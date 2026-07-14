@@ -117,7 +117,13 @@ function Index() {
           </Link>
         ))}
 
-        <Link to="/admin" className="ml-2 text-white/30 hover:text-white">Admin</Link>
+        <Link
+          to="/admin"
+          className="ml-2 border border-white/20 px-2 py-1 font-mono text-[10px] tracking-widest text-white/40 hover:border-white hover:text-white"
+          title="Studio access for the editor"
+        >
+          ◆ Studio
+        </Link>
       </nav>
 
       <section className="relative flex min-h-screen flex-col items-center justify-center px-4 py-20">
