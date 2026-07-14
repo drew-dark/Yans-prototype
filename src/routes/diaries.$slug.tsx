@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
+import { RichBody, useMediaViewer } from "@/components/site/MediaViewer";
 
 export const Route = createFileRoute("/diaries/$slug")({
   head: ({ loaderData }) => {
@@ -53,6 +54,7 @@ function EntryPage() {
     },
     initialData: Route.useLoaderData(),
   });
+  const { open } = useMediaViewer();
   if (!e) return null;
   return (
     <PageShell>
@@ -64,12 +66,20 @@ function EntryPage() {
         </div>
         <h1 className="mt-3 font-display text-5xl uppercase leading-none tracking-tight md:text-7xl">{e.title}</h1>
         {e.cover_image_url && (
-          <img src={e.cover_image_url} alt="" className="mt-10 w-full border border-white/10 object-cover" />
+          <button
+            type="button"
+            onClick={() => open({ kind: "image", src: e.cover_image_url!, alt: e.title })}
+            className="mt-10 block w-full overflow-hidden border border-white/10"
+            aria-label="Open cover image"
+          >
+            <img src={e.cover_image_url} alt="" className="w-full object-cover" />
+          </button>
         )}
         {e.body && (
-          <div className="prose prose-invert mt-10 max-w-none whitespace-pre-wrap font-sans text-base leading-relaxed text-white/80">
-            {e.body}
-          </div>
+          <RichBody
+            text={e.body}
+            className="prose prose-invert mt-10 max-w-none font-sans text-base leading-relaxed text-white/80"
+          />
         )}
       </article>
     </PageShell>

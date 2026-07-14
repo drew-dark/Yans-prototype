@@ -2,6 +2,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
+import { RichBody, useMediaViewer } from "@/components/site/MediaViewer";
 
 export const Route = createFileRoute("/stories/$slug")({
   head: ({ loaderData }) => {
@@ -48,6 +49,7 @@ function StoryPage() {
     },
     initialData: Route.useLoaderData(),
   });
+  const { open } = useMediaViewer();
   if (!s) return null;
   return (
     <PageShell>
@@ -61,12 +63,20 @@ function StoryPage() {
         <h1 className="mt-3 font-display text-5xl uppercase leading-none tracking-tight md:text-7xl">{s.title}</h1>
         {s.excerpt && <p className="mt-6 text-lg text-white/60">{s.excerpt}</p>}
         {s.cover_image_url && (
-          <img src={s.cover_image_url} alt="" className="mt-10 w-full border border-white/10 object-cover" />
+          <button
+            type="button"
+            onClick={() => open({ kind: "image", src: s.cover_image_url!, alt: s.title })}
+            className="mt-10 block w-full overflow-hidden border border-white/10"
+            aria-label="Open cover image"
+          >
+            <img src={s.cover_image_url} alt="" className="w-full object-cover" />
+          </button>
         )}
         {s.body && (
-          <div className="mt-10 whitespace-pre-wrap font-sans text-base leading-relaxed text-white/80">
-            {s.body}
-          </div>
+          <RichBody
+            text={s.body}
+            className="mt-10 font-sans text-base leading-relaxed text-white/80"
+          />
         )}
       </article>
     </PageShell>
