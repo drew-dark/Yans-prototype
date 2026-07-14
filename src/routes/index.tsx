@@ -38,7 +38,14 @@ const fallbackTiles = [
 ];
 
 const offsets = ["mt-0", "mt-12", "-mt-8", "mt-20", "-mt-16"];
-const navLinks = ["Gallery", "Gaijin Diaries", "Stories", "Shop", "About"];
+const navLinks = [
+  { to: "/gallery", label: "Gallery" },
+  { to: "/diaries", label: "Gaijin Diaries" },
+  { to: "/stories", label: "Stories" },
+  { to: "/shop", label: "Shop" },
+  { to: "/about", label: "About" },
+] as const;
+
 
 function Index() {
   const { data: tiles = fallbackTiles } = useQuery({
@@ -99,15 +106,16 @@ function Index() {
       </div>
 
       <nav className="absolute right-12 top-12 z-40 hidden items-center space-x-8 text-[11px] font-bold uppercase tracking-[0.3em] text-white/70 md:flex">
-        {navLinks.map((label) => (
-          <a
-            key={label}
-            href={`#${label.toLowerCase().replace(/\s+/g, "-")}`}
+        {navLinks.map((link) => (
+          <Link
+            key={link.to}
+            to={link.to}
             className="transition-colors hover:text-white"
           >
-            {label}
-          </a>
+            {link.label}
+          </Link>
         ))}
+
         <Link to="/admin" className="ml-2 text-white/30 hover:text-white">Admin</Link>
       </nav>
 
