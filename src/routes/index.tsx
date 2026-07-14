@@ -1,4 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import portraitImg from "@/assets/muyan-portrait.jpg";
 import broadcastImg from "@/assets/muyan-broadcast.jpg";
 import foodImg from "@/assets/muyan-food.jpg";
@@ -27,17 +29,43 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const tiles = [
-  { src: portraitImg, label: "Portrait", offset: "mt-0" },
-  { src: broadcastImg, label: "Broadcast", offset: "mt-12" },
-  { src: foodImg, label: "Culture", offset: "-mt-8" },
-  { src: verseImg, label: "Verse", offset: "mt-20" },
-  { src: stageImg, label: "Stage", offset: "-mt-16" },
+const fallbackTiles = [
+  { id: "1", image_url: portraitImg, label: "Portrait" },
+  { id: "2", image_url: broadcastImg, label: "Broadcast" },
+  { id: "3", image_url: foodImg, label: "Culture" },
+  { id: "4", image_url: verseImg, label: "Verse" },
+  { id: "5", image_url: stageImg, label: "Stage" },
 ];
 
+const offsets = ["mt-0", "mt-12", "-mt-8", "mt-20", "-mt-16"];
 const navLinks = ["Gallery", "Gaijin Diaries", "Stories", "Shop", "About"];
 
 function Index() {
+  const { data: tiles = fallbackTiles } = useQuery({
+    queryKey: ["public", "collection_items"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("collection_items")
+        .select("id, image_url, label")
+        .eq("published", true)
+        .order("sort_order");
+      if (error) throw error;
+      return data.length > 0 ? data : fallbackTiles;
+    },
+  });
+
+  const { data: about } = useQuery({
+    queryKey: ["public", "about"],
+    queryFn: async () => {
+      const { data } = await supabase.from("about_content").select("*").maybeSingle();
+      return data;
+    },
+  });
+
+  const headline = about?.headline || "EMMANUEL RAYAN DAKA";
+  const tagline = about?.tagline || "These are words carved from quiet places — am just a Zambian poet and journalist writing the things we rarely say out loud.";
+  const location = about?.location || "Lusaka, Zambia — Tokyo, Japan";
+
   return (
     <main
       className="relative min-h-screen w-full overflow-hidden font-sans text-white"
@@ -47,13 +75,11 @@ function Index() {
           "radial-gradient(circle at 20% 30%, rgba(255,255,255,0.03) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.03) 0%, transparent 50%)",
       }}
     >
-      {/* Ink splatter accents */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -left-20 -top-20 h-96 w-96 rounded-full bg-white opacity-10 blur-3xl" />
         <div className="absolute -bottom-40 -right-20 h-[600px] w-[600px] rounded-full bg-white opacity-5 blur-[120px]" />
       </div>
 
-      {/* Name tag */}
       <div className="absolute left-8 top-8 z-50">
         <div
           className="-rotate-1 transform bg-kraft px-6 py-3 shadow-xl"
@@ -63,7 +89,7 @@ function Index() {
           }}
         >
           <h1 className="font-mono text-lg font-bold leading-none tracking-tight text-ink-dark">
-            EMMANUEL RAYAN DAKA
+            {headline.toUpperCase()}
           </h1>
           <div className="my-1 h-px bg-ink-dark/20" />
           <p className="font-mono text-[10px] uppercase tracking-widest text-ink-dark">
@@ -72,8 +98,7 @@ function Index() {
         </div>
       </div>
 
-      {/* Nav */}
-      <nav className="absolute right-12 top-12 z-40 hidden space-x-8 text-[11px] font-bold uppercase tracking-[0.3em] text-white/70 md:flex">
+      <nav className="absolute right-12 top-12 z-40 hidden items-center space-x-8 text-[11px] font-bold uppercase tracking-[0.3em] text-white/70 md:flex">
         {navLinks.map((label) => (
           <a
             key={label}
@@ -83,10 +108,10 @@ function Index() {
             {label}
           </a>
         ))}
+        <Link to="/admin" className="ml-2 text-white/30 hover:text-white">Admin</Link>
       </nav>
 
       <section className="relative flex min-h-screen flex-col items-center justify-center px-4 py-20">
-        {/* Vertical side text */}
         <div
           className="absolute right-8 top-1/2 -translate-y-1/2 rotate-180 font-mono text-[10px] uppercase tracking-[0.5em] text-white/30"
           style={{ writingMode: "vertical-rl" }}
@@ -94,7 +119,6 @@ function Index() {
           YANS LOUNGE © 2026
         </div>
 
-        {/* Photo strip */}
         <div className="relative flex h-[60vh] w-full max-w-6xl items-center justify-center gap-2 md:h-[70vh] md:gap-4">
           <h2 className="pointer-events-none absolute z-30 select-none font-display text-7xl leading-none tracking-tighter text-white mix-blend-difference md:text-[12rem] lg:text-[16rem]">
             MUYAN
@@ -102,16 +126,14 @@ function Index() {
             COLLECTION
           </h2>
 
-          {tiles.map((t) => (
+          {tiles.map((t, i) => (
             <div
-              key={t.label}
-              className={`h-full flex-1 -skew-x-12 transform overflow-hidden ${t.offset}`}
+              key={t.id}
+              className={`h-full flex-1 -skew-x-12 transform overflow-hidden ${offsets[i % offsets.length]}`}
             >
               <img
-                src={t.src}
+                src={t.image_url}
                 alt={t.label}
-                width={600}
-                height={1200}
                 loading="lazy"
                 className="h-full w-full skew-x-12 scale-150 transform object-cover"
               />
@@ -119,11 +141,9 @@ function Index() {
           ))}
         </div>
 
-        {/* Tagline */}
         <div className="z-40 mt-16 max-w-xl text-center">
           <p className="text-sm font-light leading-relaxed text-white/60 md:text-lg">
-            These are words carved from quiet places — am just a Zambian poet
-            and journalist writing the things we rarely say out loud.
+            {tagline}
           </p>
           <div className="mt-8 flex justify-center">
             <div className="h-12 w-px bg-gradient-to-b from-white/40 to-transparent" />
@@ -137,12 +157,12 @@ function Index() {
             Currently Residing
           </span>
           <span className="text-sm uppercase tracking-widest">
-            Lusaka, Zambia — Tokyo, Japan
+            {location}
           </span>
         </div>
         <div className="text-right">
-          <a
-            href="#enter"
+          <Link
+            to="/admin"
             className="inline-block cursor-pointer bg-white/5 px-6 py-2 transition-colors hover:bg-white/10"
             style={{
               clipPath:
@@ -152,7 +172,7 @@ function Index() {
             <span className="font-mono text-xs uppercase tracking-tighter">
               Enter the Lounge →
             </span>
-          </a>
+          </Link>
         </div>
       </footer>
     </main>
