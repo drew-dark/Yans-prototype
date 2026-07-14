@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { NewsletterForm } from "@/components/site/NewsletterForm";
 import portraitImg from "@/assets/muyan-portrait.jpg";
 import broadcastImg from "@/assets/muyan-broadcast.jpg";
 import foodImg from "@/assets/muyan-food.jpg";
@@ -158,6 +159,12 @@ function Index() {
           </div>
         </div>
       </section>
+
+      <section className="relative z-10 mx-auto max-w-2xl px-6 pb-24 md:px-12">
+        <NewsletterForm source="home" variant="kraft" />
+      </section>
+
+
 
       <footer className="flex flex-col items-end justify-between gap-8 border-t border-white/5 p-12 md:flex-row">
         <div>
