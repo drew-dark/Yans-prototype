@@ -11,7 +11,7 @@ import verseImg from "@/assets/muyan-verse.jpg";
 import stageImg from "@/assets/muyan-stage.jpg";
 
 const heroOffsets = ["mt-0", "mt-12", "-mt-8", "mt-20", "-mt-16"];
-const heroImages = [portraitImg, broadcastImg, verseImg, stageImg, foodImg];
+const fallbackHero = [foodImg, stageImg, portraitImg, verseImg, broadcastImg];
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -57,6 +57,21 @@ const navLinks = [
 
 
 function Index() {
+  const { data: heroImages = fallbackHero } = useQuery({
+    queryKey: ["public", "hero_images"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("hero_images")
+        .select("image_url, alt")
+        .eq("published", true)
+        .order("sort_order");
+      if (error) throw error;
+      return data.length > 0
+        ? data.map((d) => d.image_url)
+        : fallbackHero;
+    },
+  });
+
   const { data: tiles = fallbackTiles } = useQuery({
     queryKey: ["public", "collection_items"],
     queryFn: async () => {
