@@ -185,17 +185,20 @@ function Index() {
         </div>
         <div className="text-right">
           <Link
-            to="/admin"
-            className="inline-block cursor-pointer bg-white/5 px-6 py-2 transition-colors hover:bg-white/10"
+            to="/about"
+            className="inline-block cursor-pointer bg-kraft px-6 py-2 text-ink-dark shadow-lg transition-transform hover:-translate-y-0.5"
             style={{
               clipPath:
                 "polygon(0% 5%, 5% 0%, 95% 2%, 100% 8%, 98% 92%, 100% 100%, 5% 98%, 0% 90%)",
             }}
           >
-            <span className="font-mono text-xs uppercase tracking-tighter">
-              Enter the Lounge →
+            <span className="font-mono text-xs font-bold uppercase tracking-tighter">
+              ✎ Enter the Lounge →
             </span>
           </Link>
+          <div className="mt-2 font-mono text-[9px] uppercase tracking-widest text-white/30">
+            Readers · public site
+          </div>
         </div>
       </footer>
     </main>
