@@ -117,7 +117,13 @@ function Index() {
           </Link>
         ))}
 
-        <Link to="/admin" className="ml-2 text-white/30 hover:text-white">Admin</Link>
+        <Link
+          to="/admin"
+          className="ml-2 border border-white/20 px-2 py-1 font-mono text-[10px] tracking-widest text-white/40 hover:border-white hover:text-white"
+          title="Studio access for the editor"
+        >
+          ◆ Studio
+        </Link>
       </nav>
 
       <section className="relative flex min-h-screen flex-col items-center justify-center px-4 py-20">
@@ -128,8 +134,10 @@ function Index() {
           YANS LOUNGE © 2026
         </div>
 
-        <div className="relative flex h-[60vh] w-full max-w-6xl items-center justify-center gap-2 md:h-[70vh] md:gap-4">
-          <h2 className="pointer-events-none absolute z-30 select-none font-display text-7xl leading-none tracking-tighter text-white mix-blend-difference md:text-[12rem] lg:text-[16rem]">
+        <div className="group relative flex h-[60vh] w-full max-w-6xl items-center justify-center gap-2 md:h-[70vh] md:gap-4">
+          <h2
+            className="pointer-events-none absolute z-30 select-none font-display text-7xl leading-none tracking-tighter text-white/5 transition-all duration-500 ease-out group-hover:text-white group-hover:mix-blend-difference md:text-[12rem] lg:text-[16rem]"
+          >
             MUYAN
             <br />
             COLLECTION
@@ -144,7 +152,7 @@ function Index() {
                 src={t.image_url}
                 alt={t.label}
                 loading="lazy"
-                className="h-full w-full skew-x-12 scale-150 transform object-cover"
+                className="h-full w-full skew-x-12 scale-150 transform object-cover transition-transform duration-700 group-hover:scale-[1.6]"
               />
             </div>
           ))}
@@ -177,17 +185,20 @@ function Index() {
         </div>
         <div className="text-right">
           <Link
-            to="/admin"
-            className="inline-block cursor-pointer bg-white/5 px-6 py-2 transition-colors hover:bg-white/10"
+            to="/about"
+            className="inline-block cursor-pointer bg-kraft px-6 py-2 text-ink-dark shadow-lg transition-transform hover:-translate-y-0.5"
             style={{
               clipPath:
                 "polygon(0% 5%, 5% 0%, 95% 2%, 100% 8%, 98% 92%, 100% 100%, 5% 98%, 0% 90%)",
             }}
           >
-            <span className="font-mono text-xs uppercase tracking-tighter">
-              Enter the Lounge →
+            <span className="font-mono text-xs font-bold uppercase tracking-tighter">
+              ✎ Enter the Lounge →
             </span>
           </Link>
+          <div className="mt-2 font-mono text-[9px] uppercase tracking-widest text-white/30">
+            Readers · public site
+          </div>
         </div>
       </footer>
     </main>
