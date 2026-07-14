@@ -1,0 +1,77 @@
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { PageShell } from "@/components/site/SiteChrome";
+
+export const Route = createFileRoute("/diaries/$slug")({
+  head: ({ loaderData }) => {
+    const e = loaderData as { title?: string; body?: string | null; cover_image_url?: string | null } | undefined;
+    if (!e) return { meta: [{ title: "Entry — Gaijin Diaries" }, { name: "robots", content: "noindex" }] };
+    return {
+      meta: [
+        { title: `${e.title} — Gaijin Diaries` },
+        { name: "description", content: e.body?.slice(0, 160) ?? "Diary entry" },
+        { property: "og:title", content: `${e.title} — Gaijin Diaries` },
+        { property: "og:description", content: e.body?.slice(0, 160) ?? "Diary entry" },
+        ...(e.cover_image_url ? [{ property: "og:image", content: e.cover_image_url }] : []),
+      ],
+    };
+  },
+  loader: async ({ params }) => {
+    const { data } = await supabase
+      .from("diary_entries")
+      .select("*")
+      .eq("slug", params.slug)
+      .eq("published", true)
+      .maybeSingle();
+    if (!data) throw notFound();
+    return data;
+  },
+  errorComponent: ({ error }) => (
+    <PageShell><div className="mx-auto max-w-2xl p-16 text-center text-white/50">{error.message}</div></PageShell>
+  ),
+  notFoundComponent: () => (
+    <PageShell>
+      <div className="mx-auto max-w-2xl px-6 py-24 text-center">
+        <h1 className="font-display text-6xl uppercase">Not found</h1>
+        <p className="mt-4 text-white/50">That entry isn't published.</p>
+        <Link to="/diaries" className="mt-6 inline-block font-mono text-xs uppercase tracking-widest text-white/60 hover:text-white">← Back to diaries</Link>
+      </div>
+    </PageShell>
+  ),
+  component: EntryPage,
+});
+
+function EntryPage() {
+  const params = Route.useParams();
+  const { data: e } = useQuery({
+    queryKey: ["public", "diary", params.slug],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("diary_entries").select("*").eq("slug", params.slug).eq("published", true).maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    initialData: Route.useLoaderData(),
+  });
+  if (!e) return null;
+  return (
+    <PageShell>
+      <article className="mx-auto max-w-3xl px-6 py-16 md:px-12">
+        <Link to="/diaries" className="font-mono text-[10px] uppercase tracking-widest text-white/40 hover:text-white">← Diaries</Link>
+        <div className="mt-6 flex items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-white/40">
+          <span>{new Date(e.entry_date).toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" })}</span>
+          {e.location && <><span>·</span><span>{e.location}</span></>}
+        </div>
+        <h1 className="mt-3 font-display text-5xl uppercase leading-none tracking-tight md:text-7xl">{e.title}</h1>
+        {e.cover_image_url && (
+          <img src={e.cover_image_url} alt="" className="mt-10 w-full border border-white/10 object-cover" />
+        )}
+        {e.body && (
+          <div className="prose prose-invert mt-10 max-w-none whitespace-pre-wrap font-sans text-base leading-relaxed text-white/80">
+            {e.body}
+          </div>
+        )}
+      </article>
+    </PageShell>
+  );
+}

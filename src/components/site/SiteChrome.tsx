@@ -1,0 +1,109 @@
+import { Link, useRouterState } from "@tanstack/react-router";
+
+const links = [
+  { to: "/gallery", label: "Gallery" },
+  { to: "/diaries", label: "Gaijin Diaries" },
+  { to: "/stories", label: "Stories" },
+  { to: "/shop", label: "Shop" },
+  { to: "/about", label: "About" },
+] as const;
+
+export function SiteHeader() {
+  const pathname = useRouterState({ select: (r) => r.location.pathname });
+  return (
+    <header className="relative z-40 flex items-start justify-between px-6 py-6 md:px-12 md:py-8">
+      <Link to="/" className="block">
+        <div
+          className="-rotate-1 transform bg-kraft px-4 py-2 shadow-xl"
+          style={{
+            clipPath:
+              "polygon(0% 5%, 5% 0%, 95% 2%, 100% 8%, 98% 92%, 100% 100%, 5% 98%, 0% 90%)",
+          }}
+        >
+          <h1 className="font-mono text-sm font-bold leading-none tracking-tight text-ink-dark">
+            EMMANUEL RAYAN DAKA
+          </h1>
+          <p className="mt-1 font-mono text-[9px] uppercase tracking-widest text-ink-dark/80">
+            Yans Lounge
+          </p>
+        </div>
+      </Link>
+      <nav className="hidden items-center gap-6 pt-2 text-[11px] font-bold uppercase tracking-[0.3em] text-white/60 md:flex">
+        {links.map((l) => {
+          const active = pathname === l.to || pathname.startsWith(l.to + "/");
+          return (
+            <Link
+              key={l.to}
+              to={l.to}
+              className={`transition-colors hover:text-white ${active ? "text-white" : ""}`}
+            >
+              {l.label}
+            </Link>
+          );
+        })}
+      </nav>
+    </header>
+  );
+}
+
+export function MobileNav() {
+  const pathname = useRouterState({ select: (r) => r.location.pathname });
+  return (
+    <nav className="flex overflow-x-auto border-b border-white/10 bg-neutral-950 px-4 py-2 md:hidden">
+      {links.map((l) => {
+        const active = pathname === l.to || pathname.startsWith(l.to + "/");
+        return (
+          <Link
+            key={l.to}
+            to={l.to}
+            className={`whitespace-nowrap px-3 py-1 font-mono text-[10px] uppercase tracking-widest ${active ? "text-white" : "text-white/40"}`}
+          >
+            {l.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+export function SiteFooter() {
+  return (
+    <footer className="mt-24 border-t border-white/5 px-6 py-10 md:px-12">
+      <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-4 text-xs md:flex-row md:items-end">
+        <div>
+          <span className="mb-1 block font-mono text-[9px] uppercase tracking-widest text-white/30">
+            Yans Lounge © 2026
+          </span>
+          <Link to="/" className="text-white/60 hover:text-white">
+            emmanuel rayan daka
+          </Link>
+        </div>
+        <div className="flex gap-4 text-[10px] uppercase tracking-widest text-white/40">
+          <Link to="/stories">Stories</Link>
+          <Link to="/diaries">Diaries</Link>
+          <Link to="/gallery">Gallery</Link>
+          <Link to="/shop">Shop</Link>
+          <Link to="/about">About</Link>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+export function PageShell({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className="min-h-screen w-full font-sans text-white"
+      style={{
+        backgroundColor: "#0a0a0a",
+        backgroundImage:
+          "radial-gradient(circle at 20% 30%, rgba(255,255,255,0.03) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.03) 0%, transparent 50%)",
+      }}
+    >
+      <SiteHeader />
+      <MobileNav />
+      {children}
+      <SiteFooter />
+    </div>
+  );
+}
