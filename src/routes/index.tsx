@@ -10,7 +10,6 @@ import foodImg from "@/assets/muyan-food.jpg";
 import verseImg from "@/assets/muyan-verse.jpg";
 import stageImg from "@/assets/muyan-stage.jpg";
 
-const heroOffsets = ["mt-0", "mt-12", "-mt-8", "mt-20", "-mt-16"];
 const fallbackHero = [foodImg, stageImg, portraitImg, verseImg, broadcastImg];
 
 export const Route = createFileRoute("/")({
