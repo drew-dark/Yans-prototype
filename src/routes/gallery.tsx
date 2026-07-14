@@ -4,9 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
 import { Paginator } from "@/components/site/Paginator";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
+import { useMediaViewer } from "@/components/site/MediaViewer";
 import { useEffect, useState } from "react";
 
 const PAGE_SIZE = 12;
+const VIDEO_RE = /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i;
 
 export const Route = createFileRoute("/gallery")({
   head: () => ({
@@ -42,8 +44,7 @@ function GalleryPage() {
 
   const photos = data?.photos ?? [];
   const totalPages = Math.max(1, Math.ceil((data?.total ?? 0) / PAGE_SIZE));
-
-  const [active, setActive] = useState<Photo | null>(null);
+  const { open } = useMediaViewer();
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -67,25 +68,50 @@ function GalleryPage() {
         ) : (
           <>
             <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
-              {photos.map((p, i) => (
-                <button
-                  key={p.id}
-                  onClick={() => setActive(p)}
-                  className={`group relative overflow-hidden border border-white/10 bg-neutral-900 ${i % 5 === 0 ? "row-span-2 aspect-[3/4]" : "aspect-square"}`}
-                >
-                  <img
-                    src={p.image_url}
-                    alt={p.caption ?? ""}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  {p.caption && (
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-3 opacity-0 transition-opacity group-hover:opacity-100">
-                      <p className="font-mono text-[10px] uppercase tracking-widest text-white">{p.caption}</p>
-                    </div>
-                  )}
-                </button>
-              ))}
+              {photos.map((p, i) => {
+                const isVideo = VIDEO_RE.test(p.image_url);
+                return (
+                  <button
+                    key={p.id}
+                    onClick={() =>
+                      open(
+                        isVideo
+                          ? { kind: "video", src: p.image_url, caption: p.caption ?? undefined }
+                          : { kind: "image", src: p.image_url, alt: p.caption ?? "", caption: p.caption ?? undefined },
+                      )
+                    }
+                    className={`group relative overflow-hidden border border-white/10 bg-neutral-900 ${i % 5 === 0 ? "row-span-2 aspect-[3/4]" : "aspect-square"}`}
+                    aria-label={p.caption ?? (isVideo ? "Play video" : "Open image")}
+                  >
+                    {isVideo ? (
+                      <video
+                        src={p.image_url}
+                        muted
+                        playsInline
+                        preload="metadata"
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                      />
+                    ) : (
+                      <img
+                        src={p.image_url}
+                        alt={p.caption ?? ""}
+                        loading="lazy"
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                      />
+                    )}
+                    {p.caption && (
+                      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-3 opacity-0 transition-opacity group-hover:opacity-100 motion-reduce:transition-none">
+                        <p className="font-mono text-[10px] uppercase tracking-widest text-white">{p.caption}</p>
+                      </div>
+                    )}
+                    {isVideo && (
+                      <span className="pointer-events-none absolute right-2 top-2 rounded bg-black/70 px-2 py-0.5 font-mono text-[9px] uppercase tracking-widest text-white/80">
+                        ▶ Video
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
             <Paginator page={page} totalPages={totalPages} onPageChange={setPage} />
           </>
@@ -95,24 +121,6 @@ function GalleryPage() {
           <NewsletterForm source="gallery" />
         </div>
       </section>
-
-      {active && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4"
-          onClick={() => setActive(null)}
-        >
-          <div className="relative max-h-full max-w-5xl">
-            <img src={active.image_url} alt={active.caption ?? ""} className="max-h-[85vh] w-auto object-contain" />
-            {active.caption && (
-              <p className="mt-4 text-center font-mono text-xs uppercase tracking-widest text-white/70">{active.caption}</p>
-            )}
-            {active.tags?.length > 0 && (
-              <p className="mt-2 text-center font-mono text-[10px] text-white/40">{active.tags.map((t) => `#${t}`).join(" · ")}</p>
-            )}
-          </div>
-          <button className="absolute right-6 top-6 font-mono text-xs uppercase tracking-widest text-white/60 hover:text-white">Close ✕</button>
-        </div>
-      )}
     </PageShell>
   );
 }
