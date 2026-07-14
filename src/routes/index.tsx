@@ -134,8 +134,10 @@ function Index() {
           YANS LOUNGE © 2026
         </div>
 
-        <div className="relative flex h-[60vh] w-full max-w-6xl items-center justify-center gap-2 md:h-[70vh] md:gap-4">
-          <h2 className="pointer-events-none absolute z-30 select-none font-display text-7xl leading-none tracking-tighter text-white mix-blend-difference md:text-[12rem] lg:text-[16rem]">
+        <div className="group relative flex h-[60vh] w-full max-w-6xl items-center justify-center gap-2 md:h-[70vh] md:gap-4">
+          <h2
+            className="pointer-events-none absolute z-30 select-none font-display text-7xl leading-none tracking-tighter text-white/5 transition-all duration-500 ease-out group-hover:text-white group-hover:mix-blend-difference md:text-[12rem] lg:text-[16rem]"
+          >
             MUYAN
             <br />
             COLLECTION
@@ -150,7 +152,7 @@ function Index() {
                 src={t.image_url}
                 alt={t.label}
                 loading="lazy"
-                className="h-full w-full skew-x-12 scale-150 transform object-cover"
+                className="h-full w-full skew-x-12 scale-150 transform object-cover transition-transform duration-700 group-hover:scale-[1.6]"
               />
             </div>
           ))}
