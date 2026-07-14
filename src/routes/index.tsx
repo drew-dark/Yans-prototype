@@ -3,11 +3,15 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { useMediaViewer } from "@/components/site/MediaViewer";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import portraitImg from "@/assets/muyan-portrait.jpg";
 import broadcastImg from "@/assets/muyan-broadcast.jpg";
 import foodImg from "@/assets/muyan-food.jpg";
 import verseImg from "@/assets/muyan-verse.jpg";
 import stageImg from "@/assets/muyan-stage.jpg";
+
+const heroOffsets = ["mt-0", "mt-12", "-mt-8", "mt-20", "-mt-16"];
+const heroImages = [portraitImg, broadcastImg, verseImg, stageImg, foodImg];
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -78,6 +82,9 @@ function Index() {
   const tagline = about?.tagline || "These are words carved from quiet places — am just a Zambian poet and journalist writing the things we rarely say out loud.";
   const location = about?.location || "Lusaka, Zambia — Tokyo, Japan";
   const { open } = useMediaViewer();
+  const reduceMotion = useReducedMotion();
+  const imageTransitionClass = reduceMotion ? "" : "transition-transform duration-700";
+  const hoverImageClass = reduceMotion ? "" : "group-hover:scale-[1.6]";
 
   return (
     <main
@@ -131,7 +138,7 @@ function Index() {
         </Link>
       </nav>
 
-      <section className="relative flex min-h-[80vh] flex-col items-center justify-center px-6 py-24 text-center">
+      <section className="relative flex min-h-screen flex-col items-center justify-center px-4 py-20">
         <div
           className="absolute right-8 top-1/2 -translate-y-1/2 rotate-180 font-mono text-[10px] uppercase tracking-[0.5em] text-white/30"
           style={{ writingMode: "vertical-rl" }}
@@ -142,12 +149,29 @@ function Index() {
         <p className="font-mono text-[10px] uppercase tracking-[0.5em] text-white/40">
           Poet · Author · Journalist · Broadcaster
         </p>
-        <h2 className="mt-6 font-display text-6xl uppercase leading-[0.9] tracking-tighter text-white md:text-8xl lg:text-9xl">
+        <h2 className="mt-6 text-center font-display text-6xl uppercase leading-[0.9] tracking-tighter text-white md:text-8xl lg:text-9xl">
           Words carved
           <br />
           from quiet places
         </h2>
-        <p className="mt-10 max-w-xl text-sm font-light leading-relaxed text-white/60 md:text-lg">
+
+        <div className="group relative mt-14 flex h-[42vh] w-full max-w-6xl items-center justify-center gap-2 md:h-[50vh] md:gap-4">
+          {heroImages.map((src, i) => (
+            <div
+              key={i}
+              className={`h-full flex-1 -skew-x-12 transform overflow-hidden ${heroOffsets[i % heroOffsets.length]}`}
+            >
+              <img
+                src={src}
+                alt=""
+                loading="lazy"
+                className={`h-full w-full skew-x-12 scale-150 transform object-cover ${imageTransitionClass} ${hoverImageClass}`}
+              />
+            </div>
+          ))}
+        </div>
+
+        <p className="mt-12 max-w-xl text-center text-sm font-light leading-relaxed text-white/60 md:text-lg">
           {tagline}
         </p>
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
@@ -164,7 +188,6 @@ function Index() {
             Read stories
           </Link>
         </div>
-        <div className="mt-12 h-12 w-px bg-gradient-to-b from-white/40 to-transparent" />
       </section>
 
       <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
