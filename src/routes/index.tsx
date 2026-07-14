@@ -164,11 +164,6 @@ function Index() {
         <p className="font-mono text-[10px] uppercase tracking-[0.5em] text-white/40">
           Poet · Author · Journalist · Broadcaster
         </p>
-        <h2 className="mt-6 text-center font-display text-6xl uppercase leading-[0.9] tracking-tighter text-white md:text-8xl lg:text-9xl">
-          Words carved
-          <br />
-          from quiet places
-        </h2>
 
         <div className="group relative mt-14 flex h-[42vh] w-full max-w-6xl items-center justify-center gap-2 md:h-[50vh] md:gap-4">
           {heroImages.map((src, i) => (
