@@ -10,6 +10,7 @@ import foodImg from "@/assets/muyan-food.jpg";
 import verseImg from "@/assets/muyan-verse.jpg";
 import stageImg from "@/assets/muyan-stage.jpg";
 
+const heroOffsets = ["mt-0", "mt-12", "-mt-8", "mt-20", "-mt-16"];
 const fallbackHero = [foodImg, stageImg, portraitImg, verseImg, broadcastImg];
 
 export const Route = createFileRoute("/")({
@@ -164,25 +165,20 @@ function Index() {
           Poet · Author · Journalist · Broadcaster
         </p>
 
-        <div className="group relative mt-14 flex h-[42vh] w-full max-w-6xl items-stretch justify-center gap-1 md:h-[50vh] md:gap-2">
-          {heroImages.map((src, i) => {
-            const heights = ["h-[85%]", "h-full", "h-[70%]", "h-[95%]", "h-[78%]"];
-            const aligns = ["self-end", "self-center", "self-start", "self-end", "self-center"];
-            return (
-              <div
-                key={i}
-                className={`relative flex-1 overflow-hidden border border-white/5 bg-neutral-900 ${heights[i % heights.length]} ${aligns[i % aligns.length]} ${imageTransitionClass} hover:z-10 hover:flex-[1.4]`}
-              >
-                <img
-                  src={src}
-                  alt=""
-                  loading="lazy"
-                  className={`h-full w-full object-cover ${imageTransitionClass} ${hoverImageClass} group-hover:opacity-60 hover:!opacity-100`}
-                />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-0 hover:!opacity-100" />
-              </div>
-            );
-          })}
+        <div className="group relative mt-14 flex h-[42vh] w-full max-w-6xl items-center justify-center gap-2 md:h-[50vh] md:gap-4">
+          {heroImages.map((src, i) => (
+            <div
+              key={i}
+              className={`h-full flex-1 -skew-x-12 transform overflow-hidden ${heroOffsets[i % heroOffsets.length]}`}
+            >
+              <img
+                src={src}
+                alt=""
+                loading="lazy"
+                className={`h-full w-full skew-x-12 scale-150 transform object-cover ${imageTransitionClass} ${hoverImageClass}`}
+              />
+            </div>
+          ))}
         </div>
 
 
@@ -223,30 +219,40 @@ function Index() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-          {tiles.slice(0, 8).map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() =>
-                open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label })
-              }
-              className="group relative aspect-[3/4] overflow-hidden border border-white/10 bg-neutral-900 text-left"
-              aria-label={t.label}
-            >
-              <img
-                src={t.image_url}
-                alt={t.label}
-                loading="lazy"
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-3">
-                <p className="font-mono text-[10px] uppercase tracking-widest text-white">
+        <div className="group/strip flex h-[46vh] w-full items-stretch gap-1 overflow-hidden md:h-[58vh] md:gap-2">
+          {tiles.slice(0, 8).map((t, i) => {
+            const heights = ["h-[88%]", "h-full", "h-[72%]", "h-[95%]", "h-[80%]", "h-full", "h-[75%]", "h-[92%]"];
+            const aligns = ["self-end", "self-start", "self-end", "self-center", "self-start", "self-end", "self-center", "self-start"];
+            return (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() =>
+                  open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label })
+                }
+                className={`relative flex-1 overflow-hidden border border-white/10 bg-neutral-900 text-left ${heights[i % heights.length]} ${aligns[i % aligns.length]} ${imageTransitionClass} hover:z-10 hover:flex-[2] focus-visible:z-10 focus-visible:flex-[2] focus:outline-none`}
+                aria-label={t.label}
+              >
+                <img
+                  src={t.image_url}
+                  alt={t.label}
+                  loading="lazy"
+                  className={`h-full w-full object-cover ${imageTransitionClass} ${hoverImageClass} group-hover/strip:opacity-40 hover:!opacity-100 focus-visible:!opacity-100`}
+                />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-3 opacity-0 transition-opacity duration-500 hover:!opacity-100 group-hover/strip:opacity-0">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-white">
+                    {t.label}
+                  </p>
+                </div>
+                <div
+                  className="pointer-events-none absolute left-2 top-2 rotate-180 font-mono text-[9px] uppercase tracking-[0.35em] text-white/70 mix-blend-difference"
+                  style={{ writingMode: "vertical-rl" }}
+                >
                   {t.label}
-                </p>
-              </div>
-            </button>
-          ))}
+                </div>
+              </button>
+            );
+          })}
         </div>
 
         <div className="mt-6 text-right md:hidden">
