@@ -88,7 +88,12 @@ function AboutPage() {
             </div>
           </div>
         )}
+
+        <div className="mt-20">
+          <NewsletterForm source="about" />
+        </div>
       </section>
     </PageShell>
   );
 }
+
