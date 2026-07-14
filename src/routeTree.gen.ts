@@ -13,6 +13,7 @@ import { Route as StoriesRouteImport } from './routes/stories'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as DiariesRouteImport } from './routes/diaries'
+import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
@@ -46,6 +47,11 @@ const GalleryRoute = GalleryRouteImport.update({
 const DiariesRoute = DiariesRouteImport.update({
   id: '/diaries',
   path: '/diaries',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CollectionRoute = CollectionRouteImport.update({
+  id: '/collection',
+  path: '/collection',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -125,6 +131,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/collection': typeof CollectionRoute
   '/diaries': typeof DiariesRouteWithChildren
   '/gallery': typeof GalleryRoute
   '/shop': typeof ShopRoute
@@ -144,6 +151,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/collection': typeof CollectionRoute
   '/diaries': typeof DiariesRouteWithChildren
   '/gallery': typeof GalleryRoute
   '/shop': typeof ShopRoute
@@ -164,6 +172,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/collection': typeof CollectionRoute
   '/diaries': typeof DiariesRouteWithChildren
   '/gallery': typeof GalleryRoute
   '/shop': typeof ShopRoute
@@ -185,6 +194,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
+    | '/collection'
     | '/diaries'
     | '/gallery'
     | '/shop'
@@ -204,6 +214,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/auth'
+    | '/collection'
     | '/diaries'
     | '/gallery'
     | '/shop'
@@ -223,6 +234,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/about'
     | '/auth'
+    | '/collection'
     | '/diaries'
     | '/gallery'
     | '/shop'
@@ -244,6 +256,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
+  CollectionRoute: typeof CollectionRoute
   DiariesRoute: typeof DiariesRouteWithChildren
   GalleryRoute: typeof GalleryRoute
   ShopRoute: typeof ShopRoute
@@ -278,6 +291,13 @@ declare module '@tanstack/react-router' {
       path: '/diaries'
       fullPath: '/diaries'
       preLoaderRoute: typeof DiariesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/collection': {
+      id: '/collection'
+      path: '/collection'
+      fullPath: '/collection'
+      preLoaderRoute: typeof CollectionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -445,6 +465,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
+  CollectionRoute: CollectionRoute,
   DiariesRoute: DiariesRouteWithChildren,
   GalleryRoute: GalleryRoute,
   ShopRoute: ShopRoute,

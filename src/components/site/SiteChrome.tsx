@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 
 const links = [
+  { to: "/collection", label: "Collection" },
   { to: "/gallery", label: "Gallery" },
   { to: "/diaries", label: "Gaijin Diaries" },
   { to: "/stories", label: "Stories" },

@@ -1,9 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
-import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { useMediaViewer } from "@/components/site/MediaViewer";
 import portraitImg from "@/assets/muyan-portrait.jpg";
 import broadcastImg from "@/assets/muyan-broadcast.jpg";
 import foodImg from "@/assets/muyan-food.jpg";
@@ -38,10 +37,13 @@ const fallbackTiles = [
   { id: "3", image_url: foodImg, label: "Culture" },
   { id: "4", image_url: verseImg, label: "Verse" },
   { id: "5", image_url: stageImg, label: "Stage" },
+  { id: "6", image_url: portraitImg, label: "Studio" },
+  { id: "7", image_url: broadcastImg, label: "Field" },
+  { id: "8", image_url: foodImg, label: "Table" },
 ];
 
-const offsets = ["mt-0", "mt-12", "-mt-8", "mt-20", "-mt-16"];
 const navLinks = [
+  { to: "/collection", label: "Collection" },
   { to: "/gallery", label: "Gallery" },
   { to: "/diaries", label: "Gaijin Diaries" },
   { to: "/stories", label: "Stories" },
@@ -75,13 +77,7 @@ function Index() {
   const headline = about?.headline || "EMMANUEL RAYAN DAKA";
   const tagline = about?.tagline || "These are words carved from quiet places — am just a Zambian poet and journalist writing the things we rarely say out loud.";
   const location = about?.location || "Lusaka, Zambia — Tokyo, Japan";
-  const [isRevealed, setIsRevealed] = useState(false);
-  const reduceMotion = useReducedMotion();
-  const revealed = isRevealed && !reduceMotion;
-  const hoverEffectsClass = reduceMotion ? "" : "group-hover:opacity-0";
-  const hoverImageClass = reduceMotion ? "" : "group-hover:scale-[1.6]";
-  const transitionClass = reduceMotion ? "" : "transition-all duration-500 ease-out";
-  const imageTransitionClass = reduceMotion ? "" : "transition-transform duration-700";
+  const { open } = useMediaViewer();
 
   return (
     <main
@@ -135,7 +131,7 @@ function Index() {
         </Link>
       </nav>
 
-      <section className="relative flex min-h-screen flex-col items-center justify-center px-4 py-20">
+      <section className="relative flex min-h-[80vh] flex-col items-center justify-center px-6 py-24 text-center">
         <div
           className="absolute right-8 top-1/2 -translate-y-1/2 rotate-180 font-mono text-[10px] uppercase tracking-[0.5em] text-white/30"
           style={{ writingMode: "vertical-rl" }}
@@ -143,40 +139,85 @@ function Index() {
           YANS LOUNGE © 2026
         </div>
 
-        <div
-          className={`group relative flex h-[60vh] w-full max-w-6xl ${reduceMotion ? "" : "cursor-pointer"} items-center justify-center gap-2 md:h-[70vh] md:gap-4`}
-          onClick={reduceMotion ? undefined : () => setIsRevealed((v) => !v)}
-        >
-          <h2
-            className={`pointer-events-none absolute z-30 select-none font-display text-7xl leading-none tracking-tighter text-white ${transitionClass} ${hoverEffectsClass} md:text-[12rem] lg:text-[16rem] ${revealed ? "opacity-0" : "opacity-100"}`}
+        <p className="font-mono text-[10px] uppercase tracking-[0.5em] text-white/40">
+          Poet · Author · Journalist · Broadcaster
+        </p>
+        <h2 className="mt-6 font-display text-6xl uppercase leading-[0.9] tracking-tighter text-white md:text-8xl lg:text-9xl">
+          Words carved
+          <br />
+          from quiet places
+        </h2>
+        <p className="mt-10 max-w-xl text-sm font-light leading-relaxed text-white/60 md:text-lg">
+          {tagline}
+        </p>
+        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+          <Link
+            to="/collection"
+            className="border border-white/30 px-6 py-3 font-mono text-[11px] uppercase tracking-[0.3em] text-white hover:bg-white hover:text-ink-dark"
           >
-            MUYAN
-            <br />
-            COLLECTION
-          </h2>
+            Enter the Collection →
+          </Link>
+          <Link
+            to="/stories"
+            className="font-mono text-[11px] uppercase tracking-[0.3em] text-white/60 hover:text-white"
+          >
+            Read stories
+          </Link>
+        </div>
+        <div className="mt-12 h-12 w-px bg-gradient-to-b from-white/40 to-transparent" />
+      </section>
 
-          {tiles.map((t, i) => (
-            <div
+      <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
+        <div className="mb-10 flex items-end justify-between gap-6">
+          <div>
+            <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.4em] text-white/40">
+              Volume 01
+            </p>
+            <h3 className="font-display text-5xl uppercase leading-none tracking-tight md:text-7xl">
+              Muyan Collection
+            </h3>
+          </div>
+          <Link
+            to="/collection"
+            className="hidden font-mono text-[10px] uppercase tracking-widest text-white/60 hover:text-white md:inline"
+          >
+            View all →
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
+          {tiles.slice(0, 8).map((t) => (
+            <button
               key={t.id}
-              className={`h-full flex-1 -skew-x-12 transform overflow-hidden ${offsets[i % offsets.length]}`}
+              type="button"
+              onClick={() =>
+                open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label })
+              }
+              className="group relative aspect-[3/4] overflow-hidden border border-white/10 bg-neutral-900 text-left"
+              aria-label={t.label}
             >
               <img
                 src={t.image_url}
                 alt={t.label}
                 loading="lazy"
-                className={`h-full w-full skew-x-12 scale-150 transform object-cover ${imageTransitionClass} ${hoverImageClass} ${revealed ? "scale-[1.6]" : ""}`}
+                className="h-full w-full object-cover"
               />
-            </div>
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-3">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-white">
+                  {t.label}
+                </p>
+              </div>
+            </button>
           ))}
         </div>
 
-        <div className="z-40 mt-16 max-w-xl text-center">
-          <p className="text-sm font-light leading-relaxed text-white/60 md:text-lg">
-            {tagline}
-          </p>
-          <div className="mt-8 flex justify-center">
-            <div className="h-12 w-px bg-gradient-to-b from-white/40 to-transparent" />
-          </div>
+        <div className="mt-6 text-right md:hidden">
+          <Link
+            to="/collection"
+            className="font-mono text-[10px] uppercase tracking-widest text-white/60 hover:text-white"
+          >
+            View all →
+          </Link>
         </div>
       </section>
 
