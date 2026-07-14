@@ -74,6 +74,7 @@ function Index() {
   const headline = about?.headline || "EMMANUEL RAYAN DAKA";
   const tagline = about?.tagline || "These are words carved from quiet places — am just a Zambian poet and journalist writing the things we rarely say out loud.";
   const location = about?.location || "Lusaka, Zambia — Tokyo, Japan";
+  const [isRevealed, setIsRevealed] = useState(false);
 
   return (
     <main
