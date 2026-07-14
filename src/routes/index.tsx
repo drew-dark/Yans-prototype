@@ -136,7 +136,7 @@ function Index() {
 
         <div className="group relative flex h-[60vh] w-full max-w-6xl items-center justify-center gap-2 md:h-[70vh] md:gap-4">
           <h2
-            className="pointer-events-none absolute z-30 select-none font-display text-7xl leading-none tracking-tighter text-white/5 transition-all duration-500 ease-out group-hover:text-white group-hover:mix-blend-difference md:text-[12rem] lg:text-[16rem]"
+            className="pointer-events-none absolute z-30 select-none font-display text-7xl leading-none tracking-tighter text-white transition-all duration-500 ease-out group-hover:mix-blend-difference md:text-[12rem] lg:text-[16rem]"
           >
             MUYAN
             <br />
