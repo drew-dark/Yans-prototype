@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { NewsletterForm } from "@/components/site/NewsletterForm";
 import portraitImg from "@/assets/muyan-portrait.jpg";
 import broadcastImg from "@/assets/muyan-broadcast.jpg";
 import foodImg from "@/assets/muyan-food.jpg";
