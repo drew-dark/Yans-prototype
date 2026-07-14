@@ -38,7 +38,14 @@ const fallbackTiles = [
 ];
 
 const offsets = ["mt-0", "mt-12", "-mt-8", "mt-20", "-mt-16"];
-const navLinks = ["Gallery", "Gaijin Diaries", "Stories", "Shop", "About"];
+const navLinks = [
+  { to: "/gallery", label: "Gallery" },
+  { to: "/diaries", label: "Gaijin Diaries" },
+  { to: "/stories", label: "Stories" },
+  { to: "/shop", label: "Shop" },
+  { to: "/about", label: "About" },
+] as const;
+
 
 function Index() {
   const { data: tiles = fallbackTiles } = useQuery({

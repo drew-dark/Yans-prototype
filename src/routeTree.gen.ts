@@ -9,9 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StoriesRouteImport } from './routes/stories'
+import { Route as ShopRouteImport } from './routes/shop'
+import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as DiariesRouteImport } from './routes/diaries'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StoriesSlugRouteImport } from './routes/stories.$slug'
+import { Route as DiariesSlugRouteImport } from './routes/diaries.$slug'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
 import { Route as AuthenticatedAdminStoriesRouteImport } from './routes/_authenticated/admin/stories'
@@ -21,9 +28,34 @@ import { Route as AuthenticatedAdminDiaryRouteImport } from './routes/_authentic
 import { Route as AuthenticatedAdminCollectionRouteImport } from './routes/_authenticated/admin/collection'
 import { Route as AuthenticatedAdminAboutRouteImport } from './routes/_authenticated/admin/about'
 
+const StoriesRoute = StoriesRouteImport.update({
+  id: '/stories',
+  path: '/stories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GalleryRoute = GalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DiariesRoute = DiariesRouteImport.update({
+  id: '/diaries',
+  path: '/diaries',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
@@ -34,6 +66,16 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const StoriesSlugRoute = StoriesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => StoriesRoute,
+} as any)
+const DiariesSlugRoute = DiariesSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => DiariesRoute,
 } as any)
 const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
   id: '/admin',
@@ -81,8 +123,15 @@ const AuthenticatedAdminAboutRoute = AuthenticatedAdminAboutRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/diaries': typeof DiariesRouteWithChildren
+  '/gallery': typeof GalleryRoute
+  '/shop': typeof ShopRoute
+  '/stories': typeof StoriesRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/diaries/$slug': typeof DiariesSlugRoute
+  '/stories/$slug': typeof StoriesSlugRoute
   '/admin/about': typeof AuthenticatedAdminAboutRoute
   '/admin/collection': typeof AuthenticatedAdminCollectionRoute
   '/admin/diary': typeof AuthenticatedAdminDiaryRoute
@@ -93,7 +142,14 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/diaries': typeof DiariesRouteWithChildren
+  '/gallery': typeof GalleryRoute
+  '/shop': typeof ShopRoute
+  '/stories': typeof StoriesRouteWithChildren
+  '/diaries/$slug': typeof DiariesSlugRoute
+  '/stories/$slug': typeof StoriesSlugRoute
   '/admin/about': typeof AuthenticatedAdminAboutRoute
   '/admin/collection': typeof AuthenticatedAdminCollectionRoute
   '/admin/diary': typeof AuthenticatedAdminDiaryRoute
@@ -106,8 +162,15 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
+  '/diaries': typeof DiariesRouteWithChildren
+  '/gallery': typeof GalleryRoute
+  '/shop': typeof ShopRoute
+  '/stories': typeof StoriesRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/diaries/$slug': typeof DiariesSlugRoute
+  '/stories/$slug': typeof StoriesSlugRoute
   '/_authenticated/admin/about': typeof AuthenticatedAdminAboutRoute
   '/_authenticated/admin/collection': typeof AuthenticatedAdminCollectionRoute
   '/_authenticated/admin/diary': typeof AuthenticatedAdminDiaryRoute
@@ -120,8 +183,15 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/about'
     | '/auth'
+    | '/diaries'
+    | '/gallery'
+    | '/shop'
+    | '/stories'
     | '/admin'
+    | '/diaries/$slug'
+    | '/stories/$slug'
     | '/admin/about'
     | '/admin/collection'
     | '/admin/diary'
@@ -132,7 +202,14 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/about'
     | '/auth'
+    | '/diaries'
+    | '/gallery'
+    | '/shop'
+    | '/stories'
+    | '/diaries/$slug'
+    | '/stories/$slug'
     | '/admin/about'
     | '/admin/collection'
     | '/admin/diary'
@@ -144,8 +221,15 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/about'
     | '/auth'
+    | '/diaries'
+    | '/gallery'
+    | '/shop'
+    | '/stories'
     | '/_authenticated/admin'
+    | '/diaries/$slug'
+    | '/stories/$slug'
     | '/_authenticated/admin/about'
     | '/_authenticated/admin/collection'
     | '/_authenticated/admin/diary'
@@ -158,16 +242,56 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
+  DiariesRoute: typeof DiariesRouteWithChildren
+  GalleryRoute: typeof GalleryRoute
+  ShopRoute: typeof ShopRoute
+  StoriesRoute: typeof StoriesRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/stories': {
+      id: '/stories'
+      path: '/stories'
+      fullPath: '/stories'
+      preLoaderRoute: typeof StoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/gallery': {
+      id: '/gallery'
+      path: '/gallery'
+      fullPath: '/gallery'
+      preLoaderRoute: typeof GalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/diaries': {
+      id: '/diaries'
+      path: '/diaries'
+      fullPath: '/diaries'
+      preLoaderRoute: typeof DiariesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -183,6 +307,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/stories/$slug': {
+      id: '/stories/$slug'
+      path: '/$slug'
+      fullPath: '/stories/$slug'
+      preLoaderRoute: typeof StoriesSlugRouteImport
+      parentRoute: typeof StoriesRoute
+    }
+    '/diaries/$slug': {
+      id: '/diaries/$slug'
+      path: '/$slug'
+      fullPath: '/diaries/$slug'
+      preLoaderRoute: typeof DiariesSlugRouteImport
+      parentRoute: typeof DiariesRoute
     }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
@@ -280,10 +418,37 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
+interface DiariesRouteChildren {
+  DiariesSlugRoute: typeof DiariesSlugRoute
+}
+
+const DiariesRouteChildren: DiariesRouteChildren = {
+  DiariesSlugRoute: DiariesSlugRoute,
+}
+
+const DiariesRouteWithChildren =
+  DiariesRoute._addFileChildren(DiariesRouteChildren)
+
+interface StoriesRouteChildren {
+  StoriesSlugRoute: typeof StoriesSlugRoute
+}
+
+const StoriesRouteChildren: StoriesRouteChildren = {
+  StoriesSlugRoute: StoriesSlugRoute,
+}
+
+const StoriesRouteWithChildren =
+  StoriesRoute._addFileChildren(StoriesRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
+  DiariesRoute: DiariesRouteWithChildren,
+  GalleryRoute: GalleryRoute,
+  ShopRoute: ShopRoute,
+  StoriesRoute: StoriesRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
