@@ -2,7 +2,9 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
-import { RichBody, useMediaViewer } from "@/components/site/MediaViewer";
+import { useMediaViewer } from "@/components/site/MediaViewer";
+import { ReadingProgress } from "@/components/site/ReadingProgress";
+import { Markdown, readingTimeMinutes } from "@/lib/markdown";
 
 export const Route = createFileRoute("/stories/$slug")({
   head: ({ loaderData }) => {
@@ -51,33 +53,45 @@ function StoryPage() {
   });
   const { open } = useMediaViewer();
   if (!s) return null;
+  const mins = readingTimeMinutes(s.body);
   return (
     <PageShell>
+      <ReadingProgress />
       <article className="mx-auto max-w-3xl px-6 py-16 md:px-12">
         <Link to="/stories" className="font-mono text-[10px] uppercase tracking-widest text-white/40 hover:text-white">← Stories</Link>
-        {s.published_at && (
-          <p className="mt-6 font-mono text-[10px] uppercase tracking-widest text-white/40">
-            {new Date(s.published_at).toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" })}
+        <div className="mt-6 flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-white/40">
+          {s.published_at && (
+            <span>{new Date(s.published_at).toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" })}</span>
+          )}
+          {s.published_at && <span>·</span>}
+          <span>{mins} min read</span>
+        </div>
+        <h1 className="mt-3 font-display text-5xl uppercase leading-none tracking-tight md:text-7xl">{s.title}</h1>
+        {s.excerpt && (
+          <p className="mt-6 border-l-2 border-white/30 pl-4 font-display text-xl italic tracking-tight text-white/70 md:text-2xl">
+            {s.excerpt}
           </p>
         )}
-        <h1 className="mt-3 font-display text-5xl uppercase leading-none tracking-tight md:text-7xl">{s.title}</h1>
-        {s.excerpt && <p className="mt-6 text-lg text-white/60">{s.excerpt}</p>}
         {s.cover_image_url && (
           <button
             type="button"
             onClick={() => open({ kind: "image", src: s.cover_image_url!, alt: s.title })}
-            className="mt-10 block w-full overflow-hidden border border-white/10"
+            className="group mt-10 block w-full overflow-hidden border border-white/10"
             aria-label="Open cover image"
           >
-            <img src={s.cover_image_url} alt="" className="w-full object-cover" />
+            <img src={s.cover_image_url} alt="" className="w-full object-cover transition-transform duration-700 group-hover:scale-[1.02] motion-reduce:group-hover:scale-100" />
           </button>
         )}
         {s.body && (
-          <RichBody
+          <Markdown
             text={s.body}
-            className="mt-10 font-sans text-base leading-relaxed text-white/80"
+            dropCap
+            className="mt-12 font-sans text-lg leading-[1.75] text-white/80 [&_a]:text-white/90"
           />
         )}
+        <div className="mt-16 border-t border-white/10 pt-6">
+          <Link to="/stories" className="font-mono text-[10px] uppercase tracking-widest text-white/50 hover:text-white">← Back to stories</Link>
+        </div>
       </article>
     </PageShell>
   );
