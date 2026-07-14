@@ -10,7 +10,6 @@ import foodImg from "@/assets/muyan-food.jpg";
 import verseImg from "@/assets/muyan-verse.jpg";
 import stageImg from "@/assets/muyan-stage.jpg";
 
-const heroOffsets = ["mt-0", "mt-12", "-mt-8", "mt-20", "-mt-16"];
 const fallbackHero = [foodImg, stageImg, portraitImg, verseImg, broadcastImg];
 
 export const Route = createFileRoute("/")({
@@ -165,21 +164,27 @@ function Index() {
           Poet · Author · Journalist · Broadcaster
         </p>
 
-        <div className="group relative mt-14 flex h-[42vh] w-full max-w-6xl items-center justify-center gap-2 md:h-[50vh] md:gap-4">
-          {heroImages.map((src, i) => (
-            <div
-              key={i}
-              className={`h-full flex-1 -skew-x-12 transform overflow-hidden ${heroOffsets[i % heroOffsets.length]}`}
-            >
-              <img
-                src={src}
-                alt=""
-                loading="lazy"
-                className={`h-full w-full skew-x-12 scale-150 transform object-cover ${imageTransitionClass} ${hoverImageClass}`}
-              />
-            </div>
-          ))}
+        <div className="group relative mt-14 flex h-[42vh] w-full max-w-6xl items-stretch justify-center gap-1 md:h-[50vh] md:gap-2">
+          {heroImages.map((src, i) => {
+            const heights = ["h-[85%]", "h-full", "h-[70%]", "h-[95%]", "h-[78%]"];
+            const aligns = ["self-end", "self-center", "self-start", "self-end", "self-center"];
+            return (
+              <div
+                key={i}
+                className={`relative flex-1 overflow-hidden border border-white/5 bg-neutral-900 ${heights[i % heights.length]} ${aligns[i % aligns.length]} ${imageTransitionClass} hover:z-10 hover:flex-[1.4]`}
+              >
+                <img
+                  src={src}
+                  alt=""
+                  loading="lazy"
+                  className={`h-full w-full object-cover ${imageTransitionClass} ${hoverImageClass} group-hover:opacity-60 hover:!opacity-100`}
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-0 hover:!opacity-100" />
+              </div>
+            );
+          })}
         </div>
+
 
         <p className="mt-12 max-w-xl text-center text-sm font-light leading-relaxed text-white/60 md:text-lg">
           {tagline}
