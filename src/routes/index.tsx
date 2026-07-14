@@ -1,9 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
-import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { useMediaViewer } from "@/components/site/MediaViewer";
 import portraitImg from "@/assets/muyan-portrait.jpg";
 import broadcastImg from "@/assets/muyan-broadcast.jpg";
 import foodImg from "@/assets/muyan-food.jpg";
@@ -38,10 +37,13 @@ const fallbackTiles = [
   { id: "3", image_url: foodImg, label: "Culture" },
   { id: "4", image_url: verseImg, label: "Verse" },
   { id: "5", image_url: stageImg, label: "Stage" },
+  { id: "6", image_url: portraitImg, label: "Studio" },
+  { id: "7", image_url: broadcastImg, label: "Field" },
+  { id: "8", image_url: foodImg, label: "Table" },
 ];
 
-const offsets = ["mt-0", "mt-12", "-mt-8", "mt-20", "-mt-16"];
 const navLinks = [
+  { to: "/collection", label: "Collection" },
   { to: "/gallery", label: "Gallery" },
   { to: "/diaries", label: "Gaijin Diaries" },
   { to: "/stories", label: "Stories" },
