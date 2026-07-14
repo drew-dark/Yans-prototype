@@ -14,6 +14,12 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedAdminStoriesRouteImport } from './routes/_authenticated/admin/stories'
+import { Route as AuthenticatedAdminShopRouteImport } from './routes/_authenticated/admin/shop'
+import { Route as AuthenticatedAdminGalleryRouteImport } from './routes/_authenticated/admin/gallery'
+import { Route as AuthenticatedAdminDiaryRouteImport } from './routes/_authenticated/admin/diary'
+import { Route as AuthenticatedAdminCollectionRouteImport } from './routes/_authenticated/admin/collection'
+import { Route as AuthenticatedAdminAboutRouteImport } from './routes/_authenticated/admin/about'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -39,16 +45,61 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminStoriesRoute =
+  AuthenticatedAdminStoriesRouteImport.update({
+    id: '/stories',
+    path: '/stories',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminShopRoute = AuthenticatedAdminShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminGalleryRoute =
+  AuthenticatedAdminGalleryRouteImport.update({
+    id: '/gallery',
+    path: '/gallery',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminDiaryRoute = AuthenticatedAdminDiaryRouteImport.update({
+  id: '/diary',
+  path: '/diary',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminCollectionRoute =
+  AuthenticatedAdminCollectionRouteImport.update({
+    id: '/collection',
+    path: '/collection',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminAboutRoute = AuthenticatedAdminAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/admin/about': typeof AuthenticatedAdminAboutRoute
+  '/admin/collection': typeof AuthenticatedAdminCollectionRoute
+  '/admin/diary': typeof AuthenticatedAdminDiaryRoute
+  '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
+  '/admin/shop': typeof AuthenticatedAdminShopRoute
+  '/admin/stories': typeof AuthenticatedAdminStoriesRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/admin/about': typeof AuthenticatedAdminAboutRoute
+  '/admin/collection': typeof AuthenticatedAdminCollectionRoute
+  '/admin/diary': typeof AuthenticatedAdminDiaryRoute
+  '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
+  '/admin/shop': typeof AuthenticatedAdminShopRoute
+  '/admin/stories': typeof AuthenticatedAdminStoriesRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesById {
@@ -57,19 +108,50 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
+  '/_authenticated/admin/about': typeof AuthenticatedAdminAboutRoute
+  '/_authenticated/admin/collection': typeof AuthenticatedAdminCollectionRoute
+  '/_authenticated/admin/diary': typeof AuthenticatedAdminDiaryRoute
+  '/_authenticated/admin/gallery': typeof AuthenticatedAdminGalleryRoute
+  '/_authenticated/admin/shop': typeof AuthenticatedAdminShopRoute
+  '/_authenticated/admin/stories': typeof AuthenticatedAdminStoriesRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/admin' | '/admin/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/admin'
+    | '/admin/about'
+    | '/admin/collection'
+    | '/admin/diary'
+    | '/admin/gallery'
+    | '/admin/shop'
+    | '/admin/stories'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/admin'
+  to:
+    | '/'
+    | '/auth'
+    | '/admin/about'
+    | '/admin/collection'
+    | '/admin/diary'
+    | '/admin/gallery'
+    | '/admin/shop'
+    | '/admin/stories'
+    | '/admin'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/admin'
+    | '/_authenticated/admin/about'
+    | '/_authenticated/admin/collection'
+    | '/_authenticated/admin/diary'
+    | '/_authenticated/admin/gallery'
+    | '/_authenticated/admin/shop'
+    | '/_authenticated/admin/stories'
     | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -116,15 +198,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/stories': {
+      id: '/_authenticated/admin/stories'
+      path: '/stories'
+      fullPath: '/admin/stories'
+      preLoaderRoute: typeof AuthenticatedAdminStoriesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/shop': {
+      id: '/_authenticated/admin/shop'
+      path: '/shop'
+      fullPath: '/admin/shop'
+      preLoaderRoute: typeof AuthenticatedAdminShopRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/gallery': {
+      id: '/_authenticated/admin/gallery'
+      path: '/gallery'
+      fullPath: '/admin/gallery'
+      preLoaderRoute: typeof AuthenticatedAdminGalleryRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/diary': {
+      id: '/_authenticated/admin/diary'
+      path: '/diary'
+      fullPath: '/admin/diary'
+      preLoaderRoute: typeof AuthenticatedAdminDiaryRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/collection': {
+      id: '/_authenticated/admin/collection'
+      path: '/collection'
+      fullPath: '/admin/collection'
+      preLoaderRoute: typeof AuthenticatedAdminCollectionRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/about': {
+      id: '/_authenticated/admin/about'
+      path: '/about'
+      fullPath: '/admin/about'
+      preLoaderRoute: typeof AuthenticatedAdminAboutRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
   }
 }
 
 interface AuthenticatedAdminRouteRouteChildren {
+  AuthenticatedAdminAboutRoute: typeof AuthenticatedAdminAboutRoute
+  AuthenticatedAdminCollectionRoute: typeof AuthenticatedAdminCollectionRoute
+  AuthenticatedAdminDiaryRoute: typeof AuthenticatedAdminDiaryRoute
+  AuthenticatedAdminGalleryRoute: typeof AuthenticatedAdminGalleryRoute
+  AuthenticatedAdminShopRoute: typeof AuthenticatedAdminShopRoute
+  AuthenticatedAdminStoriesRoute: typeof AuthenticatedAdminStoriesRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren =
   {
+    AuthenticatedAdminAboutRoute: AuthenticatedAdminAboutRoute,
+    AuthenticatedAdminCollectionRoute: AuthenticatedAdminCollectionRoute,
+    AuthenticatedAdminDiaryRoute: AuthenticatedAdminDiaryRoute,
+    AuthenticatedAdminGalleryRoute: AuthenticatedAdminGalleryRoute,
+    AuthenticatedAdminShopRoute: AuthenticatedAdminShopRoute,
+    AuthenticatedAdminStoriesRoute: AuthenticatedAdminStoriesRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   }
 
