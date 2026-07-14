@@ -82,6 +82,9 @@ function Index() {
   const tagline = about?.tagline || "These are words carved from quiet places — am just a Zambian poet and journalist writing the things we rarely say out loud.";
   const location = about?.location || "Lusaka, Zambia — Tokyo, Japan";
   const { open } = useMediaViewer();
+  const reduceMotion = useReducedMotion();
+  const imageTransitionClass = reduceMotion ? "" : "transition-transform duration-700";
+  const hoverImageClass = reduceMotion ? "" : "group-hover:scale-[1.6]";
 
   return (
     <main
