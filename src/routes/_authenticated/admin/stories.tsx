@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { ImageUpload } from "@/components/admin/ImageUpload";
+import { MarkdownEditor, UnsavedChangesGuard } from "@/components/admin/MarkdownEditor";
+import { readingTimeMinutes } from "@/lib/markdown";
 import { toast } from "sonner";
 import { Trash2, Pencil, Plus } from "lucide-react";
 
@@ -47,20 +49,36 @@ function StoriesAdmin() {
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<Story | null>(null);
   const [form, setForm] = useState(empty);
+  const initialRef = useRef<string>(JSON.stringify(empty));
+
+  const dirty = useMemo(
+    () => open && initialRef.current !== JSON.stringify(form),
+    [open, form],
+  );
+  const readMins = useMemo(() => readingTimeMinutes(form.body), [form.body]);
+
+  // Auto-fill slug from title while the slug field is empty (only for new items)
+  useEffect(() => {
+    if (!open || editing) return;
+    setForm((f) => (f.slug ? f : { ...f, slug: slugify(f.title) }));
+  }, [form.title, open, editing]);
 
   function startNew() {
     setEditing(null);
     setForm(empty);
+    initialRef.current = JSON.stringify(empty);
     setOpen(true);
   }
   function startEdit(s: Story) {
     setEditing(s);
-    setForm({
+    const next = {
       title: s.title, slug: s.slug,
       cover_image_url: s.cover_image_url ?? "",
       excerpt: s.excerpt ?? "", body: s.body ?? "",
       published: s.published,
-    });
+    };
+    setForm(next);
+    initialRef.current = JSON.stringify(next);
     setOpen(true);
   }
 
@@ -83,6 +101,7 @@ function StoriesAdmin() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin", "stories"] });
+      initialRef.current = JSON.stringify(form);
       setOpen(false); toast.success("Saved");
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Failed"),
@@ -105,32 +124,58 @@ function StoriesAdmin() {
         </div>
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogTrigger asChild><Button onClick={startNew}><Plus className="mr-1 h-4 w-4" />New story</Button></DialogTrigger>
-          <DialogContent className="max-h-[90vh] overflow-y-auto bg-neutral-950 text-white border-neutral-800 sm:max-w-2xl">
-            <DialogHeader><DialogTitle>{editing ? "Edit story" : "New story"}</DialogTitle></DialogHeader>
+          <DialogContent
+            className="max-h-[92vh] overflow-y-auto bg-neutral-950 text-white border-neutral-800 sm:max-w-3xl"
+            onKeyDown={(e) => {
+              if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "s") {
+                e.preventDefault();
+                if (!save.isPending) save.mutate();
+              }
+            }}
+          >
+            <UnsavedChangesGuard dirty={dirty} />
+            <DialogHeader>
+              <DialogTitle>{editing ? "Edit story" : "New story"}</DialogTitle>
+            </DialogHeader>
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>Title</Label>
-                <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="bg-neutral-900 border-neutral-800" />
-              </div>
-              <div className="space-y-2">
-                <Label>Slug <span className="text-white/40">(auto if blank)</span></Label>
-                <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} className="bg-neutral-900 border-neutral-800" />
+              <div className="grid gap-3 md:grid-cols-[1fr_260px]">
+                <div className="space-y-2">
+                  <Label>Title</Label>
+                  <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} className="bg-neutral-900 border-neutral-800" autoFocus />
+                </div>
+                <div className="space-y-2">
+                  <Label>Slug <span className="text-white/40">(auto)</span></Label>
+                  <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} className="bg-neutral-900 border-neutral-800 font-mono text-xs" />
+                </div>
               </div>
               <ImageUpload folder="stories" label="Cover image" value={form.cover_image_url} onChange={(v) => setForm({ ...form, cover_image_url: v })} />
               <div className="space-y-2">
                 <Label>Excerpt</Label>
-                <Textarea rows={2} value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} className="bg-neutral-900 border-neutral-800" />
+                <Textarea rows={2} value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} className="bg-neutral-900 border-neutral-800" placeholder="One or two lines used in listings and social previews." />
               </div>
-              <div className="space-y-2">
-                <Label>Body (markdown ok)</Label>
-                <Textarea rows={10} value={form.body} onChange={(e) => setForm({ ...form, body: e.target.value })} className="bg-neutral-900 border-neutral-800 font-mono text-sm" />
-              </div>
-              <div className="flex items-center gap-2">
-                <Switch checked={form.published} onCheckedChange={(v) => setForm({ ...form, published: v })} />
-                <Label>Published</Label>
+              <MarkdownEditor
+                folder="stories"
+                label="Body"
+                value={form.body}
+                onChange={(v) => setForm({ ...form, body: v })}
+                rows={16}
+              />
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-3">
+                <div className="flex items-center gap-2">
+                  <Switch checked={form.published} onCheckedChange={(v) => setForm({ ...form, published: v })} />
+                  <Label>Published</Label>
+                </div>
+                <div className="font-mono text-[10px] uppercase tracking-widest text-white/40">
+                  {readMins} min read · {dirty ? "Unsaved" : "Saved"}
+                </div>
               </div>
             </div>
-            <DialogFooter><Button onClick={() => save.mutate()} disabled={save.isPending}>Save</Button></DialogFooter>
+            <DialogFooter>
+              <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+              <Button onClick={() => save.mutate()} disabled={save.isPending || !dirty}>
+                {save.isPending ? "Saving…" : "Save (⌘S)"}
+              </Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>

@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
+import { Markdown } from "@/lib/markdown";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -63,7 +64,7 @@ function AboutPage() {
               )}
 
               {about?.bio && (
-                <div className="mt-8 whitespace-pre-wrap text-base leading-relaxed text-white/70">{about.bio}</div>
+                <Markdown text={about.bio} className="mt-8 text-base leading-relaxed text-white/75" />
               )}
 
               {about?.socials && Object.keys(about.socials as Record<string, string>).length > 0 && (
