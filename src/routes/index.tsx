@@ -11,7 +11,7 @@ import verseImg from "@/assets/muyan-verse.jpg";
 import stageImg from "@/assets/muyan-stage.jpg";
 
 const heroOffsets = ["mt-0", "mt-12", "-mt-8", "mt-20", "-mt-16"];
-const heroImages = [portraitImg, broadcastImg, verseImg, stageImg, foodImg];
+const fallbackHero = [foodImg, stageImg, portraitImg, verseImg, broadcastImg];
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -57,6 +57,21 @@ const navLinks = [
 
 
 function Index() {
+  const { data: heroImages = fallbackHero } = useQuery({
+    queryKey: ["public", "hero_images"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("hero_images")
+        .select("image_url, alt")
+        .eq("published", true)
+        .order("sort_order");
+      if (error) throw error;
+      return data.length > 0
+        ? data.map((d) => d.image_url)
+        : fallbackHero;
+    },
+  });
+
   const { data: tiles = fallbackTiles } = useQuery({
     queryKey: ["public", "collection_items"],
     queryFn: async () => {
@@ -149,11 +164,6 @@ function Index() {
         <p className="font-mono text-[10px] uppercase tracking-[0.5em] text-white/40">
           Poet · Author · Journalist · Broadcaster
         </p>
-        <h2 className="mt-6 text-center font-display text-6xl uppercase leading-[0.9] tracking-tighter text-white md:text-8xl lg:text-9xl">
-          Words carved
-          <br />
-          from quiet places
-        </h2>
 
         <div className="group relative mt-14 flex h-[42vh] w-full max-w-6xl items-center justify-center gap-2 md:h-[50vh] md:gap-4">
           {heroImages.map((src, i) => (

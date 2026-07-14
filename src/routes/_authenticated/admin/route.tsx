@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
 const navItems = [
+  { to: "/admin/hero", label: "Hero" },
   { to: "/admin/collection", label: "Collection" },
   { to: "/admin/stories", label: "Stories" },
   { to: "/admin/diary", label: "Diary" },
