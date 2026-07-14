@@ -219,30 +219,40 @@ function Index() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 md:grid-cols-4 md:gap-4">
-          {tiles.slice(0, 8).map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() =>
-                open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label })
-              }
-              className="group relative aspect-[3/4] overflow-hidden border border-white/10 bg-neutral-900 text-left"
-              aria-label={t.label}
-            >
-              <img
-                src={t.image_url}
-                alt={t.label}
-                loading="lazy"
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-3">
-                <p className="font-mono text-[10px] uppercase tracking-widest text-white">
+        <div className="group/strip flex h-[46vh] w-full items-stretch gap-1 overflow-hidden md:h-[58vh] md:gap-2">
+          {tiles.slice(0, 8).map((t, i) => {
+            const heights = ["h-[88%]", "h-full", "h-[72%]", "h-[95%]", "h-[80%]", "h-full", "h-[75%]", "h-[92%]"];
+            const aligns = ["self-end", "self-start", "self-end", "self-center", "self-start", "self-end", "self-center", "self-start"];
+            return (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() =>
+                  open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label })
+                }
+                className={`relative flex-1 overflow-hidden border border-white/10 bg-neutral-900 text-left ${heights[i % heights.length]} ${aligns[i % aligns.length]} ${imageTransitionClass} hover:z-10 hover:flex-[2] focus-visible:z-10 focus-visible:flex-[2] focus:outline-none`}
+                aria-label={t.label}
+              >
+                <img
+                  src={t.image_url}
+                  alt={t.label}
+                  loading="lazy"
+                  className={`h-full w-full object-cover ${imageTransitionClass} ${hoverImageClass} group-hover/strip:opacity-40 hover:!opacity-100 focus-visible:!opacity-100`}
+                />
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-3 opacity-0 transition-opacity duration-500 hover:!opacity-100 group-hover/strip:opacity-0">
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-white">
+                    {t.label}
+                  </p>
+                </div>
+                <div
+                  className="pointer-events-none absolute left-2 top-2 rotate-180 font-mono text-[9px] uppercase tracking-[0.35em] text-white/70 mix-blend-difference"
+                  style={{ writingMode: "vertical-rl" }}
+                >
                   {t.label}
-                </p>
-              </div>
-            </button>
-          ))}
+                </div>
+              </button>
+            );
+          })}
         </div>
 
         <div className="mt-6 text-right md:hidden">
