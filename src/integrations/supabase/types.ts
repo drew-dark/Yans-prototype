@@ -155,6 +155,36 @@ export type Database = {
         }
         Relationships: []
       }
+      hero_images: {
+        Row: {
+          alt: string
+          created_at: string
+          id: string
+          image_url: string
+          published: boolean
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          alt?: string
+          created_at?: string
+          id?: string
+          image_url: string
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          alt?: string
+          created_at?: string
+          id?: string
+          image_url?: string
+          published?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       newsletter_subscribers: {
         Row: {
           confirmed: boolean
