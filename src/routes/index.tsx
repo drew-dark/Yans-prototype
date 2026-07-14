@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 import portraitImg from "@/assets/muyan-portrait.jpg";
@@ -73,6 +74,7 @@ function Index() {
   const headline = about?.headline || "EMMANUEL RAYAN DAKA";
   const tagline = about?.tagline || "These are words carved from quiet places — am just a Zambian poet and journalist writing the things we rarely say out loud.";
   const location = about?.location || "Lusaka, Zambia — Tokyo, Japan";
+  const [isRevealed, setIsRevealed] = useState(false);
 
   return (
     <main
@@ -134,9 +136,12 @@ function Index() {
           YANS LOUNGE © 2026
         </div>
 
-        <div className="group relative flex h-[60vh] w-full max-w-6xl items-center justify-center gap-2 md:h-[70vh] md:gap-4">
+        <div
+          className="group relative flex h-[60vh] w-full max-w-6xl cursor-pointer items-center justify-center gap-2 md:h-[70vh] md:gap-4"
+          onClick={() => setIsRevealed((v) => !v)}
+        >
           <h2
-            className="pointer-events-none absolute z-30 select-none font-display text-7xl leading-none tracking-tighter text-white transition-all duration-500 ease-out group-hover:mix-blend-difference md:text-[12rem] lg:text-[16rem]"
+            className={`pointer-events-none absolute z-30 select-none font-display text-7xl leading-none tracking-tighter text-white transition-all duration-500 ease-out group-hover:opacity-0 md:text-[12rem] lg:text-[16rem] ${isRevealed ? "opacity-0" : "opacity-100"}`}
           >
             MUYAN
             <br />
@@ -152,7 +157,7 @@ function Index() {
                 src={t.image_url}
                 alt={t.label}
                 loading="lazy"
-                className="h-full w-full skew-x-12 scale-150 transform object-cover transition-transform duration-700 group-hover:scale-[1.6]"
+                className={`h-full w-full skew-x-12 scale-150 transform object-cover transition-transform duration-700 group-hover:scale-[1.6] ${isRevealed ? "scale-[1.6]" : ""}`}
               />
             </div>
           ))}
