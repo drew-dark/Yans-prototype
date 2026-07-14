@@ -160,6 +160,12 @@ function Index() {
         </div>
       </section>
 
+      <section className="relative z-10 mx-auto max-w-2xl px-6 pb-24 md:px-12">
+        <NewsletterForm source="home" variant="kraft" />
+      </section>
+
+
+
       <footer className="flex flex-col items-end justify-between gap-8 border-t border-white/5 p-12 md:flex-row">
         <div>
           <span className="mb-2 block font-mono text-[9px] uppercase tracking-widest text-white/30">
