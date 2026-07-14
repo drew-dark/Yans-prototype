@@ -3,11 +3,15 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { useMediaViewer } from "@/components/site/MediaViewer";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import portraitImg from "@/assets/muyan-portrait.jpg";
 import broadcastImg from "@/assets/muyan-broadcast.jpg";
 import foodImg from "@/assets/muyan-food.jpg";
 import verseImg from "@/assets/muyan-verse.jpg";
 import stageImg from "@/assets/muyan-stage.jpg";
+
+const heroOffsets = ["mt-0", "mt-12", "-mt-8", "mt-20", "-mt-16"];
+const heroImages = [portraitImg, broadcastImg, verseImg, stageImg, foodImg];
 
 export const Route = createFileRoute("/")({
   head: () => ({
