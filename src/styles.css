@@ -19,6 +19,12 @@
  */
 
 @theme inline {
+  --font-display: 'Anton', sans-serif;
+  --font-mono: 'Courier Prime', monospace;
+  --font-sans: 'Inter', sans-serif;
+  --color-ink-dark: var(--ink-dark);
+  --color-kraft: var(--kraft);
+  --color-kraft-dark: var(--kraft-dark);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -63,6 +69,9 @@
 
 :root {
   --radius: 0.625rem;
+  --ink-dark: #0a0a0a;
+  --kraft: #c5a880;
+  --kraft-dark: #a38965;
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
