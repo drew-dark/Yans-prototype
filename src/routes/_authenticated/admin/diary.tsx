@@ -151,6 +151,14 @@ function DiaryAdmin() {
                 </div>
               </div>
               <ImageUpload folder="diary" label="Cover image" value={form.cover_image_url} onChange={(v) => setForm({ ...form, cover_image_url: v })} />
+              <TaxonomyPicker
+                value={{
+                  collection_id: form.collection_id, volume_id: form.volume_id, season_id: form.season_id,
+                  chapter_number: form.chapter_number, chapter_title: form.chapter_title,
+                  part_number: form.part_number, part_title: form.part_title,
+                }}
+                onChange={(t) => setForm({ ...form, ...t })}
+              />
               <MarkdownEditor
                 folder="diary"
                 label="Body"
