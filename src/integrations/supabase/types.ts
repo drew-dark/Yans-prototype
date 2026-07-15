@@ -83,44 +83,120 @@ export type Database = {
         }
         Relationships: []
       }
+      collections: {
+        Row: {
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       diary_entries: {
         Row: {
           body: string | null
+          chapter_number: number | null
+          chapter_title: string | null
+          collection_id: string | null
           cover_image_url: string | null
           created_at: string
           entry_date: string
           id: string
           location: string | null
+          part_number: number | null
+          part_title: string | null
           published: boolean
+          season_id: string | null
           slug: string
           title: string
           updated_at: string
+          volume_id: string | null
         }
         Insert: {
           body?: string | null
+          chapter_number?: number | null
+          chapter_title?: string | null
+          collection_id?: string | null
           cover_image_url?: string | null
           created_at?: string
           entry_date?: string
           id?: string
           location?: string | null
+          part_number?: number | null
+          part_title?: string | null
           published?: boolean
+          season_id?: string | null
           slug: string
           title: string
           updated_at?: string
+          volume_id?: string | null
         }
         Update: {
           body?: string | null
+          chapter_number?: number | null
+          chapter_title?: string | null
+          collection_id?: string | null
           cover_image_url?: string | null
           created_at?: string
           entry_date?: string
           id?: string
           location?: string | null
+          part_number?: number | null
+          part_title?: string | null
           published?: boolean
+          season_id?: string | null
           slug?: string
           title?: string
           updated_at?: string
+          volume_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "diary_entries_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "diary_entries_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "diary_entries_volume_id_fkey"
+            columns: ["volume_id"]
+            isOneToOne: false
+            referencedRelation: "volumes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       gallery_photos: {
         Row: {
@@ -218,6 +294,50 @@ export type Database = {
         }
         Relationships: []
       }
+      seasons: {
+        Row: {
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+          volume_id: string
+        }
+        Insert: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+          volume_id: string
+        }
+        Update: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+          volume_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seasons_volume_id_fkey"
+            columns: ["volume_id"]
+            isOneToOne: false
+            referencedRelation: "volumes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       shop_products: {
         Row: {
           buy_url: string | null
@@ -269,41 +389,84 @@ export type Database = {
       stories: {
         Row: {
           body: string | null
+          chapter_number: number | null
+          chapter_title: string | null
+          collection_id: string | null
           cover_image_url: string | null
           created_at: string
           excerpt: string | null
           id: string
+          part_number: number | null
+          part_title: string | null
           published: boolean
           published_at: string | null
+          season_id: string | null
           slug: string
           title: string
           updated_at: string
+          volume_id: string | null
         }
         Insert: {
           body?: string | null
+          chapter_number?: number | null
+          chapter_title?: string | null
+          collection_id?: string | null
           cover_image_url?: string | null
           created_at?: string
           excerpt?: string | null
           id?: string
+          part_number?: number | null
+          part_title?: string | null
           published?: boolean
           published_at?: string | null
+          season_id?: string | null
           slug: string
           title: string
           updated_at?: string
+          volume_id?: string | null
         }
         Update: {
           body?: string | null
+          chapter_number?: number | null
+          chapter_title?: string | null
+          collection_id?: string | null
           cover_image_url?: string | null
           created_at?: string
           excerpt?: string | null
           id?: string
+          part_number?: number | null
+          part_title?: string | null
           published?: boolean
           published_at?: string | null
+          season_id?: string | null
           slug?: string
           title?: string
           updated_at?: string
+          volume_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "stories_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stories_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "stories_volume_id_fkey"
+            columns: ["volume_id"]
+            isOneToOne: false
+            referencedRelation: "volumes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -325,6 +488,50 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      volumes: {
+        Row: {
+          collection_id: string
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          id: string
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          collection_id: string
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          collection_id?: string
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "volumes_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
