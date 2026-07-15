@@ -22,6 +22,7 @@ import { Route as StoriesSlugRouteImport } from './routes/stories.$slug'
 import { Route as DiariesSlugRouteImport } from './routes/diaries.$slug'
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedAdminTaxonomyRouteImport } from './routes/_authenticated/admin/taxonomy'
 import { Route as AuthenticatedAdminStoriesRouteImport } from './routes/_authenticated/admin/stories'
 import { Route as AuthenticatedAdminShopRouteImport } from './routes/_authenticated/admin/shop'
 import { Route as AuthenticatedAdminHeroRouteImport } from './routes/_authenticated/admin/hero'
@@ -94,6 +95,12 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminTaxonomyRoute =
+  AuthenticatedAdminTaxonomyRouteImport.update({
+    id: '/taxonomy',
+    path: '/taxonomy',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminStoriesRoute =
   AuthenticatedAdminStoriesRouteImport.update({
     id: '/stories',
@@ -152,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/admin/hero': typeof AuthenticatedAdminHeroRoute
   '/admin/shop': typeof AuthenticatedAdminShopRoute
   '/admin/stories': typeof AuthenticatedAdminStoriesRoute
+  '/admin/taxonomy': typeof AuthenticatedAdminTaxonomyRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesByTo {
@@ -172,6 +180,7 @@ export interface FileRoutesByTo {
   '/admin/hero': typeof AuthenticatedAdminHeroRoute
   '/admin/shop': typeof AuthenticatedAdminShopRoute
   '/admin/stories': typeof AuthenticatedAdminStoriesRoute
+  '/admin/taxonomy': typeof AuthenticatedAdminTaxonomyRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRoutesById {
@@ -195,6 +204,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/hero': typeof AuthenticatedAdminHeroRoute
   '/_authenticated/admin/shop': typeof AuthenticatedAdminShopRoute
   '/_authenticated/admin/stories': typeof AuthenticatedAdminStoriesRoute
+  '/_authenticated/admin/taxonomy': typeof AuthenticatedAdminTaxonomyRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
 export interface FileRouteTypes {
@@ -218,6 +228,7 @@ export interface FileRouteTypes {
     | '/admin/hero'
     | '/admin/shop'
     | '/admin/stories'
+    | '/admin/taxonomy'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -238,6 +249,7 @@ export interface FileRouteTypes {
     | '/admin/hero'
     | '/admin/shop'
     | '/admin/stories'
+    | '/admin/taxonomy'
     | '/admin'
   id:
     | '__root__'
@@ -260,6 +272,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/hero'
     | '/_authenticated/admin/shop'
     | '/_authenticated/admin/stories'
+    | '/_authenticated/admin/taxonomy'
     | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
 }
@@ -368,6 +381,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/taxonomy': {
+      id: '/_authenticated/admin/taxonomy'
+      path: '/taxonomy'
+      fullPath: '/admin/taxonomy'
+      preLoaderRoute: typeof AuthenticatedAdminTaxonomyRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/stories': {
       id: '/_authenticated/admin/stories'
       path: '/stories'
@@ -428,6 +448,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminHeroRoute: typeof AuthenticatedAdminHeroRoute
   AuthenticatedAdminShopRoute: typeof AuthenticatedAdminShopRoute
   AuthenticatedAdminStoriesRoute: typeof AuthenticatedAdminStoriesRoute
+  AuthenticatedAdminTaxonomyRoute: typeof AuthenticatedAdminTaxonomyRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
@@ -440,6 +461,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminHeroRoute: AuthenticatedAdminHeroRoute,
     AuthenticatedAdminShopRoute: AuthenticatedAdminShopRoute,
     AuthenticatedAdminStoriesRoute: AuthenticatedAdminStoriesRoute,
+    AuthenticatedAdminTaxonomyRoute: AuthenticatedAdminTaxonomyRoute,
     AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   }
 

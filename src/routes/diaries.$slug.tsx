@@ -69,6 +69,13 @@ function EntryPage() {
           {e.location && <><span>·</span><span>{e.location}</span></>}
           {mins > 0 && <><span>·</span><span>{mins} min read</span></>}
         </div>
+        {(e.chapter_number != null || e.chapter_title || e.part_number != null || e.part_title) && (
+          <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">
+            {e.chapter_number != null && <>Chapter {e.chapter_number}{e.part_number != null ? `.${e.part_number}` : ""}</>}
+            {e.chapter_title && <> — {e.chapter_title}</>}
+            {e.part_title && <> · {e.part_title}</>}
+          </p>
+        )}
         <h1 className="mt-3 font-display text-5xl uppercase leading-none tracking-tight md:text-7xl">{e.title}</h1>
         {e.cover_image_url && (
           <button

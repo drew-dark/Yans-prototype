@@ -9,7 +9,9 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { MarkdownEditor, UnsavedChangesGuard } from "@/components/admin/MarkdownEditor";
+import { TaxonomyPicker, emptyTaxonomy } from "@/components/admin/TaxonomyPicker";
 import { readingTimeMinutes } from "@/lib/markdown";
+import type { TaxonomyRef } from "@/lib/taxonomy";
 import { toast } from "sonner";
 import { Trash2, Pencil, Plus } from "lucide-react";
 
@@ -26,9 +28,9 @@ type Entry = {
   cover_image_url: string | null;
   body: string | null;
   published: boolean;
-};
+} & Partial<TaxonomyRef>;
 
-const empty = { title: "", slug: "", entry_date: new Date().toISOString().slice(0, 10), location: "", cover_image_url: "", body: "", published: false };
+const empty = { title: "", slug: "", entry_date: new Date().toISOString().slice(0, 10), location: "", cover_image_url: "", body: "", published: false, ...emptyTaxonomy };
 
 function slugify(s: string) {
   return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -64,6 +66,13 @@ function DiaryAdmin() {
       title: e.title, slug: e.slug, entry_date: e.entry_date,
       location: e.location ?? "", cover_image_url: e.cover_image_url ?? "",
       body: e.body ?? "", published: e.published,
+      collection_id: e.collection_id ?? null,
+      volume_id: e.volume_id ?? null,
+      season_id: e.season_id ?? null,
+      chapter_number: e.chapter_number ?? null,
+      chapter_title: e.chapter_title ?? null,
+      part_number: e.part_number ?? null,
+      part_title: e.part_title ?? null,
     };
     setForm(next);
     initialRef.current = JSON.stringify(next);
@@ -142,6 +151,14 @@ function DiaryAdmin() {
                 </div>
               </div>
               <ImageUpload folder="diary" label="Cover image" value={form.cover_image_url} onChange={(v) => setForm({ ...form, cover_image_url: v })} />
+              <TaxonomyPicker
+                value={{
+                  collection_id: form.collection_id, volume_id: form.volume_id, season_id: form.season_id,
+                  chapter_number: form.chapter_number, chapter_title: form.chapter_title,
+                  part_number: form.part_number, part_title: form.part_title,
+                }}
+                onChange={(t) => setForm({ ...form, ...t })}
+              />
               <MarkdownEditor
                 folder="diary"
                 label="Body"

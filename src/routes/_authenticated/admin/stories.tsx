@@ -10,7 +10,9 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { MarkdownEditor, UnsavedChangesGuard } from "@/components/admin/MarkdownEditor";
+import { TaxonomyPicker, emptyTaxonomy } from "@/components/admin/TaxonomyPicker";
 import { readingTimeMinutes } from "@/lib/markdown";
+import type { TaxonomyRef } from "@/lib/taxonomy";
 import { toast } from "sonner";
 import { Trash2, Pencil, Plus } from "lucide-react";
 
@@ -27,9 +29,9 @@ type Story = {
   body: string | null;
   published: boolean;
   published_at: string | null;
-};
+} & Partial<TaxonomyRef>;
 
-const empty = { title: "", slug: "", cover_image_url: "", excerpt: "", body: "", published: false };
+const empty = { title: "", slug: "", cover_image_url: "", excerpt: "", body: "", published: false, ...emptyTaxonomy };
 
 function slugify(s: string) {
   return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
@@ -76,6 +78,13 @@ function StoriesAdmin() {
       cover_image_url: s.cover_image_url ?? "",
       excerpt: s.excerpt ?? "", body: s.body ?? "",
       published: s.published,
+      collection_id: s.collection_id ?? null,
+      volume_id: s.volume_id ?? null,
+      season_id: s.season_id ?? null,
+      chapter_number: s.chapter_number ?? null,
+      chapter_title: s.chapter_title ?? null,
+      part_number: s.part_number ?? null,
+      part_title: s.part_title ?? null,
     };
     setForm(next);
     initialRef.current = JSON.stringify(next);
@@ -149,6 +158,14 @@ function StoriesAdmin() {
                 </div>
               </div>
               <ImageUpload folder="stories" label="Cover image" value={form.cover_image_url} onChange={(v) => setForm({ ...form, cover_image_url: v })} />
+              <TaxonomyPicker
+                value={{
+                  collection_id: form.collection_id, volume_id: form.volume_id, season_id: form.season_id,
+                  chapter_number: form.chapter_number, chapter_title: form.chapter_title,
+                  part_number: form.part_number, part_title: form.part_title,
+                }}
+                onChange={(t) => setForm({ ...form, ...t })}
+              />
               <div className="space-y-2">
                 <Label>Excerpt</Label>
                 <Textarea rows={2} value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} className="bg-neutral-900 border-neutral-800" placeholder="One or two lines used in listings and social previews." />
