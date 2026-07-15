@@ -110,8 +110,15 @@ function parseBlocks(md: string): Block[] {
     // Standalone media tokens
     const img = line.trim().match(/^!\[([^\]]*)\]\(([^)\s]+)\)$/);
     if (img) { flushAll(); blocks.push({ kind: "image", alt: img[1], src: img[2] }); continue; }
-    const vid = line.trim().match(/^@video\(([^)\s]+)\)$/);
-    if (vid) { flushAll(); blocks.push({ kind: "video", src: vid[1] }); continue; }
+    const vid = line.trim().match(/^@video\(([^)]+)\)$/);
+    if (vid) {
+      flushAll();
+      const inner = vid[1].trim();
+      const posterMatch = inner.match(/^(\S+)\s*,\s*poster\s*=\s*(\S+)$/);
+      if (posterMatch) blocks.push({ kind: "video", src: posterMatch[1], poster: posterMatch[2] });
+      else blocks.push({ kind: "video", src: inner.split(/\s|,/)[0] });
+      continue;
+    }
     const bare = line.trim();
     if (/^https?:\/\//.test(bare) && IMG_EXT.test(bare)) { flushAll(); blocks.push({ kind: "image", alt: "", src: bare }); continue; }
     if (/^https?:\/\//.test(bare) && VID_EXT.test(bare)) { flushAll(); blocks.push({ kind: "video", src: bare }); continue; }
