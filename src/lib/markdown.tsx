@@ -74,7 +74,7 @@ type Block =
   | { kind: "hr" }
   | { kind: "code"; text: string }
   | { kind: "image"; alt: string; src: string }
-  | { kind: "video"; src: string };
+  | { kind: "video"; src: string; poster?: string };
 
 function parseBlocks(md: string): Block[] {
   const lines = md.replace(/\r\n/g, "\n").split("\n");
