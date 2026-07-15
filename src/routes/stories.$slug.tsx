@@ -66,6 +66,13 @@ function StoryPage() {
           {s.published_at && <span>·</span>}
           <span>{mins} min read</span>
         </div>
+        {(s.chapter_number != null || s.chapter_title || s.part_number != null || s.part_title) && (
+          <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">
+            {s.chapter_number != null && <>Chapter {s.chapter_number}{s.part_number != null ? `.${s.part_number}` : ""}</>}
+            {s.chapter_title && <> — {s.chapter_title}</>}
+            {s.part_title && <> · {s.part_title}</>}
+          </p>
+        )}
         <h1 className="mt-3 font-display text-5xl uppercase leading-none tracking-tight md:text-7xl">{s.title}</h1>
         {s.excerpt && (
           <p className="mt-6 border-l-2 border-white/30 pl-4 font-display text-xl italic tracking-tight text-white/70 md:text-2xl">
