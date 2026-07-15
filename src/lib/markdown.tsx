@@ -249,7 +249,7 @@ export function Markdown({
               </button>
             );
           case "video":
-            return <VideoPlayer key={i} src={b.src} className="my-8 border border-white/10" />;
+            return <VideoPlayer key={i} src={b.src} poster={b.poster} className="my-8 border border-white/10" />;
           default:
             return <Fragment key={i} />;
         }
