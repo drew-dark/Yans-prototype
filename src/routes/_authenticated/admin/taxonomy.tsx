@@ -169,7 +169,7 @@ function CollectionsPane({ selected, onSelect }: { selected: string | null; onSe
   const create = useMutation({
     mutationFn: async (n: NewNode) => {
       const slug = n.slug || slugify(n.title);
-      const { error } = await supabase.from("collections" as never).insert({ ...n, slug });
+      const { error } = await (supabase as any).from("collections").insert({ ...n, slug });
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["taxonomy", "collections"] }); toast.success("Collection added"); },
@@ -177,14 +177,14 @@ function CollectionsPane({ selected, onSelect }: { selected: string | null; onSe
   });
   const update = useMutation({
     mutationFn: async ({ id, patch }: { id: string; patch: Partial<Collection> }) => {
-      const { error } = await supabase.from("collections" as never).update(patch).eq("id", id);
+      const { error } = await (supabase as any).from("collections").update(patch).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["taxonomy", "collections"] }),
   });
   const del = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("collections" as never).delete().eq("id", id);
+      const { error } = await (supabase as any).from("collections").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -219,7 +219,7 @@ function VolumesPane({ collectionId, selected, onSelect }: { collectionId: strin
     mutationFn: async (n: NewNode) => {
       if (!collectionId) throw new Error("Select a collection first");
       const slug = n.slug || slugify(n.title);
-      const { error } = await supabase.from("volumes" as never).insert({ ...n, slug, collection_id: collectionId });
+      const { error } = await (supabase as any).from("volumes").insert({ ...n, slug, collection_id: collectionId });
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["taxonomy", "volumes", collectionId] }); toast.success("Volume added"); },
@@ -227,14 +227,14 @@ function VolumesPane({ collectionId, selected, onSelect }: { collectionId: strin
   });
   const update = useMutation({
     mutationFn: async ({ id, patch }: { id: string; patch: Partial<Volume> }) => {
-      const { error } = await supabase.from("volumes" as never).update(patch).eq("id", id);
+      const { error } = await (supabase as any).from("volumes").update(patch).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["taxonomy", "volumes", collectionId] }),
   });
   const del = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("volumes" as never).delete().eq("id", id);
+      const { error } = await (supabase as any).from("volumes").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["taxonomy"] }); toast.success("Deleted"); },
@@ -271,7 +271,7 @@ function SeasonsPane({ volumeId }: { volumeId: string | null }) {
     mutationFn: async (n: NewNode) => {
       if (!volumeId) throw new Error("Select a volume first");
       const slug = n.slug || slugify(n.title);
-      const { error } = await supabase.from("seasons" as never).insert({ ...n, slug, volume_id: volumeId });
+      const { error } = await (supabase as any).from("seasons").insert({ ...n, slug, volume_id: volumeId });
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["taxonomy", "seasons", volumeId] }); toast.success("Season added"); },
@@ -279,14 +279,14 @@ function SeasonsPane({ volumeId }: { volumeId: string | null }) {
   });
   const update = useMutation({
     mutationFn: async ({ id, patch }: { id: string; patch: Partial<Season> }) => {
-      const { error } = await supabase.from("seasons" as never).update(patch).eq("id", id);
+      const { error } = await (supabase as any).from("seasons").update(patch).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["taxonomy", "seasons", volumeId] }),
   });
   const del = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("seasons" as never).delete().eq("id", id);
+      const { error } = await (supabase as any).from("seasons").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["taxonomy"] }); toast.success("Deleted"); },
