@@ -66,6 +66,13 @@ function DiaryAdmin() {
       title: e.title, slug: e.slug, entry_date: e.entry_date,
       location: e.location ?? "", cover_image_url: e.cover_image_url ?? "",
       body: e.body ?? "", published: e.published,
+      collection_id: e.collection_id ?? null,
+      volume_id: e.volume_id ?? null,
+      season_id: e.season_id ?? null,
+      chapter_number: e.chapter_number ?? null,
+      chapter_title: e.chapter_title ?? null,
+      part_number: e.part_number ?? null,
+      part_title: e.part_title ?? null,
     };
     setForm(next);
     initialRef.current = JSON.stringify(next);
