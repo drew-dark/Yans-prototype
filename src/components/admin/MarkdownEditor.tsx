@@ -109,19 +109,6 @@ export function MarkdownEditor({
     return data.signedUrl;
   }
 
-  async function uploadFile(file: File): Promise<string | null> {
-    setUploading(true);
-    try {
-      const ext = file.name.split(".").pop() || "bin";
-      return await uploadBlob(file, ext, file.type);
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Upload failed");
-      return null;
-    } finally {
-      setUploading(false);
-    }
-  }
-
   /** Generate a JPEG poster from a video file by seeking to ~1s and rasterising. */
   async function generateVideoPoster(file: File): Promise<Blob | null> {
     return new Promise((resolve) => {
