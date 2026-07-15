@@ -94,22 +94,26 @@ export function MarkdownEditor({
     });
   }
 
+  async function uploadBlob(blob: Blob, ext: string, contentType?: string): Promise<string | null> {
+    const path = `${folder}/${crypto.randomUUID()}.${ext}`;
+    const { error } = await supabase.storage.from("content").upload(path, blob, {
+      cacheControl: "3600",
+      upsert: false,
+      contentType: contentType || blob.type || undefined,
+    });
+    if (error) throw error;
+    const { data, error: sigErr } = await supabase.storage
+      .from("content")
+      .createSignedUrl(path, SIGNED_URL_EXPIRY);
+    if (sigErr) throw sigErr;
+    return data.signedUrl;
+  }
+
   async function uploadFile(file: File): Promise<string | null> {
     setUploading(true);
     try {
       const ext = file.name.split(".").pop() || "bin";
-      const path = `${folder}/${crypto.randomUUID()}.${ext}`;
-      const { error } = await supabase.storage.from("content").upload(path, file, {
-        cacheControl: "3600",
-        upsert: false,
-        contentType: file.type || undefined,
-      });
-      if (error) throw error;
-      const { data, error: sigErr } = await supabase.storage
-        .from("content")
-        .createSignedUrl(path, SIGNED_URL_EXPIRY);
-      if (sigErr) throw sigErr;
-      return data.signedUrl;
+      return await uploadBlob(file, ext, file.type);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Upload failed");
       return null;
@@ -118,15 +122,81 @@ export function MarkdownEditor({
     }
   }
 
+  /** Generate a JPEG poster from a video file by seeking to ~1s and rasterising. */
+  async function generateVideoPoster(file: File): Promise<Blob | null> {
+    return new Promise((resolve) => {
+      const url = URL.createObjectURL(file);
+      const video = document.createElement("video");
+      video.preload = "metadata";
+      video.muted = true;
+      video.playsInline = true;
+      video.crossOrigin = "anonymous";
+      video.src = url;
+      let done = false;
+      const cleanup = () => { URL.revokeObjectURL(url); };
+      const bail = () => { if (done) return; done = true; cleanup(); resolve(null); };
+      const timeout = window.setTimeout(bail, 8000);
+      video.addEventListener("loadedmetadata", () => {
+        const target = Math.min(1, Math.max(0, (video.duration || 2) * 0.1));
+        try { video.currentTime = target; } catch { bail(); }
+      });
+      video.addEventListener("seeked", () => {
+        if (done) return;
+        try {
+          const w = video.videoWidth;
+          const h = video.videoHeight;
+          if (!w || !h) return bail();
+          const scale = Math.min(1, 1280 / Math.max(w, h));
+          const canvas = document.createElement("canvas");
+          canvas.width = Math.round(w * scale);
+          canvas.height = Math.round(h * scale);
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return bail();
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          canvas.toBlob((blob) => {
+            done = true;
+            window.clearTimeout(timeout);
+            cleanup();
+            resolve(blob);
+          }, "image/jpeg", 0.82);
+        } catch {
+          bail();
+        }
+      });
+      video.addEventListener("error", bail);
+    });
+  }
+
   async function handleFile(file: File, kindHint?: "image" | "video") {
     const kind =
       kindHint ??
       (file.type.startsWith("video/") ? "video" : "image");
-    const url = await uploadFile(file);
-    if (!url) return;
-    if (kind === "video") insertAtCursor(`@video(${url})`);
-    else insertAtCursor(`![${file.name.replace(/\.[^.]+$/, "")}](${url})`);
-    toast.success("Inserted");
+    setUploading(true);
+    try {
+      if (kind === "video") {
+        const [videoUrl, posterBlob] = await Promise.all([
+          uploadBlob(file, file.name.split(".").pop() || "mp4", file.type),
+          generateVideoPoster(file),
+        ]);
+        if (!videoUrl) return;
+        let posterUrl: string | null = null;
+        if (posterBlob) {
+          try { posterUrl = await uploadBlob(posterBlob, "jpg", "image/jpeg"); }
+          catch { posterUrl = null; }
+        }
+        insertAtCursor(posterUrl ? `@video(${videoUrl}, poster=${posterUrl})` : `@video(${videoUrl})`);
+        toast.success(posterUrl ? "Video inserted with poster" : "Video inserted");
+      } else {
+        const url = await uploadBlob(file, file.name.split(".").pop() || "bin", file.type);
+        if (!url) return;
+        insertAtCursor(`![${file.name.replace(/\.[^.]+$/, "")}](${url})`);
+        toast.success("Image inserted");
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Upload failed");
+    } finally {
+      setUploading(false);
+    }
   }
 
   function onDrop(e: DragEvent<HTMLTextAreaElement>) {
