@@ -78,6 +78,13 @@ function StoriesAdmin() {
       cover_image_url: s.cover_image_url ?? "",
       excerpt: s.excerpt ?? "", body: s.body ?? "",
       published: s.published,
+      collection_id: s.collection_id ?? null,
+      volume_id: s.volume_id ?? null,
+      season_id: s.season_id ?? null,
+      chapter_number: s.chapter_number ?? null,
+      chapter_title: s.chapter_title ?? null,
+      part_number: s.part_number ?? null,
+      part_title: s.part_title ?? null,
     };
     setForm(next);
     initialRef.current = JSON.stringify(next);
