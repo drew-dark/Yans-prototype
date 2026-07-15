@@ -9,7 +9,9 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { MarkdownEditor, UnsavedChangesGuard } from "@/components/admin/MarkdownEditor";
+import { TaxonomyPicker, emptyTaxonomy } from "@/components/admin/TaxonomyPicker";
 import { readingTimeMinutes } from "@/lib/markdown";
+import type { TaxonomyRef } from "@/lib/taxonomy";
 import { toast } from "sonner";
 import { Trash2, Pencil, Plus } from "lucide-react";
 
@@ -26,9 +28,9 @@ type Entry = {
   cover_image_url: string | null;
   body: string | null;
   published: boolean;
-};
+} & Partial<TaxonomyRef>;
 
-const empty = { title: "", slug: "", entry_date: new Date().toISOString().slice(0, 10), location: "", cover_image_url: "", body: "", published: false };
+const empty = { title: "", slug: "", entry_date: new Date().toISOString().slice(0, 10), location: "", cover_image_url: "", body: "", published: false, ...emptyTaxonomy };
 
 function slugify(s: string) {
   return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
