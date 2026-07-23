@@ -96,6 +96,10 @@ function EntryPage() {
             className="mt-12 font-sans text-lg leading-[1.75] text-white/80"
           />
         )}
+        <div className="mt-10 flex items-center gap-3">
+          <BookmarkButton contentType="diary" contentId={e.id} />
+        </div>
+        <CommentsSection contentType="diary" contentId={e.id} />
         <div className="mt-16 border-t border-white/10 pt-6">
           <Link to="/diaries" className="font-mono text-[10px] uppercase tracking-widest text-white/50 hover:text-white">← Back to diaries</Link>
         </div>
