@@ -96,7 +96,7 @@ function DearTodayAdmin() {
       const payload: any = { ...form, slug };
       if (form.published && !editing?.published) payload.published_at = new Date().toISOString();
       if (editing) {
-        const { error } = await supabase.from("dear_today" as never).update(payload).eq("id", editing.id);
+        const { error } = await supabase.from("dear_today" as never).update(payload as never).eq("id", editing.id);
         if (error) throw error;
       } else {
         const { data: u } = await supabase.auth.getUser();
