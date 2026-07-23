@@ -53,6 +53,30 @@ export type Database = {
         }
         Relationships: []
       }
+      bookmarks: {
+        Row: {
+          content_id: string
+          content_type: Database["public"]["Enums"]["content_kind"]
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          content_id: string
+          content_type: Database["public"]["Enums"]["content_kind"]
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          content_id?: string
+          content_type?: Database["public"]["Enums"]["content_kind"]
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       collection_items: {
         Row: {
           created_at: string
@@ -115,6 +139,132 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      comments: {
+        Row: {
+          body: string
+          content_id: string
+          content_type: Database["public"]["Enums"]["content_kind"]
+          created_at: string
+          id: string
+          parent_id: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          content_id: string
+          content_type: Database["public"]["Enums"]["content_kind"]
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          content_id?: string
+          content_type?: Database["public"]["Enums"]["content_kind"]
+          created_at?: string
+          id?: string
+          parent_id?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dear_today: {
+        Row: {
+          author_id: string | null
+          body: string | null
+          chapter_number: number | null
+          chapter_title: string | null
+          collection_id: string | null
+          cover_url: string | null
+          created_at: string
+          entry_date: string
+          excerpt: string | null
+          id: string
+          published: boolean
+          published_at: string | null
+          season_id: string | null
+          slug: string
+          title: string
+          updated_at: string
+          volume_id: string | null
+        }
+        Insert: {
+          author_id?: string | null
+          body?: string | null
+          chapter_number?: number | null
+          chapter_title?: string | null
+          collection_id?: string | null
+          cover_url?: string | null
+          created_at?: string
+          entry_date?: string
+          excerpt?: string | null
+          id?: string
+          published?: boolean
+          published_at?: string | null
+          season_id?: string | null
+          slug: string
+          title: string
+          updated_at?: string
+          volume_id?: string | null
+        }
+        Update: {
+          author_id?: string | null
+          body?: string | null
+          chapter_number?: number | null
+          chapter_title?: string | null
+          collection_id?: string | null
+          cover_url?: string | null
+          created_at?: string
+          entry_date?: string
+          excerpt?: string | null
+          id?: string
+          published?: boolean
+          published_at?: string | null
+          season_id?: string | null
+          slug?: string
+          title?: string
+          updated_at?: string
+          volume_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dear_today_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dear_today_season_id_fkey"
+            columns: ["season_id"]
+            isOneToOne: false
+            referencedRelation: "seasons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dear_today_volume_id_fkey"
+            columns: ["volume_id"]
+            isOneToOne: false
+            referencedRelation: "volumes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       diary_entries: {
         Row: {
@@ -291,6 +441,33 @@ export type Database = {
           source?: string | null
           unsubscribed_at?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          display_name: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          display_name?: string | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -538,6 +715,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_any_role: {
+        Args: {
+          _roles: Database["public"]["Enums"]["app_role"][]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -548,6 +732,12 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "editor" | "moderator" | "guest_author" | "reader"
+      content_kind:
+        | "story"
+        | "diary"
+        | "collection_item"
+        | "gallery"
+        | "dear_today"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -676,6 +866,13 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "editor", "moderator", "guest_author", "reader"],
+      content_kind: [
+        "story",
+        "diary",
+        "collection_item",
+        "gallery",
+        "dear_today",
+      ],
     },
   },
 } as const
