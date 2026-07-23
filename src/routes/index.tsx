@@ -11,7 +11,21 @@ import verseImg from "@/assets/muyan-verse.jpg";
 import stageImg from "@/assets/muyan-stage.jpg";
 
 const heroOffsets = ["mt-0", "mt-12", "-mt-8", "mt-20", "-mt-16"];
-const fallbackHero = [foodImg, stageImg, portraitImg, verseImg, broadcastImg];
+
+// Swapped: hero now uses the images previously in the Muyan collection strip;
+// Muyan collection uses the images previously in the hero.
+const fallbackHero = [portraitImg, broadcastImg, foodImg, verseImg, stageImg];
+
+const fallbackTiles = [
+  { id: "1", image_url: foodImg, label: "Culture" },
+  { id: "2", image_url: stageImg, label: "Stage" },
+  { id: "3", image_url: portraitImg, label: "Portrait" },
+  { id: "4", image_url: verseImg, label: "Verse" },
+  { id: "5", image_url: broadcastImg, label: "Broadcast" },
+  { id: "6", image_url: stageImg, label: "Field" },
+  { id: "7", image_url: foodImg, label: "Table" },
+  { id: "8", image_url: portraitImg, label: "Studio" },
+];
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -35,17 +49,6 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const fallbackTiles = [
-  { id: "1", image_url: portraitImg, label: "Portrait" },
-  { id: "2", image_url: broadcastImg, label: "Broadcast" },
-  { id: "3", image_url: foodImg, label: "Culture" },
-  { id: "4", image_url: verseImg, label: "Verse" },
-  { id: "5", image_url: stageImg, label: "Stage" },
-  { id: "6", image_url: portraitImg, label: "Studio" },
-  { id: "7", image_url: broadcastImg, label: "Field" },
-  { id: "8", image_url: foodImg, label: "Table" },
-];
-
 const navLinks = [
   { to: "/collection", label: "Collection" },
   { to: "/gallery", label: "Gallery" },
@@ -54,7 +57,6 @@ const navLinks = [
   { to: "/shop", label: "Shop" },
   { to: "/about", label: "About" },
 ] as const;
-
 
 function Index() {
   const { data: heroImages = fallbackHero } = useQuery({
@@ -66,9 +68,7 @@ function Index() {
         .eq("published", true)
         .order("sort_order");
       if (error) throw error;
-      return data.length > 0
-        ? data.map((d) => d.image_url)
-        : fallbackHero;
+      return data.length > 0 ? data.map((d) => d.image_url) : fallbackHero;
     },
   });
 
@@ -93,8 +93,59 @@ function Index() {
     },
   });
 
+  const { data: latestStories = [] } = useQuery({
+    queryKey: ["public", "home", "stories"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("stories")
+        .select("id, slug, title, excerpt, cover_image_url, chapter_number, chapter_title")
+        .eq("published", true)
+        .order("published_at", { ascending: false, nullsFirst: false })
+        .limit(6);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const { data: latestShop = [] } = useQuery({
+    queryKey: ["public", "home", "shop"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("shop_products")
+        .select("id, slug, title, description, image_url, price_cents, currency")
+        .eq("published", true)
+        .order("sort_order")
+        .limit(6);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const { data: latestDear = [] } = useQuery({
+    queryKey: ["public", "home", "dear_today"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("dear_today" as never)
+        .select("id, slug, title, excerpt, cover_url, entry_date")
+        .eq("published", true)
+        .order("entry_date", { ascending: false })
+        .limit(6);
+      if (error) throw error;
+      return (data ?? []) as unknown as Array<{
+        id: string;
+        slug: string;
+        title: string;
+        excerpt: string | null;
+        cover_url: string | null;
+        entry_date: string;
+      }>;
+    },
+  });
+
   const headline = about?.headline || "EMMANUEL RAYAN DAKA";
-  const tagline = about?.tagline || "These are words carved from quiet places — am just a Zambian poet and journalist writing the things we rarely say out loud.";
+  const tagline =
+    about?.tagline ||
+    "These are words carved from quiet places — am just a Zambian poet and journalist writing the things we rarely say out loud.";
   const location = about?.location || "Lusaka, Zambia — Tokyo, Japan";
   const { open } = useMediaViewer();
   const reduceMotion = useReducedMotion();
@@ -135,18 +186,21 @@ function Index() {
 
       <nav className="absolute right-12 top-12 z-40 hidden items-center space-x-8 text-[11px] font-bold uppercase tracking-[0.3em] text-white/70 md:flex">
         {navLinks.map((link) => (
-          <Link
-            key={link.to}
-            to={link.to}
-            className="transition-colors hover:text-white"
-          >
+          <Link key={link.to} to={link.to} className="transition-colors hover:text-white">
             {link.label}
           </Link>
         ))}
 
         <Link
-          to="/admin"
+          to="/account"
           className="ml-2 border border-white/20 px-2 py-1 font-mono text-[10px] tracking-widest text-white/40 hover:border-white hover:text-white"
+          title="Your account"
+        >
+          ◇ Account
+        </Link>
+        <Link
+          to="/admin"
+          className="border border-white/20 px-2 py-1 font-mono text-[10px] tracking-widest text-white/40 hover:border-white hover:text-white"
           title="Studio access for the editor"
         >
           ◆ Studio
@@ -180,7 +234,6 @@ function Index() {
             </div>
           ))}
         </div>
-
 
         <p className="mt-12 max-w-xl text-center text-sm font-light leading-relaxed text-white/60 md:text-lg">
           {tagline}
@@ -227,9 +280,7 @@ function Index() {
               <button
                 key={t.id}
                 type="button"
-                onClick={() =>
-                  open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label })
-                }
+                onClick={() => open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label })}
                 className={`relative flex-1 overflow-hidden border border-white/10 bg-neutral-900 text-left ${heights[i % heights.length]} ${aligns[i % aligns.length]} ${imageTransitionClass} hover:z-10 hover:flex-[2] focus-visible:z-10 focus-visible:flex-[2] focus:outline-none`}
                 aria-label={t.label}
               >
@@ -240,9 +291,7 @@ function Index() {
                   className={`h-full w-full object-cover ${imageTransitionClass} ${hoverImageClass} group-hover/strip:opacity-40 hover:!opacity-100 focus-visible:!opacity-100`}
                 />
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-3 opacity-0 transition-opacity duration-500 hover:!opacity-100 group-hover/strip:opacity-0">
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-white">
-                    {t.label}
-                  </p>
+                  <p className="font-mono text-[10px] uppercase tracking-widest text-white">{t.label}</p>
                 </div>
                 <div
                   className="pointer-events-none absolute left-2 top-2 rotate-180 font-mono text-[9px] uppercase tracking-[0.35em] text-white/70 mix-blend-difference"
@@ -256,29 +305,171 @@ function Index() {
         </div>
 
         <div className="mt-6 text-right md:hidden">
-          <Link
-            to="/collection"
-            className="font-mono text-[10px] uppercase tracking-widest text-white/60 hover:text-white"
-          >
+          <Link to="/collection" className="font-mono text-[10px] uppercase tracking-widest text-white/60 hover:text-white">
             View all →
           </Link>
         </div>
       </section>
 
+      {/* Latest Stories */}
+      {latestStories.length > 0 && (
+        <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
+          <div className="mb-8 flex items-end justify-between gap-6">
+            <div>
+              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.4em] text-white/40">
+                Latest
+              </p>
+              <h3 className="font-display text-4xl uppercase leading-none tracking-tight md:text-6xl">
+                Stories
+              </h3>
+            </div>
+            <Link to="/stories" className="font-mono text-[10px] uppercase tracking-widest text-white/60 hover:text-white">
+              All stories →
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {latestStories.map((s) => (
+              <Link
+                key={s.id}
+                to="/stories/$slug"
+                params={{ slug: s.slug }}
+                className="group flex flex-col overflow-hidden border border-white/10 bg-neutral-900/40 transition-colors hover:border-white/40"
+              >
+                {s.cover_image_url && (
+                  <div className="aspect-[16/10] overflow-hidden">
+                    <img
+                      src={s.cover_image_url}
+                      alt=""
+                      loading="lazy"
+                      className={`h-full w-full object-cover ${imageTransitionClass} group-hover:scale-105`}
+                    />
+                  </div>
+                )}
+                <div className="p-4">
+                  {s.chapter_number != null && (
+                    <p className="mb-1 font-mono text-[10px] uppercase tracking-widest text-white/40">
+                      Chapter {s.chapter_number}
+                      {s.chapter_title ? ` — ${s.chapter_title}` : ""}
+                    </p>
+                  )}
+                  <h4 className="font-display text-xl uppercase leading-tight">{s.title}</h4>
+                  {s.excerpt && <p className="mt-2 line-clamp-2 text-sm text-white/60">{s.excerpt}</p>}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Books / Shop */}
+      {latestShop.length > 0 && (
+        <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
+          <div className="mb-8 flex items-end justify-between gap-6">
+            <div>
+              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.4em] text-white/40">
+                From the shelf
+              </p>
+              <h3 className="font-display text-4xl uppercase leading-none tracking-tight md:text-6xl">
+                Books &amp; Wares
+              </h3>
+            </div>
+            <Link to="/shop" className="font-mono text-[10px] uppercase tracking-widest text-white/60 hover:text-white">
+              Visit shop →
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+            {latestShop.map((p) => (
+              <Link
+                key={p.id}
+                to="/shop"
+                className="group flex flex-col overflow-hidden border border-white/10 bg-neutral-900/40 transition-colors hover:border-white/40"
+              >
+                {p.image_url && (
+                  <div className="aspect-[3/4] overflow-hidden">
+                    <img
+                      src={p.image_url}
+                      alt=""
+                      loading="lazy"
+                      className={`h-full w-full object-cover ${imageTransitionClass} group-hover:scale-105`}
+                    />
+                  </div>
+                )}
+                <div className="p-3">
+                  <h4 className="line-clamp-2 font-display text-sm uppercase leading-tight">{p.title}</h4>
+                  {p.description && (
+                    <p className="mt-1 line-clamp-2 text-xs text-white/50">{p.description}</p>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Dear Today */}
+      {latestDear.length > 0 && (
+        <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
+          <div className="mb-8 flex items-end justify-between gap-6">
+            <div>
+              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.4em] text-white/40">
+                A collection
+              </p>
+              <h3 className="font-display text-4xl uppercase leading-none tracking-tight md:text-6xl">
+                Dear Today
+              </h3>
+            </div>
+            <Link
+              to="/collection/dear-today"
+              className="font-mono text-[10px] uppercase tracking-widest text-white/60 hover:text-white"
+            >
+              View all →
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {latestDear.map((d) => (
+              <Link
+                key={d.id}
+                to="/collection/dear-today/$slug"
+                params={{ slug: d.slug }}
+                className="group flex flex-col overflow-hidden border border-white/10 bg-neutral-900/40 transition-colors hover:border-white/40"
+              >
+                {d.cover_url && (
+                  <div className="aspect-[16/10] overflow-hidden">
+                    <img
+                      src={d.cover_url}
+                      alt=""
+                      loading="lazy"
+                      className={`h-full w-full object-cover ${imageTransitionClass} group-hover:scale-105`}
+                    />
+                  </div>
+                )}
+                <div className="p-4">
+                  <p className="mb-1 font-mono text-[10px] uppercase tracking-widest text-white/40">
+                    {new Date(d.entry_date).toLocaleDateString(undefined, {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                  </p>
+                  <h4 className="font-display text-xl uppercase leading-tight">{d.title}</h4>
+                  {d.excerpt && <p className="mt-2 line-clamp-2 text-sm text-white/60">{d.excerpt}</p>}
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
       <section className="relative z-10 mx-auto max-w-2xl px-6 pb-24 md:px-12">
         <NewsletterForm source="home" variant="kraft" />
       </section>
-
-
 
       <footer className="flex flex-col items-end justify-between gap-8 border-t border-white/5 p-12 md:flex-row">
         <div>
           <span className="mb-2 block font-mono text-[9px] uppercase tracking-widest text-white/30">
             Currently Residing
           </span>
-          <span className="text-sm uppercase tracking-widest">
-            {location}
-          </span>
+          <span className="text-sm uppercase tracking-widest">{location}</span>
         </div>
         <div className="text-right">
           <Link

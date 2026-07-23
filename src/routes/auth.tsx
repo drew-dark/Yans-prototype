@@ -11,6 +11,14 @@ export const Route = createFileRoute("/auth")({
   component: AuthPage,
 });
 
+const STAFF_ROLES = ["admin", "editor", "moderator", "guest_author"];
+
+async function routeAfterSignIn(userId: string): Promise<"/admin" | "/account"> {
+  const { data } = await supabase.from("user_roles").select("role").eq("user_id", userId);
+  const roles = (data ?? []).map((r: { role: string }) => r.role);
+  return roles.some((r) => STAFF_ROLES.includes(r)) ? "/admin" : "/account";
+}
+
 function AuthPage() {
   const navigate = useNavigate();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -19,9 +27,13 @@ function AuthPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/admin" });
-    });
+    (async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        const to = await routeAfterSignIn(data.session.user.id);
+        navigate({ to });
+      }
+    })();
   }, [navigate]);
 
   async function handleSubmit(e: React.FormEvent) {
@@ -29,17 +41,22 @@ function AuthPage() {
     setLoading(true);
     try {
       if (mode === "signup") {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { emailRedirectTo: window.location.origin + "/admin" },
+          options: { emailRedirectTo: window.location.origin + "/account" },
         });
         if (error) throw error;
-        toast.success("Account created. Ask the site owner to grant you admin access.");
+        if (data.session) {
+          navigate({ to: "/account" });
+        } else {
+          toast.success("Check your email to confirm your account.");
+        }
       } else {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        navigate({ to: "/admin" });
+        const to = await routeAfterSignIn(data.user.id);
+        navigate({ to });
       }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Something went wrong");
@@ -58,6 +75,11 @@ function AuthPage() {
           <h1 className="mt-4 font-display text-3xl uppercase tracking-tight">
             {mode === "signin" ? "Sign in" : "Create account"}
           </h1>
+          <p className="mt-2 text-xs text-white/50">
+            {mode === "signup"
+              ? "Readers get their own space to bookmark, comment, and manage a profile."
+              : "Readers sign in for bookmarks and comments. Staff continue to the studio."}
+          </p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
