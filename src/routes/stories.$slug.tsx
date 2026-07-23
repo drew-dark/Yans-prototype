@@ -5,6 +5,8 @@ import { PageShell } from "@/components/site/SiteChrome";
 import { useMediaViewer } from "@/components/site/MediaViewer";
 import { ReadingProgress } from "@/components/site/ReadingProgress";
 import { Markdown, readingTimeMinutes } from "@/lib/markdown";
+import { BookmarkButton } from "@/components/site/BookmarkButton";
+import { CommentsSection } from "@/components/site/CommentsSection";
 
 export const Route = createFileRoute("/stories/$slug")({
   head: ({ loaderData }) => {
@@ -96,6 +98,10 @@ function StoryPage() {
             className="mt-12 font-sans text-lg leading-[1.75] text-white/80 [&_a]:text-white/90"
           />
         )}
+        <div className="mt-10 flex items-center gap-3">
+          <BookmarkButton contentType="story" contentId={s.id} />
+        </div>
+        <CommentsSection contentType="story" contentId={s.id} />
         <div className="mt-16 border-t border-white/10 pt-6">
           <Link to="/stories" className="font-mono text-[10px] uppercase tracking-widest text-white/50 hover:text-white">← Back to stories</Link>
         </div>

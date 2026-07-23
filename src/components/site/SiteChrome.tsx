@@ -1,4 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const links = [
   { to: "/collection", label: "Collection" },
@@ -8,6 +10,47 @@ const links = [
   { to: "/shop", label: "Shop" },
   { to: "/about", label: "About" },
 ] as const;
+
+function useSessionEmail() {
+  const [email, setEmail] = useState<string | null>(null);
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (mounted) setEmail(data.session?.user?.email ?? null);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      if (mounted) setEmail(session?.user?.email ?? null);
+    });
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+  return email;
+}
+
+function AuthAffordance() {
+  const email = useSessionEmail();
+  if (!email) {
+    return (
+      <Link
+        to="/auth"
+        className="border border-white/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-white/60 hover:border-white hover:text-white"
+      >
+        Sign in
+      </Link>
+    );
+  }
+  return (
+    <Link
+      to="/account"
+      className="border border-white/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-white/70 hover:border-white hover:text-white"
+      title={email}
+    >
+      ◇ Account
+    </Link>
+  );
+}
 
 export function SiteHeader() {
   const pathname = useRouterState({ select: (r) => r.location.pathname });
@@ -29,20 +72,23 @@ export function SiteHeader() {
           </p>
         </div>
       </Link>
-      <nav className="hidden items-center gap-6 pt-2 text-[11px] font-bold uppercase tracking-[0.3em] text-white/60 md:flex">
-        {links.map((l) => {
-          const active = pathname === l.to || pathname.startsWith(l.to + "/");
-          return (
-            <Link
-              key={l.to}
-              to={l.to}
-              className={`transition-colors hover:text-white ${active ? "text-white" : ""}`}
-            >
-              {l.label}
-            </Link>
-          );
-        })}
-      </nav>
+      <div className="flex items-center gap-6 pt-2">
+        <nav className="hidden items-center gap-6 text-[11px] font-bold uppercase tracking-[0.3em] text-white/60 md:flex">
+          {links.map((l) => {
+            const active = pathname === l.to || pathname.startsWith(l.to + "/");
+            return (
+              <Link
+                key={l.to}
+                to={l.to}
+                className={`transition-colors hover:text-white ${active ? "text-white" : ""}`}
+              >
+                {l.label}
+              </Link>
+            );
+          })}
+        </nav>
+        <AuthAffordance />
+      </div>
     </header>
   );
 }
@@ -82,6 +128,7 @@ export function SiteFooter() {
         <div className="flex gap-4 text-[10px] uppercase tracking-widest text-white/40">
           <Link to="/stories">Stories</Link>
           <Link to="/diaries">Diaries</Link>
+          <Link to="/collection/dear-today">Dear Today</Link>
           <Link to="/gallery">Gallery</Link>
           <Link to="/shop">Shop</Link>
           <Link to="/about">About</Link>

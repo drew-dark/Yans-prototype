@@ -1,17 +1,22 @@
-import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link, useRouterState, useNavigate, redirect } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
-const navItems = [
-  { to: "/admin/hero", label: "Hero" },
-  { to: "/admin/collection", label: "Collection" },
-  { to: "/admin/taxonomy", label: "Taxonomy" },
-  { to: "/admin/stories", label: "Stories" },
-  { to: "/admin/diary", label: "Diary" },
-  { to: "/admin/gallery", label: "Gallery" },
-  { to: "/admin/shop", label: "Shop" },
-  { to: "/admin/about", label: "About" },
+const STAFF_ROLES = ["admin", "editor", "moderator", "guest_author"] as const;
+
+const allNavItems = [
+  { to: "/admin/hero", label: "Hero", roles: ["admin", "editor"] },
+  { to: "/admin/collection", label: "Collection", roles: ["admin", "editor"] },
+  { to: "/admin/taxonomy", label: "Taxonomy", roles: ["admin", "editor"] },
+  { to: "/admin/stories", label: "Stories", roles: ["admin", "editor"] },
+  { to: "/admin/diary", label: "Diary", roles: ["admin", "editor"] },
+  { to: "/admin/dear-today", label: "Dear Today", roles: ["admin", "editor", "guest_author"] },
+  { to: "/admin/gallery", label: "Gallery", roles: ["admin", "editor"] },
+  { to: "/admin/shop", label: "Shop", roles: ["admin", "editor"] },
+  { to: "/admin/about", label: "About", roles: ["admin", "editor"] },
+  { to: "/admin/comments", label: "Comments", roles: ["admin", "moderator"] },
+  { to: "/admin/users", label: "Users", roles: ["admin"] },
 ] as const;
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -23,7 +28,7 @@ function AdminLayout() {
   const navigate = useNavigate();
   const pathname = useRouterState({ select: (r) => r.location.pathname });
   const [checking, setChecking] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [roles, setRoles] = useState<string[]>([]);
   const [email, setEmail] = useState<string | null>(null);
 
   useEffect(() => {
@@ -37,10 +42,8 @@ function AdminLayout() {
       const { data } = await supabase
         .from("user_roles")
         .select("role")
-        .eq("user_id", userData.user.id)
-        .eq("role", "admin")
-        .maybeSingle();
-      setIsAdmin(!!data);
+        .eq("user_id", userData.user.id);
+      setRoles((data ?? []).map((r: { role: string }) => r.role));
       setChecking(false);
     })();
   }, []);
@@ -50,20 +53,25 @@ function AdminLayout() {
     navigate({ to: "/auth", replace: true });
   }
 
+  const hasStaff = roles.some((r) => (STAFF_ROLES as readonly string[]).includes(r));
+  const navItems = allNavItems.filter((item) => item.roles.some((r) => roles.includes(r)));
+
   if (checking) {
     return <div className="flex min-h-screen items-center justify-center bg-neutral-950 text-white/60">Loading…</div>;
   }
 
-  if (!isAdmin) {
+  if (!hasStaff) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-neutral-950 px-4 text-white">
         <div className="max-w-md space-y-4 text-center">
-          <h1 className="font-display text-3xl uppercase">Not authorized</h1>
+          <h1 className="font-display text-3xl uppercase">Reader account</h1>
           <p className="text-sm text-white/60">
-            Signed in as <span className="font-mono">{email}</span>. Ask the site owner
-            to grant you the <span className="font-mono">admin</span> role.
+            Signed in as <span className="font-mono">{email}</span>. The studio is for staff. Head to your account to manage bookmarks and profile.
           </p>
-          <Button variant="outline" onClick={signOut}>Sign out</Button>
+          <div className="flex flex-wrap justify-center gap-2">
+            <Button onClick={() => navigate({ to: "/account" })}>Go to your account</Button>
+            <Button variant="outline" onClick={signOut}>Sign out</Button>
+          </div>
         </div>
       </div>
     );
