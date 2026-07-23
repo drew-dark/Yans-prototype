@@ -5,6 +5,8 @@ import { PageShell } from "@/components/site/SiteChrome";
 import { useMediaViewer } from "@/components/site/MediaViewer";
 import { ReadingProgress } from "@/components/site/ReadingProgress";
 import { Markdown, readingTimeMinutes } from "@/lib/markdown";
+import { BookmarkButton } from "@/components/site/BookmarkButton";
+import { CommentsSection } from "@/components/site/CommentsSection";
 
 export const Route = createFileRoute("/diaries/$slug")({
   head: ({ loaderData }) => {
