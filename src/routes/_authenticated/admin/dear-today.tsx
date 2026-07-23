@@ -101,7 +101,7 @@ function DearTodayAdmin() {
       } else {
         const { data: u } = await supabase.auth.getUser();
         payload.author_id = u.user?.id ?? null;
-        const { error } = await supabase.from("dear_today" as never).insert(payload);
+        const { error } = await supabase.from("dear_today" as never).insert(payload as never);
         if (error) throw error;
       }
     },
