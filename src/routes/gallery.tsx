@@ -28,6 +28,7 @@ type Photo = { id: string; image_url: string; caption: string | null; tags: stri
 
 function GalleryPage() {
   const [page, setPage] = useState(1);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const { data, isLoading } = useQuery({
     queryKey: ["public", "gallery", page],
     queryFn: async () => {
@@ -75,13 +76,14 @@ function GalleryPage() {
                 return (
                   <button
                     key={p.id}
-                    onClick={() =>
+                    onClick={() => {
+                      setSelectedId(p.id);
                       open(
                         isVideo
                           ? { kind: "video", src: p.image_url, caption: p.caption ?? undefined }
                           : { kind: "image", src: p.image_url, alt: p.caption ?? "", caption: p.caption ?? undefined },
-                      )
-                    }
+                      );
+                    }}
                     className={`group relative overflow-hidden border border-white/10 bg-neutral-900 ${i % 5 === 0 ? "row-span-2 aspect-[3/4]" : "aspect-square"}`}
                     aria-label={p.caption ?? (isVideo ? "Play video" : "Open image")}
                   >
