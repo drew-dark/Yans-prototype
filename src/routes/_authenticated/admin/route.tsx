@@ -79,49 +79,38 @@ function AdminLayout() {
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white">
-      <header className="border-b border-white/10 bg-neutral-900/60 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-6">
-            <Link to="/" className="font-display text-lg uppercase tracking-tight">
-              Yans <span className="text-white/40">/ admin</span>
-            </Link>
-            <nav className="hidden gap-1 md:flex">
-              {navItems.map((item) => {
-                const active = pathname.startsWith(item.to);
-                return (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    className={`rounded px-3 py-1.5 text-xs uppercase tracking-widest transition-colors ${
-                      active ? "bg-white text-neutral-950" : "text-white/60 hover:text-white"
-                    }`}
-                  >
-                    {item.label}
-                  </Link>
-                );
-              })}
-            </nav>
-          </div>
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-neutral-900/80 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
+          <Link to="/" className="shrink-0 font-display text-lg uppercase tracking-tight">
+            Yans <span className="text-white/40">/ admin</span>
+          </Link>
           <div className="flex items-center gap-3 text-xs">
-            <span className="hidden text-white/40 md:inline">{email}</span>
+            <span className="hidden max-w-[180px] truncate text-white/40 md:inline">{email}</span>
             <Button size="sm" variant="ghost" onClick={signOut}>Sign out</Button>
           </div>
         </div>
-        <nav className="flex overflow-x-auto border-t border-white/10 px-4 py-2 md:hidden">
-          {navItems.map((item) => {
-            const active = pathname.startsWith(item.to);
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={`whitespace-nowrap px-3 py-1 text-xs uppercase tracking-widest ${active ? "text-white" : "text-white/50"}`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </nav>
+        <div className="mx-auto max-w-6xl px-4 pb-2 md:px-6">
+          <nav className="flex flex-nowrap gap-1 overflow-x-auto pb-1 [scrollbar-width:none] md:flex-wrap md:overflow-visible [&::-webkit-scrollbar]:hidden">
+            {navItems.map((item) => {
+              const active = pathname.startsWith(item.to);
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className={`shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-[11px] uppercase tracking-widest transition-colors ${
+                    active
+                      ? "border-white bg-white text-neutral-950"
+                      : "border-white/15 text-white/60 hover:border-white/40 hover:text-white"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
       </header>
+
       <main className="mx-auto max-w-6xl px-6 py-8">
         <Outlet />
       </main>

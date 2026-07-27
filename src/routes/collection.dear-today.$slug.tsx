@@ -6,6 +6,7 @@ import { useMediaViewer } from "@/components/site/MediaViewer";
 import { ReadingProgress } from "@/components/site/ReadingProgress";
 import { Markdown, readingTimeMinutes } from "@/lib/markdown";
 import { BookmarkButton } from "@/components/site/BookmarkButton";
+import { StudioEditLink } from "@/components/site/StudioEditLink";
 import { CommentsSection } from "@/components/site/CommentsSection";
 
 export const Route = createFileRoute("/collection/dear-today/$slug")({
@@ -112,8 +113,9 @@ function EntryPage() {
         {e.body && (
           <Markdown text={e.body} dropCap className="mt-12 font-sans text-lg leading-[1.75] text-white/80" />
         )}
-        <div className="mt-10 flex items-center gap-3">
+        <div className="mt-10 flex flex-wrap items-center gap-3">
           <BookmarkButton contentType="dear_today" contentId={e.id} />
+          <StudioEditLink to="/admin/dear-today" label="Edit entry" />
         </div>
         <CommentsSection contentType="dear_today" contentId={e.id} />
       </article>

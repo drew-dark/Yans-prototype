@@ -64,12 +64,23 @@ export function SiteHeader() {
               "polygon(0% 5%, 5% 0%, 95% 2%, 100% 8%, 98% 92%, 100% 100%, 5% 98%, 0% 90%)",
           }}
         >
-          <h1 className="font-mono text-sm font-bold leading-none tracking-tight text-ink-dark">
-            EMMANUEL RAYAN DAKA
-          </h1>
-          <p className="mt-1 font-mono text-[9px] uppercase tracking-widest text-ink-dark/80">
-            Yans Lounge
-          </p>
+          <div className="flex items-center gap-2.5">
+            <img
+              src="/favicon.png"
+              alt="Emmanuel Rayan Daka monogram"
+              width={28}
+              height={28}
+              className="h-7 w-7 object-contain mix-blend-multiply"
+            />
+            <div>
+              <h1 className="font-mono text-sm font-bold leading-none tracking-tight text-ink-dark">
+                EMMANUEL RAYAN DAKA
+              </h1>
+              <p className="mt-1 font-mono text-[9px] uppercase tracking-widest text-ink-dark/80">
+                Yans Lounge
+              </p>
+            </div>
+          </div>
         </div>
       </Link>
       <div className="flex items-center gap-6 pt-2">
