@@ -312,7 +312,7 @@ function Index() {
       </section>
 
       {/* Latest Stories */}
-      {latestStories.length > 0 && (
+      {(
         <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
           <div className="mb-8 flex items-end justify-between gap-6">
             <div>
@@ -327,6 +327,11 @@ function Index() {
               All stories →
             </Link>
           </div>
+          {latestStories.length === 0 && (
+            <p className="border border-dashed border-white/15 p-6 text-sm text-white/40">
+              No stories published yet — publish one in the Studio and it will appear here.
+            </p>
+          )}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {latestStories.map((s) => (
               <Link
@@ -362,7 +367,7 @@ function Index() {
       )}
 
       {/* Books / Shop */}
-      {latestShop.length > 0 && (
+      {(
         <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
           <div className="mb-8 flex items-end justify-between gap-6">
             <div>
@@ -377,6 +382,11 @@ function Index() {
               Visit shop →
             </Link>
           </div>
+          {latestShop.length === 0 && (
+            <p className="border border-dashed border-white/15 p-6 text-sm text-white/40">
+              No books or wares published yet — add them in the Studio shop editor.
+            </p>
+          )}
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
             {latestShop.map((p) => (
               <Link
@@ -407,7 +417,7 @@ function Index() {
       )}
 
       {/* Dear Today */}
-      {latestDear.length > 0 && (
+      {(
         <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
           <div className="mb-8 flex items-end justify-between gap-6">
             <div>
@@ -425,6 +435,11 @@ function Index() {
               View all →
             </Link>
           </div>
+          {latestDear.length === 0 && (
+            <p className="border border-dashed border-white/15 p-6 text-sm text-white/40">
+              No Dear Today entries published yet — write one in the Studio.
+            </p>
+          )}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {latestDear.map((d) => (
               <Link
