@@ -1,9 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { useMediaViewer } from "@/components/site/MediaViewer";
+import { BookmarkButton } from "@/components/site/BookmarkButton";
+import { CommentsSection } from "@/components/site/CommentsSection";
 import portraitImg from "@/assets/muyan-portrait.jpg";
 import broadcastImg from "@/assets/muyan-broadcast.jpg";
 import foodImg from "@/assets/muyan-food.jpg";
@@ -57,6 +60,10 @@ function CollectionPage() {
     },
   });
 
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const selected = tiles.find((t) => t.id === selectedId && UUID_RE.test(t.id)) ?? null;
+
   const { open } = useMediaViewer();
 
   return (
@@ -80,9 +87,10 @@ function CollectionPage() {
             <button
               key={t.id}
               type="button"
-              onClick={() =>
-                open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label })
-              }
+              onClick={() => {
+                setSelectedId(t.id);
+                open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label });
+              }}
               className="group relative aspect-[3/4] overflow-hidden border border-white/10 bg-neutral-900 text-left"
               aria-label={t.label}
             >
@@ -100,6 +108,21 @@ function CollectionPage() {
             </button>
           ))}
         </div>
+
+        {selected && (
+          <div className="mt-16 border-t border-white/10 pt-8">
+            <div className="flex flex-wrap items-center gap-4">
+              <img src={selected.image_url} alt="" className="h-16 w-16 border border-white/10 object-cover" />
+              <div className="flex-1 min-w-[12rem]">
+                <p className="font-mono text-[10px] uppercase tracking-widest text-white/40">Selected frame</p>
+                <p className="text-sm text-white/80">{selected.label}</p>
+              </div>
+              <BookmarkButton contentType="collection_item" contentId={selected.id} />
+            </div>
+            <CommentsSection contentType="collection_item" contentId={selected.id} />
+          </div>
+        )}
+
 
         <div className="mt-16 flex items-center justify-between border-t border-white/10 pt-6 font-mono text-[10px] uppercase tracking-widest text-white/40">
           <span>Muyan · Series 01</span>
