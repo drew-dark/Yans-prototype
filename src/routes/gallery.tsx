@@ -46,6 +46,7 @@ function GalleryPage() {
   });
 
   const photos = data?.photos ?? [];
+  const selected = photos.find((p) => p.id === selectedId) ?? null;
   const totalPages = Math.max(1, Math.ceil((data?.total ?? 0) / PAGE_SIZE));
   const { open } = useMediaViewer();
 
@@ -118,6 +119,19 @@ function GalleryPage() {
               })}
             </div>
             <Paginator page={page} totalPages={totalPages} onPageChange={setPage} />
+            {selected && (
+              <div className="mt-16 border-t border-white/10 pt-8">
+                <div className="flex flex-wrap items-center gap-4">
+                  <img src={selected.image_url} alt="" className="h-16 w-16 border border-white/10 object-cover" />
+                  <div className="flex-1 min-w-[12rem]">
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-white/40">Selected frame</p>
+                    <p className="text-sm text-white/80">{selected.caption ?? "Untitled"}</p>
+                  </div>
+                  <BookmarkButton contentType="gallery" contentId={selected.id} />
+                </div>
+                <CommentsSection contentType="gallery" contentId={selected.id} />
+              </div>
+            )}
           </>
         )}
 
