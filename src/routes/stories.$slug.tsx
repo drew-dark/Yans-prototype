@@ -98,8 +98,9 @@ function StoryPage() {
             className="mt-12 font-sans text-lg leading-[1.75] text-white/80 [&_a]:text-white/90"
           />
         )}
-        <div className="mt-10 flex items-center gap-3">
+        <div className="mt-10 flex flex-wrap items-center gap-3">
           <BookmarkButton contentType="story" contentId={s.id} />
+          <StudioEditLink to="/admin/stories" label="Edit story" />
         </div>
         <CommentsSection contentType="story" contentId={s.id} />
         <div className="mt-16 border-t border-white/10 pt-6">

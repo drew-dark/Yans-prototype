@@ -96,8 +96,9 @@ function EntryPage() {
             className="mt-12 font-sans text-lg leading-[1.75] text-white/80"
           />
         )}
-        <div className="mt-10 flex items-center gap-3">
+        <div className="mt-10 flex flex-wrap items-center gap-3">
           <BookmarkButton contentType="diary" contentId={e.id} />
+          <StudioEditLink to="/admin/diary" label="Edit entry" />
         </div>
         <CommentsSection contentType="diary" contentId={e.id} />
         <div className="mt-16 border-t border-white/10 pt-6">
