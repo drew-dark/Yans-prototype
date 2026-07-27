@@ -5,6 +5,8 @@ import { PageShell } from "@/components/site/SiteChrome";
 import { Paginator } from "@/components/site/Paginator";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { useMediaViewer } from "@/components/site/MediaViewer";
+import { BookmarkButton } from "@/components/site/BookmarkButton";
+import { CommentsSection } from "@/components/site/CommentsSection";
 import { useEffect, useState } from "react";
 
 const PAGE_SIZE = 12;
