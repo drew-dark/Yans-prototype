@@ -1,8 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Paginator } from "@/components/site/Paginator";
+import { pageRangeBounds, totalPagesFor } from "@/lib/pagination";
 import { toast } from "sonner";
+
+const PAGE_SIZE = 25;
 
 export const Route = createFileRoute("/_authenticated/admin/comments")({
   component: CommentsAdmin,
