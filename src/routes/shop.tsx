@@ -1,14 +1,17 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
 import { Paginator } from "@/components/site/Paginator";
+import { GridSkeleton } from "@/components/site/GridSkeleton";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
-import { useEffect, useState } from "react";
+import { pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
+import { useEffect } from "react";
 
 const PAGE_SIZE = 9;
 
 export const Route = createFileRoute("/shop")({
+  validateSearch: validatePageSearch,
   head: () => ({
     meta: [
       { title: "Shop — Emmanuel Rayan Daka" },
@@ -34,30 +37,46 @@ function formatPrice(cents: number, currency: string) {
   }
 }
 
+const shopQuery = (page: number) => ({
+  queryKey: ["public", "shop", page] as const,
+  queryFn: async () => {
+    const { from, to } = pageRangeBounds(page, PAGE_SIZE);
+    const { data, error, count } = await supabase
+      .from("shop_products")
+      .select("id, slug, title, description, image_url, price_cents, currency, stock, buy_url", { count: "exact" })
+      .eq("published", true)
+      .order("sort_order")
+      .range(from, to);
+    if (error) throw error;
+    return { items: data as Product[], total: count ?? 0 };
+  },
+});
+
 function ShopPage() {
-  const [page, setPage] = useState(1);
-  const { data, isLoading } = useQuery({
-    queryKey: ["public", "shop", page],
-    queryFn: async () => {
-      const from = (page - 1) * PAGE_SIZE;
-      const to = from + PAGE_SIZE - 1;
-      const { data, error, count } = await supabase
-        .from("shop_products")
-        .select("id, slug, title, description, image_url, price_cents, currency, stock, buy_url", { count: "exact" })
-        .eq("published", true)
-        .order("sort_order")
-        .range(from, to);
-      if (error) throw error;
-      return { items: data as Product[], total: count ?? 0 };
-    },
+  const { page } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const qc = useQueryClient();
+  const setPage = (p: number) => navigate({ search: { page: p } });
+
+  const { data, isLoading, isFetching } = useQuery({
+    ...shopQuery(page),
+    placeholderData: keepPreviousData,
   });
 
   const items = data?.items ?? [];
-  const totalPages = Math.max(1, Math.ceil((data?.total ?? 0) / PAGE_SIZE));
+  const total = data?.total ?? 0;
+  const totalPages = totalPagesFor(total, PAGE_SIZE);
+
+  useScrollTopOnPageChange(page);
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [page]);
+    if (page < totalPages) qc.prefetchQuery(shopQuery(page + 1));
+  }, [page, totalPages, qc]);
+
+  useEffect(() => {
+    if (data && page > totalPages) setPage(totalPages);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, page, totalPages]);
 
   return (
     <PageShell>
@@ -71,17 +90,19 @@ function ShopPage() {
         </div>
 
         {isLoading ? (
-          <p className="text-white/40">Opening the crate…</p>
+          <GridSkeleton count={PAGE_SIZE} className="grid gap-8 md:grid-cols-2 lg:grid-cols-3" itemClassName="h-80" />
         ) : items.length === 0 ? (
           <p className="text-white/40">Nothing on the shelf right now.</p>
         ) : (
           <>
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div
+              className={`grid gap-8 transition-opacity duration-200 motion-reduce:transition-none md:grid-cols-2 lg:grid-cols-3 ${isFetching ? "opacity-50" : "opacity-100"}`}
+            >
               {items.map((p) => (
                 <div key={p.id} className="flex flex-col overflow-hidden border border-white/10 bg-neutral-900/40">
                   {p.image_url && (
                     <div className="aspect-square overflow-hidden bg-neutral-900">
-                      <img src={p.image_url} alt={p.title} className="h-full w-full object-cover" />
+                      <img src={p.image_url} alt={p.title} loading="lazy" className="h-full w-full object-cover" />
                     </div>
                   )}
                   <div className="flex flex-1 flex-col p-5">
@@ -109,7 +130,14 @@ function ShopPage() {
                 </div>
               ))}
             </div>
-            <Paginator page={page} totalPages={totalPages} onPageChange={setPage} />
+            <Paginator
+              page={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+              total={total}
+              pageSize={PAGE_SIZE}
+              currentCount={items.length}
+            />
           </>
         )}
 

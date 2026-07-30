@@ -1,14 +1,17 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
 import { Paginator } from "@/components/site/Paginator";
+import { GridSkeleton } from "@/components/site/GridSkeleton";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
-import { useEffect, useState } from "react";
+import { pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
+import { useEffect } from "react";
 
 const PAGE_SIZE = 6;
 
 export const Route = createFileRoute("/diaries")({
+  validateSearch: validatePageSearch,
   head: () => ({
     meta: [
       { title: "Gaijin Diaries — Emmanuel Rayan Daka" },
@@ -22,31 +25,46 @@ export const Route = createFileRoute("/diaries")({
 
 type Entry = { id: string; slug: string; title: string; entry_date: string; location: string | null; cover_image_url: string | null; body: string | null };
 
-function DiariesPage() {
-  const [page, setPage] = useState(1);
+const diariesQuery = (page: number) => ({
+  queryKey: ["public", "diaries", page] as const,
+  queryFn: async () => {
+    const { from, to } = pageRangeBounds(page, PAGE_SIZE);
+    const { data, error, count } = await supabase
+      .from("diary_entries")
+      .select("id, slug, title, entry_date, location, cover_image_url, body", { count: "exact" })
+      .eq("published", true)
+      .order("entry_date", { ascending: false })
+      .range(from, to);
+    if (error) throw error;
+    return { entries: data as Entry[], total: count ?? 0 };
+  },
+});
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["public", "diaries", page],
-    queryFn: async () => {
-      const from = (page - 1) * PAGE_SIZE;
-      const to = from + PAGE_SIZE - 1;
-      const { data, error, count } = await supabase
-        .from("diary_entries")
-        .select("id, slug, title, entry_date, location, cover_image_url, body", { count: "exact" })
-        .eq("published", true)
-        .order("entry_date", { ascending: false })
-        .range(from, to);
-      if (error) throw error;
-      return { entries: data as Entry[], total: count ?? 0 };
-    },
+function DiariesPage() {
+  const { page } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const qc = useQueryClient();
+  const setPage = (p: number) => navigate({ search: { page: p } });
+
+  const { data, isLoading, isFetching } = useQuery({
+    ...diariesQuery(page),
+    placeholderData: keepPreviousData,
   });
 
   const entries = data?.entries ?? [];
-  const totalPages = Math.max(1, Math.ceil((data?.total ?? 0) / PAGE_SIZE));
+  const total = data?.total ?? 0;
+  const totalPages = totalPagesFor(total, PAGE_SIZE);
+
+  useScrollTopOnPageChange(page);
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [page]);
+    if (page < totalPages) qc.prefetchQuery(diariesQuery(page + 1));
+  }, [page, totalPages, qc]);
+
+  useEffect(() => {
+    if (data && page > totalPages) setPage(totalPages);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, page, totalPages]);
 
   return (
     <PageShell>
@@ -60,12 +78,14 @@ function DiariesPage() {
         </div>
 
         {isLoading ? (
-          <p className="text-white/40">Opening the notebook…</p>
+          <GridSkeleton count={3} className="space-y-12" itemClassName="h-44" />
         ) : entries.length === 0 ? (
           <p className="text-white/40">No entries yet.</p>
         ) : (
           <>
-            <div className="space-y-12">
+            <div
+              className={`space-y-12 transition-opacity duration-200 motion-reduce:transition-none ${isFetching ? "opacity-50" : "opacity-100"}`}
+            >
               {entries.map((e) => (
                 <article key={e.id} className="border-b border-white/10 pb-12 last:border-b-0">
                   <Link
@@ -75,7 +95,7 @@ function DiariesPage() {
                   >
                     {e.cover_image_url && (
                       <div className="overflow-hidden bg-neutral-900">
-                        <img src={e.cover_image_url} alt="" className="h-40 w-full object-cover md:h-full" />
+                        <img src={e.cover_image_url} alt="" loading="lazy" className="h-40 w-full object-cover md:h-full" />
                       </div>
                     )}
                     <div>
@@ -95,7 +115,14 @@ function DiariesPage() {
                 </article>
               ))}
             </div>
-            <Paginator page={page} totalPages={totalPages} onPageChange={setPage} />
+            <Paginator
+              page={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+              total={total}
+              pageSize={PAGE_SIZE}
+              currentCount={entries.length}
+            />
           </>
         )}
 
