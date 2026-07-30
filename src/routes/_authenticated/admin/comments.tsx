@@ -25,18 +25,25 @@ type Row = {
 
 function CommentsAdmin() {
   const qc = useQueryClient();
-  const { data: rows = [], isLoading } = useQuery({
-    queryKey: ["admin", "comments"],
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin", "comments", page],
+    placeholderData: keepPreviousData,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { from, to } = pageRangeBounds(page, PAGE_SIZE);
+      const { data, error, count } = await supabase
         .from("comments" as never)
-        .select("id, user_id, body, status, content_type, content_id, created_at")
+        .select("id, user_id, body, status, content_type, content_id, created_at", { count: "exact" })
         .order("created_at", { ascending: false })
-        .limit(200);
+        .range(from, to);
       if (error) throw error;
-      return (data ?? []) as unknown as Row[];
+      return { rows: (data ?? []) as unknown as Row[], total: count ?? 0 };
     },
   });
+
+  const rows = data?.rows ?? [];
+  const total = data?.total ?? 0;
+  const totalPages = totalPagesFor(total, PAGE_SIZE);
 
   const setStatus = useMutation({
     mutationFn: async (v: { id: string; status: "visible" | "hidden" }) => {
