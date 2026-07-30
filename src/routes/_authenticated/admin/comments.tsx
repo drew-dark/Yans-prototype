@@ -107,6 +107,14 @@ function CommentsAdmin() {
               <p className="mt-2 whitespace-pre-wrap text-sm text-white/80">{r.body}</p>
             </div>
           ))}
+          <Paginator
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            total={total}
+            pageSize={PAGE_SIZE}
+            currentCount={rows.length}
+          />
         </div>
       )}
     </div>
