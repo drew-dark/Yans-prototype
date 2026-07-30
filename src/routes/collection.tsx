@@ -1,19 +1,25 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
+import { Paginator } from "@/components/site/Paginator";
+import { GridSkeleton } from "@/components/site/GridSkeleton";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { useMediaViewer } from "@/components/site/MediaViewer";
 import { BookmarkButton } from "@/components/site/BookmarkButton";
 import { CommentsSection } from "@/components/site/CommentsSection";
+import { isRangeOutOfBounds, pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
 import portraitImg from "@/assets/muyan-portrait.jpg";
 import broadcastImg from "@/assets/muyan-broadcast.jpg";
 import foodImg from "@/assets/muyan-food.jpg";
 import verseImg from "@/assets/muyan-verse.jpg";
 import stageImg from "@/assets/muyan-stage.jpg";
 
+const PAGE_SIZE = 8;
+
 export const Route = createFileRoute("/collection")({
+  validateSearch: validatePageSearch,
   head: () => ({
     meta: [
       { title: "Muyan Collection — Emmanuel Rayan Daka" },
@@ -46,25 +52,53 @@ const fallbackTiles: Tile[] = [
   { id: "8", image_url: foodImg, label: "Table" },
 ];
 
+const collectionQuery = (page: number) => ({
+  queryKey: ["public", "collection_items", page] as const,
+  queryFn: async () => {
+    const { from, to } = pageRangeBounds(page, PAGE_SIZE);
+    const { data, error, count } = await supabase
+      .from("collection_items")
+      .select("id, image_url, label", { count: "exact" })
+      .eq("published", true)
+      .order("sort_order")
+      .range(from, to);
+    if (error && !isRangeOutOfBounds(error)) throw error;
+    return { items: (data ?? []) as Tile[], total: count ?? 0 };
+  },
+});
+
 function CollectionPage() {
-  const { data: tiles = fallbackTiles } = useQuery({
-    queryKey: ["public", "collection_items", "all"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("collection_items")
-        .select("id, image_url, label")
-        .eq("published", true)
-        .order("sort_order");
-      if (error) throw error;
-      return data.length > 0 ? (data as Tile[]) : fallbackTiles;
-    },
+  const { page } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const qc = useQueryClient();
+  const setPage = (p: number) => navigate({ search: { page: p } });
+
+  const { data, isLoading, isFetching } = useQuery({
+    ...collectionQuery(page),
+    placeholderData: keepPreviousData,
   });
+
+  const usingFallback = !!data && data.total === 0;
+  const tiles = usingFallback ? fallbackTiles : (data?.items ?? []);
+  const total = usingFallback ? 0 : (data?.total ?? 0);
+  const totalPages = totalPagesFor(total, PAGE_SIZE);
 
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   const selected = tiles.find((t) => t.id === selectedId && UUID_RE.test(t.id)) ?? null;
 
   const { open } = useMediaViewer();
+
+  useScrollTopOnPageChange(page);
+
+  useEffect(() => {
+    if (page < totalPages) qc.prefetchQuery(collectionQuery(page + 1));
+  }, [page, totalPages, qc]);
+
+  useEffect(() => {
+    if (data && page > totalPages) setPage(totalPages);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, page, totalPages]);
 
   return (
     <PageShell>
@@ -77,37 +111,59 @@ function CollectionPage() {
             Muyan Collection
           </h1>
           <p className="mt-6 text-sm text-white/50 md:text-base">
-            Eight frames pulled from the quiet places — portrait, broadcast, verse,
+            Frames pulled from the quiet places — portrait, broadcast, verse,
             culture, and the stages in between. Tap any card to open it fuller.
           </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-          {tiles.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => {
-                setSelectedId(t.id);
-                open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label });
-              }}
-              className="group relative aspect-[3/4] overflow-hidden border border-white/10 bg-neutral-900 text-left"
-              aria-label={t.label}
+        {isLoading ? (
+          <GridSkeleton
+            count={PAGE_SIZE}
+            className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4"
+            itemClassName="aspect-[3/4]"
+          />
+        ) : (
+          <>
+            <div
+              className={`grid grid-cols-2 gap-4 transition-opacity duration-200 motion-reduce:transition-none md:grid-cols-3 lg:grid-cols-4 ${isFetching ? "opacity-50" : "opacity-100"}`}
             >
-              <img
-                src={t.image_url}
-                alt={t.label}
-                loading="lazy"
-                className="h-full w-full object-cover"
+              {tiles.map((t) => (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => {
+                    setSelectedId(t.id);
+                    open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label });
+                  }}
+                  className="group relative aspect-[3/4] overflow-hidden border border-white/10 bg-neutral-900 text-left"
+                  aria-label={t.label}
+                >
+                  <img
+                    src={t.image_url}
+                    alt={t.label}
+                    loading="lazy"
+                    className="h-full w-full object-cover"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-3">
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-white">
+                      {t.label}
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
+            {!usingFallback && (
+              <Paginator
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+                total={total}
+                pageSize={PAGE_SIZE}
+                currentCount={tiles.length}
               />
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-3">
-                <p className="font-mono text-[10px] uppercase tracking-widest text-white">
-                  {t.label}
-                </p>
-              </div>
-            </button>
-          ))}
-        </div>
+            )}
+          </>
+        )}
 
         {selected && (
           <div className="mt-16 border-t border-white/10 pt-8">
@@ -122,7 +178,6 @@ function CollectionPage() {
             <CommentsSection contentType="collection_item" contentId={selected.id} />
           </div>
         )}
-
 
         <div className="mt-16 flex items-center justify-between border-t border-white/10 pt-6 font-mono text-[10px] uppercase tracking-widest text-white/40">
           <span>Muyan · Series 01</span>

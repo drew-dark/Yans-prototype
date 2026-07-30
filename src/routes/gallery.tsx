@@ -1,18 +1,21 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
 import { Paginator } from "@/components/site/Paginator";
+import { GridSkeleton } from "@/components/site/GridSkeleton";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { useMediaViewer } from "@/components/site/MediaViewer";
 import { BookmarkButton } from "@/components/site/BookmarkButton";
 import { CommentsSection } from "@/components/site/CommentsSection";
+import { isRangeOutOfBounds, pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
 import { useEffect, useState } from "react";
 
 const PAGE_SIZE = 12;
 const VIDEO_RE = /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i;
 
 export const Route = createFileRoute("/gallery")({
+  validateSearch: validatePageSearch,
   head: () => ({
     meta: [
       { title: "Gallery — Emmanuel Rayan Daka" },
@@ -26,33 +29,49 @@ export const Route = createFileRoute("/gallery")({
 
 type Photo = { id: string; image_url: string; caption: string | null; tags: string[] };
 
+const galleryQuery = (page: number) => ({
+  queryKey: ["public", "gallery", page] as const,
+  queryFn: async () => {
+    const { from, to } = pageRangeBounds(page, PAGE_SIZE);
+    const { data, error, count } = await supabase
+      .from("gallery_photos")
+      .select("id, image_url, caption, tags", { count: "exact" })
+      .eq("published", true)
+      .order("sort_order")
+      .range(from, to);
+    if (error && !isRangeOutOfBounds(error)) throw error;
+    return { photos: (data ?? []) as Photo[], total: count ?? 0 };
+  },
+});
+
 function GalleryPage() {
-  const [page, setPage] = useState(1);
+  const { page } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
+  const qc = useQueryClient();
+  const setPage = (p: number) => navigate({ search: { page: p } });
+
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const { data, isLoading } = useQuery({
-    queryKey: ["public", "gallery", page],
-    queryFn: async () => {
-      const from = (page - 1) * PAGE_SIZE;
-      const to = from + PAGE_SIZE - 1;
-      const { data, error, count } = await supabase
-        .from("gallery_photos")
-        .select("id, image_url, caption, tags", { count: "exact" })
-        .eq("published", true)
-        .order("sort_order")
-        .range(from, to);
-      if (error) throw error;
-      return { photos: data as Photo[], total: count ?? 0 };
-    },
+  const { data, isLoading, isFetching } = useQuery({
+    ...galleryQuery(page),
+    placeholderData: keepPreviousData,
   });
 
   const photos = data?.photos ?? [];
+  const total = data?.total ?? 0;
   const selected = photos.find((p) => p.id === selectedId) ?? null;
-  const totalPages = Math.max(1, Math.ceil((data?.total ?? 0) / PAGE_SIZE));
+  const totalPages = totalPagesFor(total, PAGE_SIZE);
   const { open } = useMediaViewer();
 
+  useScrollTopOnPageChange(page);
+
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [page]);
+    if (page < totalPages) qc.prefetchQuery(galleryQuery(page + 1));
+  }, [page, totalPages, qc]);
+
+  useEffect(() => {
+    if (data && page > totalPages) setPage(totalPages);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, page, totalPages]);
 
   return (
     <PageShell>
@@ -66,12 +85,18 @@ function GalleryPage() {
         </div>
 
         {isLoading ? (
-          <p className="text-white/40">Developing frames…</p>
+          <GridSkeleton
+            count={PAGE_SIZE}
+            className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-4 lg:grid-cols-4"
+            itemClassName="aspect-square"
+          />
         ) : photos.length === 0 ? (
           <p className="text-white/40">No photographs published yet.</p>
         ) : (
           <>
-            <div className="grid grid-cols-2 gap-2 md:grid-cols-3 md:gap-4 lg:grid-cols-4">
+            <div
+              className={`grid grid-cols-2 gap-2 transition-opacity duration-200 motion-reduce:transition-none md:grid-cols-3 md:gap-4 lg:grid-cols-4 ${isFetching ? "opacity-50" : "opacity-100"}`}
+            >
               {photos.map((p, i) => {
                 const isVideo = VIDEO_RE.test(p.image_url);
                 return (
@@ -118,7 +143,14 @@ function GalleryPage() {
                 );
               })}
             </div>
-            <Paginator page={page} totalPages={totalPages} onPageChange={setPage} />
+            <Paginator
+              page={page}
+              totalPages={totalPages}
+              onPageChange={setPage}
+              total={total}
+              pageSize={PAGE_SIZE}
+              currentCount={photos.length}
+            />
             {selected && (
               <div className="mt-16 border-t border-white/10 pt-8">
                 <div className="flex flex-wrap items-center gap-4">

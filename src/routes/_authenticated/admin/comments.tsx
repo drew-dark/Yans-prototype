@@ -1,8 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Paginator } from "@/components/site/Paginator";
+import { pageRangeBounds, totalPagesFor } from "@/lib/pagination";
 import { toast } from "sonner";
+
+const PAGE_SIZE = 25;
 
 export const Route = createFileRoute("/_authenticated/admin/comments")({
   component: CommentsAdmin,
@@ -20,18 +25,25 @@ type Row = {
 
 function CommentsAdmin() {
   const qc = useQueryClient();
-  const { data: rows = [], isLoading } = useQuery({
-    queryKey: ["admin", "comments"],
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin", "comments", page],
+    placeholderData: keepPreviousData,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { from, to } = pageRangeBounds(page, PAGE_SIZE);
+      const { data, error, count } = await supabase
         .from("comments" as never)
-        .select("id, user_id, body, status, content_type, content_id, created_at")
+        .select("id, user_id, body, status, content_type, content_id, created_at", { count: "exact" })
         .order("created_at", { ascending: false })
-        .limit(200);
+        .range(from, to);
       if (error) throw error;
-      return (data ?? []) as unknown as Row[];
+      return { rows: (data ?? []) as unknown as Row[], total: count ?? 0 };
     },
   });
+
+  const rows = data?.rows ?? [];
+  const total = data?.total ?? 0;
+  const totalPages = totalPagesFor(total, PAGE_SIZE);
 
   const setStatus = useMutation({
     mutationFn: async (v: { id: string; status: "visible" | "hidden" }) => {
@@ -95,6 +107,14 @@ function CommentsAdmin() {
               <p className="mt-2 whitespace-pre-wrap text-sm text-white/80">{r.body}</p>
             </div>
           ))}
+          <Paginator
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+            total={total}
+            pageSize={PAGE_SIZE}
+            currentCount={rows.length}
+          />
         </div>
       )}
     </div>
