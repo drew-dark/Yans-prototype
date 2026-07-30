@@ -12,6 +12,12 @@ interface Props {
   page: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  /** Total number of items across all pages — enables the "Showing x–y of z" line. */
+  total?: number;
+  pageSize?: number;
+  /** Number of items rendered on the current page (defaults to pageSize math). */
+  currentCount?: number;
+  className?: string;
 }
 
 function pageRange(current: number, total: number): (number | "…")[] {
@@ -26,68 +32,113 @@ function pageRange(current: number, total: number): (number | "…")[] {
   return pages;
 }
 
-export function Paginator({ page, totalPages, onPageChange }: Props) {
-  if (totalPages <= 1) return null;
+export function Paginator({
+  page,
+  totalPages,
+  onPageChange,
+  total,
+  pageSize,
+  currentCount,
+  className = "",
+}: Props) {
+  const showSummary = typeof total === "number" && typeof pageSize === "number" && total > 0;
+  const first = (page - 1) * (pageSize ?? 0) + 1;
+  const last = Math.min(
+    total ?? 0,
+    first - 1 + (currentCount ?? pageSize ?? 0),
+  );
+
+  if (totalPages <= 1 && !showSummary) return null;
+
+  const atStart = page <= 1;
+  const atEnd = page >= totalPages;
+
+  const navClass = (disabled: boolean) =>
+    disabled
+      ? "pointer-events-none opacity-30"
+      : "text-white/70 hover:bg-white/10 hover:text-white";
 
   return (
-    <Pagination className="mt-12">
-      <PaginationContent className="flex-wrap">
-        <PaginationItem>
-          <PaginationPrevious
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              if (page > 1) onPageChange(page - 1);
-            }}
-            className={
-              page === 1
-                ? "pointer-events-none opacity-30"
-                : "text-white/70 hover:bg-white/10 hover:text-white"
-            }
-          />
-        </PaginationItem>
+    <div className={`mt-12 flex flex-col items-center gap-3 ${className}`}>
+      {showSummary && (
+        <p
+          aria-live="polite"
+          className="font-mono text-[10px] uppercase tracking-widest text-white/40"
+        >
+          Showing {first}–{last} of {total}
+        </p>
+      )}
 
-        {pageRange(page, totalPages).map((p, idx) =>
-          p === "…" ? (
-            <PaginationItem key={`e-${idx}`}>
-              <PaginationEllipsis className="text-white/40" />
-            </PaginationItem>
-          ) : (
-            <PaginationItem key={p}>
-              <PaginationLink
+      {totalPages > 1 && (
+        <Pagination>
+          <PaginationContent className="flex-wrap">
+            <PaginationItem>
+              <PaginationPrevious
                 href="#"
-                isActive={p === page}
+                aria-label="Go to previous page"
+                aria-disabled={atStart}
+                tabIndex={atStart ? -1 : 0}
                 onClick={(e) => {
                   e.preventDefault();
-                  onPageChange(p);
+                  if (!atStart) onPageChange(page - 1);
                 }}
-                className={
-                  p === page
-                    ? "border-kraft bg-kraft text-ink-dark hover:bg-kraft-dark"
-                    : "text-white/70 hover:bg-white/10 hover:text-white"
-                }
-              >
-                {p}
-              </PaginationLink>
+                className={navClass(atStart)}
+              />
             </PaginationItem>
-          ),
-        )}
 
-        <PaginationItem>
-          <PaginationNext
-            href="#"
-            onClick={(e) => {
-              e.preventDefault();
-              if (page < totalPages) onPageChange(page + 1);
-            }}
-            className={
-              page === totalPages
-                ? "pointer-events-none opacity-30"
-                : "text-white/70 hover:bg-white/10 hover:text-white"
-            }
-          />
-        </PaginationItem>
-      </PaginationContent>
-    </Pagination>
+            {/* Compact indicator on small screens */}
+            <PaginationItem className="sm:hidden">
+              <span className="px-3 font-mono text-[10px] uppercase tracking-widest text-white/60">
+                Page {page} of {totalPages}
+              </span>
+            </PaginationItem>
+
+            <span className="hidden items-center gap-1 sm:flex">
+              {pageRange(page, totalPages).map((p, idx) =>
+                p === "…" ? (
+                  <PaginationItem key={`e-${idx}`}>
+                    <PaginationEllipsis className="text-white/40" aria-hidden="true" />
+                  </PaginationItem>
+                ) : (
+                  <PaginationItem key={p}>
+                    <PaginationLink
+                      href="#"
+                      isActive={p === page}
+                      aria-label={`Go to page ${p}`}
+                      aria-current={p === page ? "page" : undefined}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        onPageChange(p);
+                      }}
+                      className={
+                        p === page
+                          ? "border-kraft bg-kraft text-ink-dark hover:bg-kraft-dark"
+                          : "text-white/70 hover:bg-white/10 hover:text-white"
+                      }
+                    >
+                      {p}
+                    </PaginationLink>
+                  </PaginationItem>
+                ),
+              )}
+            </span>
+
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                aria-label="Go to next page"
+                aria-disabled={atEnd}
+                tabIndex={atEnd ? -1 : 0}
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (!atEnd) onPageChange(page + 1);
+                }}
+                className={navClass(atEnd)}
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
+      )}
+    </div>
   );
 }
