@@ -9,7 +9,7 @@ import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { useMediaViewer } from "@/components/site/MediaViewer";
 import { BookmarkButton } from "@/components/site/BookmarkButton";
 import { CommentsSection } from "@/components/site/CommentsSection";
-import { pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
+import { isRangeOutOfBounds, pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
 import portraitImg from "@/assets/muyan-portrait.jpg";
 import broadcastImg from "@/assets/muyan-broadcast.jpg";
 import foodImg from "@/assets/muyan-food.jpg";
@@ -62,7 +62,7 @@ const collectionQuery = (page: number) => ({
       .eq("published", true)
       .order("sort_order")
       .range(from, to);
-    if (error) throw error;
+    if (error && !isRangeOutOfBounds(error)) throw error;
     return { items: (data ?? []) as Tile[], total: count ?? 0 };
   },
 });

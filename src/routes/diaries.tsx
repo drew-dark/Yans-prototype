@@ -5,7 +5,7 @@ import { PageShell } from "@/components/site/SiteChrome";
 import { Paginator } from "@/components/site/Paginator";
 import { GridSkeleton } from "@/components/site/GridSkeleton";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
-import { pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
+import { isRangeOutOfBounds, pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
 import { useEffect } from "react";
 
 const PAGE_SIZE = 6;
@@ -35,8 +35,8 @@ const diariesQuery = (page: number) => ({
       .eq("published", true)
       .order("entry_date", { ascending: false })
       .range(from, to);
-    if (error) throw error;
-    return { entries: data as Entry[], total: count ?? 0 };
+    if (error && !isRangeOutOfBounds(error)) throw error;
+    return { entries: (data ?? []) as Entry[], total: count ?? 0 };
   },
 });
 

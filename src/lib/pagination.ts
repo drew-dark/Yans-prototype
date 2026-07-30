@@ -27,3 +27,8 @@ export function useScrollTopOnPageChange(page: number) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page]);
 }
+
+/** Supabase returns 416/PGRST103 when `.range()` starts past the last row. */
+export function isRangeOutOfBounds(error: { code?: string } | null): boolean {
+  return error?.code === "PGRST103";
+}

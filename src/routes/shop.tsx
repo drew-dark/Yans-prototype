@@ -5,7 +5,7 @@ import { PageShell } from "@/components/site/SiteChrome";
 import { Paginator } from "@/components/site/Paginator";
 import { GridSkeleton } from "@/components/site/GridSkeleton";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
-import { pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
+import { isRangeOutOfBounds, pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
 import { useEffect } from "react";
 
 const PAGE_SIZE = 9;
@@ -47,8 +47,8 @@ const shopQuery = (page: number) => ({
       .eq("published", true)
       .order("sort_order")
       .range(from, to);
-    if (error) throw error;
-    return { items: data as Product[], total: count ?? 0 };
+    if (error && !isRangeOutOfBounds(error)) throw error;
+    return { items: (data ?? []) as Product[], total: count ?? 0 };
   },
 });
 

@@ -8,7 +8,7 @@ import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { useMediaViewer } from "@/components/site/MediaViewer";
 import { BookmarkButton } from "@/components/site/BookmarkButton";
 import { CommentsSection } from "@/components/site/CommentsSection";
-import { pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
+import { isRangeOutOfBounds, pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
 import { useEffect, useState } from "react";
 
 const PAGE_SIZE = 12;
@@ -39,8 +39,8 @@ const galleryQuery = (page: number) => ({
       .eq("published", true)
       .order("sort_order")
       .range(from, to);
-    if (error) throw error;
-    return { photos: data as Photo[], total: count ?? 0 };
+    if (error && !isRangeOutOfBounds(error)) throw error;
+    return { photos: (data ?? []) as Photo[], total: count ?? 0 };
   },
 });
 
