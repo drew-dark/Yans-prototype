@@ -82,7 +82,7 @@ function ShopPage() {
     <PageShell>
       <section className="mx-auto max-w-6xl px-6 py-16 md:px-12">
         <div className="mb-16 max-w-2xl">
-          <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.4em] text-white/40">Wares</p>
+          <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">Wares</p>
           <h1 className="font-display text-6xl uppercase leading-none tracking-tight md:text-8xl">Shop</h1>
           <p className="mt-6 text-sm text-white/50 md:text-base">
             Books, prints, zines. Small runs. Purchase links open in a new tab.
@@ -99,7 +99,7 @@ function ShopPage() {
               className={`grid gap-8 transition-opacity duration-200 motion-reduce:transition-none md:grid-cols-2 lg:grid-cols-3 ${isFetching ? "opacity-50" : "opacity-100"}`}
             >
               {items.map((p) => (
-                <div key={p.id} className="flex flex-col overflow-hidden border border-white/10 bg-neutral-900/40">
+                <div key={p.id} className="flex flex-col overflow-hidden border border-white/10 bg-neutral-900/40 transition-colors duration-300 hover:border-kraft/40">
                   {p.image_url && (
                     <div className="aspect-square overflow-hidden bg-neutral-900">
                       <img src={p.image_url} alt={p.title} loading="lazy" className="h-full w-full object-cover" />

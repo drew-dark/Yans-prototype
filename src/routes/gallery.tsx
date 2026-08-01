@@ -77,7 +77,7 @@ function GalleryPage() {
     <PageShell>
       <section className="mx-auto max-w-6xl px-6 py-16 md:px-12">
         <div className="mb-12 max-w-2xl">
-          <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.4em] text-white/40">Volume 01</p>
+          <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">Volume 01</p>
           <h1 className="font-display text-6xl uppercase leading-none tracking-tight md:text-8xl">Gallery</h1>
           <p className="mt-6 text-sm text-white/50 md:text-base">
             Snapshots collected between two homes. Click any frame to see it fuller.
