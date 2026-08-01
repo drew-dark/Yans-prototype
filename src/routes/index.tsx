@@ -329,7 +329,7 @@ function Index() {
                   src={t.image_url}
                   alt={t.label}
                   loading="lazy"
-                  className={`h-full w-full object-cover ${imageTransitionClass} md:${hoverImageClass ? "group-hover/strip:opacity-40" : ""} ${hoverImageClass} hover:!opacity-100 focus-visible:!opacity-100`}
+                  className={`h-full w-full object-cover ${imageTransitionClass} ${hoverImageClass} md:group-hover/strip:opacity-40 md:hover:!opacity-100 md:focus-visible:!opacity-100`}
                 />
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2.5 md:p-3">
                   <p className="font-mono text-[9px] uppercase tracking-widest text-white md:text-[10px]">{t.label}</p>
