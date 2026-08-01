@@ -34,7 +34,7 @@ export const Route = createFileRoute("/stories/$slug")({
   ),
   notFoundComponent: () => (
     <PageShell>
-      <div className="mx-auto max-w-2xl px-6 py-24 text-center">
+      <div className="mx-auto max-w-2xl px-5 py-16 text-center md:py-24">
         <h1 className="font-display text-6xl uppercase">Not found</h1>
         <Link to="/stories" className="mt-6 inline-block font-mono text-xs uppercase tracking-widest text-white/60 hover:text-white">← Back to stories</Link>
       </div>
@@ -60,7 +60,7 @@ function StoryPage() {
   return (
     <PageShell>
       <ReadingProgress />
-      <article className="mx-auto max-w-3xl px-6 py-16 md:px-12">
+      <article className="mx-auto max-w-3xl px-5 py-10 md:px-12 md:py-16">
         <Link to="/stories" className="font-mono text-[10px] uppercase tracking-widest text-white/40 hover:text-white">← Stories</Link>
         <div className="mt-6 flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-white/40">
           {s.published_at && (
@@ -76,7 +76,7 @@ function StoryPage() {
             {s.part_title && <> · {s.part_title}</>}
           </p>
         )}
-        <h1 className="mt-3 font-display text-5xl uppercase leading-none tracking-tight md:text-7xl">{s.title}</h1>
+        <h1 className="mt-3 font-display text-4xl uppercase leading-tight tracking-tight sm:text-5xl md:text-7xl">{s.title}</h1>
         {s.excerpt && (
           <p className="mt-6 border-l-2 border-white/30 pl-4 font-display text-xl italic tracking-tight text-white/70 md:text-2xl">
             {s.excerpt}

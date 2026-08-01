@@ -38,7 +38,7 @@ export const Route = createFileRoute("/diaries/$slug")({
   ),
   notFoundComponent: () => (
     <PageShell>
-      <div className="mx-auto max-w-2xl px-6 py-24 text-center">
+      <div className="mx-auto max-w-2xl px-5 py-16 text-center md:py-24">
         <h1 className="font-display text-6xl uppercase">Not found</h1>
         <p className="mt-4 text-white/50">That entry isn't published.</p>
         <Link to="/diaries" className="mt-6 inline-block font-mono text-xs uppercase tracking-widest text-white/60 hover:text-white">← Back to diaries</Link>
@@ -65,7 +65,7 @@ function EntryPage() {
   return (
     <PageShell>
       <ReadingProgress />
-      <article className="mx-auto max-w-3xl px-6 py-16 md:px-12">
+      <article className="mx-auto max-w-3xl px-5 py-10 md:px-12 md:py-16">
         <Link to="/diaries" className="font-mono text-[10px] uppercase tracking-widest text-white/40 hover:text-white">← Diaries</Link>
         <div className="mt-6 flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-white/40">
           <span>{new Date(e.entry_date).toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" })}</span>
@@ -79,7 +79,7 @@ function EntryPage() {
             {e.part_title && <> · {e.part_title}</>}
           </p>
         )}
-        <h1 className="mt-3 font-display text-5xl uppercase leading-none tracking-tight md:text-7xl">{e.title}</h1>
+        <h1 className="mt-3 font-display text-4xl uppercase leading-tight tracking-tight sm:text-5xl md:text-7xl">{e.title}</h1>
         {e.cover_image_url && (
           <button
             type="button"

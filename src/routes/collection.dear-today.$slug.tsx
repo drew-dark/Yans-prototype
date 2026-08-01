@@ -41,7 +41,7 @@ export const Route = createFileRoute("/collection/dear-today/$slug")({
   ),
   notFoundComponent: () => (
     <PageShell>
-      <div className="mx-auto max-w-2xl px-6 py-24 text-center">
+      <div className="mx-auto max-w-2xl px-5 py-16 text-center md:py-24">
         <h1 className="font-display text-6xl uppercase">Not found</h1>
         <Link to="/collection/dear-today" className="mt-6 inline-block font-mono text-xs uppercase tracking-widest text-white/60 hover:text-white">
           ← Back to Dear Today
@@ -74,7 +74,7 @@ function EntryPage() {
   return (
     <PageShell>
       <ReadingProgress />
-      <article className="mx-auto max-w-3xl px-6 py-16 md:px-12">
+      <article className="mx-auto max-w-3xl px-5 py-10 md:px-12 md:py-16">
         <Link to="/collection/dear-today" className="font-mono text-[10px] uppercase tracking-widest text-white/40 hover:text-white">
           ← Dear Today
         </Link>
@@ -89,7 +89,7 @@ function EntryPage() {
             </>
           )}
         </div>
-        <h1 className="mt-3 font-display text-5xl uppercase leading-none tracking-tight md:text-7xl">
+        <h1 className="mt-3 font-display text-4xl uppercase leading-tight tracking-tight sm:text-5xl md:text-7xl">
           {e.title}
         </h1>
         {e.excerpt && (

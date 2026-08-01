@@ -239,17 +239,17 @@ function CommentItem({
   const name = row.profiles?.display_name || "Reader";
   return (
     <div className={`rounded border border-white/10 bg-neutral-900/50 p-4 ${hidden ? "opacity-50" : ""}`}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+        <div className="flex min-w-0 items-center gap-2">
           {row.profiles?.avatar_url ? (
-            <img src={row.profiles.avatar_url} alt="" className="h-6 w-6 rounded-full object-cover" />
+            <img src={row.profiles.avatar_url} alt="" className="h-6 w-6 shrink-0 rounded-full object-cover" />
           ) : (
-            <div className="grid h-6 w-6 place-items-center rounded-full bg-white/10 font-mono text-[10px] uppercase">
+            <div className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-white/10 font-mono text-[10px] uppercase">
               {name.slice(0, 1)}
             </div>
           )}
-          <span className="font-mono text-xs text-white/70">{name}</span>
-          <span className="font-mono text-[10px] text-white/30">
+          <span className="truncate font-mono text-xs text-white/70">{name}</span>
+          <span className="shrink-0 font-mono text-[10px] text-white/30">
             {new Date(row.created_at).toLocaleDateString()}
           </span>
           {hidden && (
@@ -258,7 +258,8 @@ function CommentItem({
             </span>
           )}
         </div>
-        <div className="flex gap-1 text-[10px] font-mono uppercase tracking-widest text-white/40">
+        <div className="flex shrink-0 gap-3 text-[10px] font-mono uppercase tracking-widest text-white/40 [&>button]:py-1">
+
           {onReply && userId && (
             <button onClick={onReply} className="hover:text-white">
               Reply

@@ -166,7 +166,47 @@ function Index() {
         <div className="absolute -bottom-40 -right-20 h-[600px] w-[600px] rounded-full bg-white opacity-5 blur-[120px]" />
       </div>
 
-      <div className="absolute left-8 top-8 z-50">
+      {/* Mobile top bar: name tag + section nav */}
+      <div className="sticky top-0 z-50 bg-[#0a0a0a]/90 backdrop-blur-md md:hidden">
+        <div className="flex items-center justify-between gap-3 px-4 py-3">
+          <div
+            className="-rotate-1 transform bg-kraft px-3 py-1.5 shadow-xl"
+            style={{
+              clipPath:
+                "polygon(0% 5%, 5% 0%, 95% 2%, 100% 8%, 98% 92%, 100% 100%, 5% 98%, 0% 90%)",
+            }}
+          >
+            <h1 className="font-mono text-[11px] font-bold leading-none tracking-tight text-ink-dark">
+              {headline.toUpperCase()}
+            </h1>
+            <p className="mt-1 font-mono text-[8px] uppercase tracking-widest text-ink-dark/80">
+              Poet · Journalist · Broadcaster
+            </p>
+          </div>
+          <Link
+            to="/account"
+            className="shrink-0 border border-white/20 px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-white/60"
+          >
+            ◇ Account
+          </Link>
+        </div>
+        <nav
+          aria-label="Sections"
+          className="flex items-center gap-1 overflow-x-auto border-b border-white/10 px-3 pb-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {navLinks.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className="whitespace-nowrap px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-white/50"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
+
+      <div className="absolute left-8 top-8 z-50 hidden md:block">
         <div
           className="-rotate-1 transform bg-kraft px-6 py-3 shadow-xl"
           style={{
@@ -207,72 +247,73 @@ function Index() {
         </Link>
       </nav>
 
-      <section className="relative flex min-h-screen flex-col items-center justify-center px-4 py-20">
+      <section className="relative flex flex-col items-center justify-center px-4 py-12 md:min-h-screen md:py-20">
         <div
-          className="absolute right-8 top-1/2 -translate-y-1/2 rotate-180 font-mono text-[10px] uppercase tracking-[0.5em] text-white/30"
+          className="absolute right-8 top-1/2 hidden -translate-y-1/2 rotate-180 font-mono text-[10px] uppercase tracking-[0.5em] text-white/30 md:block"
           style={{ writingMode: "vertical-rl" }}
         >
           YANS LOUNGE © 2026
         </div>
 
-        <p className="font-mono text-[10px] uppercase tracking-[0.5em] text-white/40">
+        <p className="text-center font-mono text-[9px] uppercase tracking-[0.35em] text-white/40 md:text-[10px] md:tracking-[0.5em]">
           Poet · Author · Journalist · Broadcaster
         </p>
 
-        <div className="group relative mt-14 flex h-[42vh] w-full max-w-6xl items-center justify-center gap-2 md:h-[50vh] md:gap-4">
+        <div className="group relative mt-8 flex h-[34vh] w-full max-w-6xl items-center justify-center gap-1.5 md:mt-14 md:h-[50vh] md:gap-4">
           {heroImages.map((src, i) => (
             <div
               key={i}
-              className={`h-full flex-1 -skew-x-12 transform overflow-hidden ${heroOffsets[i % heroOffsets.length]}`}
+              className={`h-full flex-1 -skew-x-6 transform overflow-hidden md:-skew-x-12 ${heroOffsets[i % heroOffsets.length]} ${i > 2 ? "hidden sm:block" : ""}`}
             >
               <img
                 src={src}
                 alt=""
                 loading="lazy"
-                className={`h-full w-full skew-x-12 scale-150 transform object-cover ${imageTransitionClass} ${hoverImageClass}`}
+                className={`h-full w-full skew-x-6 scale-125 transform object-cover md:skew-x-12 md:scale-150 ${imageTransitionClass} ${hoverImageClass}`}
               />
             </div>
           ))}
         </div>
 
-        <p className="mt-12 max-w-xl text-center text-sm font-light leading-relaxed text-white/60 md:text-lg">
+        <p className="mt-8 max-w-xl text-balance text-center text-sm font-light leading-relaxed text-white/60 md:mt-12 md:text-lg">
           {tagline}
         </p>
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+        <div className="mt-8 flex w-full max-w-xs flex-col items-stretch gap-3 sm:w-auto sm:max-w-none sm:flex-row sm:items-center sm:justify-center sm:gap-4 md:mt-10">
           <Link
             to="/collection"
-            className="border border-white/30 px-6 py-3 font-mono text-[11px] uppercase tracking-[0.3em] text-white hover:bg-white hover:text-ink-dark"
+            className="border border-white/30 px-6 py-3.5 text-center font-mono text-[11px] uppercase tracking-[0.25em] text-white hover:bg-white hover:text-ink-dark"
           >
             Enter the Collection →
           </Link>
           <Link
             to="/stories"
-            className="font-mono text-[11px] uppercase tracking-[0.3em] text-white/60 hover:text-white"
+            className="px-6 py-3 text-center font-mono text-[11px] uppercase tracking-[0.25em] text-white/60 hover:text-white"
           >
             Read stories
           </Link>
         </div>
       </section>
 
-      <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
-        <div className="mb-10 flex items-end justify-between gap-6">
-          <div>
-            <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
+
+      <section className="relative z-10 mx-auto max-w-6xl px-5 pb-16 md:px-12 md:pb-20">
+        <div className="mb-6 flex items-end justify-between gap-6 md:mb-10">
+          <div className="min-w-0">
+            <p className="mb-2 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60 md:mb-3">
               Volume 01
             </p>
-            <h3 className="font-display text-5xl uppercase leading-none tracking-tight md:text-7xl">
+            <h3 className="font-display text-4xl uppercase leading-none tracking-tight sm:text-5xl md:text-7xl">
               Muyan Collection
             </h3>
           </div>
           <Link
             to="/collection"
-            className="hidden font-mono text-[10px] uppercase tracking-widest text-white/60 hover:text-white md:inline"
+            className="hidden shrink-0 font-mono text-[10px] uppercase tracking-widest text-white/60 hover:text-white md:inline"
           >
             View all →
           </Link>
         </div>
 
-        <div className="group/strip flex h-[46vh] w-full items-stretch gap-1 overflow-hidden md:h-[58vh] md:gap-2">
+        <div className="group/strip -mx-5 flex h-[36vh] snap-x snap-mandatory items-stretch gap-1 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:mx-0 md:h-[58vh] md:snap-none md:gap-2 md:overflow-hidden md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
           {tiles.slice(0, 8).map((t, i) => {
             const heights = ["h-[88%]", "h-full", "h-[72%]", "h-[95%]", "h-[80%]", "h-full", "h-[75%]", "h-[92%]"];
             const aligns = ["self-end", "self-start", "self-end", "self-center", "self-start", "self-end", "self-center", "self-start"];
@@ -281,45 +322,43 @@ function Index() {
                 key={t.id}
                 type="button"
                 onClick={() => open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label })}
-                className={`relative flex-1 overflow-hidden border border-white/10 bg-neutral-900 text-left ${heights[i % heights.length]} ${aligns[i % aligns.length]} ${imageTransitionClass} hover:z-10 hover:flex-[2] focus-visible:z-10 focus-visible:flex-[2] focus:outline-none`}
+                className={`relative w-[44vw] shrink-0 snap-start overflow-hidden border border-white/10 bg-neutral-900 text-left md:w-auto md:flex-1 md:shrink ${heights[i % heights.length]} ${aligns[i % aligns.length]} ${imageTransitionClass} md:hover:z-10 md:hover:flex-[2] md:focus-visible:z-10 md:focus-visible:flex-[2] focus:outline-none`}
                 aria-label={t.label}
               >
                 <img
                   src={t.image_url}
                   alt={t.label}
                   loading="lazy"
-                  className={`h-full w-full object-cover ${imageTransitionClass} ${hoverImageClass} group-hover/strip:opacity-40 hover:!opacity-100 focus-visible:!opacity-100`}
+                  className={`h-full w-full object-cover ${imageTransitionClass} ${hoverImageClass} md:group-hover/strip:opacity-40 md:hover:!opacity-100 md:focus-visible:!opacity-100`}
                 />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-3 opacity-0 transition-opacity duration-500 hover:!opacity-100 group-hover/strip:opacity-0">
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-white">{t.label}</p>
-                </div>
-                <div
-                  className="pointer-events-none absolute left-2 top-2 rotate-180 font-mono text-[9px] uppercase tracking-[0.35em] text-white/70 mix-blend-difference"
-                  style={{ writingMode: "vertical-rl" }}
-                >
-                  {t.label}
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2.5 md:p-3">
+                  <p className="font-mono text-[9px] uppercase tracking-widest text-white md:text-[10px]">{t.label}</p>
                 </div>
               </button>
             );
           })}
         </div>
 
-        <div className="mt-6 text-right md:hidden">
-          <Link to="/collection" className="font-mono text-[10px] uppercase tracking-widest text-white/60 hover:text-white">
+        <div className="mt-5 flex items-center justify-between md:hidden">
+          <span className="font-mono text-[9px] uppercase tracking-widest text-white/30">
+            Swipe →
+          </span>
+          <Link to="/collection" className="font-mono text-[10px] uppercase tracking-widest text-white/60">
             View all →
           </Link>
         </div>
       </section>
 
+
       {/* Latest Stories */}
       {(
-        <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
-          <div className="mb-8 flex items-end justify-between gap-6">
+        <section className="relative z-10 mx-auto max-w-6xl px-5 pb-16 md:px-12 md:pb-20">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-3 md:mb-8">
             <div>
               <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
                 Latest
               </p>
-              <h3 className="font-display text-4xl uppercase leading-none tracking-tight md:text-6xl">
+              <h3 className="font-display text-3xl uppercase leading-none tracking-tight sm:text-4xl md:text-6xl">
                 Stories
               </h3>
             </div>
@@ -368,13 +407,13 @@ function Index() {
 
       {/* Books / Shop */}
       {(
-        <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
-          <div className="mb-8 flex items-end justify-between gap-6">
+        <section className="relative z-10 mx-auto max-w-6xl px-5 pb-16 md:px-12 md:pb-20">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-3 md:mb-8">
             <div>
               <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
                 From the shelf
               </p>
-              <h3 className="font-display text-4xl uppercase leading-none tracking-tight md:text-6xl">
+              <h3 className="font-display text-3xl uppercase leading-none tracking-tight sm:text-4xl md:text-6xl">
                 Books &amp; Wares
               </h3>
             </div>
@@ -418,13 +457,13 @@ function Index() {
 
       {/* Dear Today */}
       {(
-        <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
-          <div className="mb-8 flex items-end justify-between gap-6">
+        <section className="relative z-10 mx-auto max-w-6xl px-5 pb-16 md:px-12 md:pb-20">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-3 md:mb-8">
             <div>
               <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
                 A collection
               </p>
-              <h3 className="font-display text-4xl uppercase leading-none tracking-tight md:text-6xl">
+              <h3 className="font-display text-3xl uppercase leading-none tracking-tight sm:text-4xl md:text-6xl">
                 Dear Today
               </h3>
             </div>
@@ -475,18 +514,18 @@ function Index() {
         </section>
       )}
 
-      <section className="relative z-10 mx-auto max-w-2xl px-6 pb-24 md:px-12">
+      <section className="relative z-10 mx-auto max-w-2xl px-5 pb-20 md:px-12 md:pb-24">
         <NewsletterForm source="home" variant="kraft" />
       </section>
 
-      <footer className="flex flex-col items-end justify-between gap-8 border-t border-white/5 p-12 md:flex-row">
+      <footer className="flex flex-col items-start justify-between gap-8 border-t border-white/5 px-5 py-10 md:flex-row md:items-end md:p-12">
         <div>
           <span className="mb-2 block font-mono text-[9px] uppercase tracking-widest text-white/30">
             Currently Residing
           </span>
           <span className="text-sm uppercase tracking-widest">{location}</span>
         </div>
-        <div className="text-right">
+        <div className="w-full md:w-auto md:text-right">
           <Link
             to="/about"
             className="inline-block cursor-pointer bg-kraft px-6 py-2 text-ink-dark shadow-lg transition-transform hover:-translate-y-0.5"
