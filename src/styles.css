@@ -19,9 +19,11 @@
  */
 
 @theme inline {
-  --font-display: 'Anton', sans-serif;
+  --font-display: 'Bebas Neue', 'Anton', sans-serif;
   --font-mono: 'Courier Prime', monospace;
-  --font-sans: 'Inter', sans-serif;
+  --font-sans: 'Barlow', 'Inter', sans-serif;
+  --color-site-bg: var(--site-bg);
+  --color-site-accent: var(--kraft);
   --color-ink-dark: var(--ink-dark);
   --color-kraft: var(--kraft);
   --color-kraft-dark: var(--kraft-dark);
@@ -72,6 +74,9 @@
   --ink-dark: #0a0a0a;
   --kraft: #c5a880;
   --kraft-dark: #a38965;
+  --site-bg: #0a0a0a;
+  --site-glow-a: rgba(255, 255, 255, 0.035);
+  --site-glow-b: rgba(197, 168, 128, 0.05);
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
@@ -150,4 +155,42 @@
     background-color: var(--color-background);
     color: var(--color-foreground);
   }
+}
+
+/* ---- Site colour themes (visitor-facing surfaces) ---- */
+[data-theme="ember"] {
+  --kraft: #e0703c;
+  --kraft-dark: #b4552b;
+  --site-bg: #0b0908;
+  --site-glow-a: rgba(255, 255, 255, 0.03);
+  --site-glow-b: rgba(224, 112, 60, 0.09);
+}
+
+[data-theme="newsprint"] {
+  --kraft: #cfd6dd;
+  --kraft-dark: #a8b2bc;
+  --site-bg: #0d0f12;
+  --site-glow-a: rgba(255, 255, 255, 0.04);
+  --site-glow-b: rgba(120, 160, 200, 0.07);
+}
+
+[data-theme="moss"] {
+  --kraft: #69c39a;
+  --kraft-dark: #4a9a76;
+  --site-bg: #07100c;
+  --site-glow-a: rgba(255, 255, 255, 0.03);
+  --site-glow-b: rgba(105, 195, 154, 0.09);
+}
+
+@layer base {
+  .font-display,
+  [class*="font-display"] {
+    letter-spacing: 0.01em;
+  }
+}
+
+/* Editorial rule used across magazine-style section headers */
+@utility rule-kraft {
+  background-image: linear-gradient(to right, var(--kraft), transparent);
+  height: 2px;
 }
