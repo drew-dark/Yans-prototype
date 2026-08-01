@@ -145,9 +145,9 @@ export function SiteNavBar() {
 
 export function SiteFooter() {
   return (
-    <footer className="mt-24 border-t border-white/10 px-6 py-12 md:px-12">
+    <footer className="mt-16 border-t border-white/10 px-5 py-10 md:mt-24 md:px-12 md:py-12">
       <div className="mx-auto mb-8 h-px max-w-6xl rule-kraft opacity-60" />
-      <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-4 text-xs md:flex-row md:items-end">
+      <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 text-xs md:flex-row md:items-end">
         <div>
           <span className="mb-1 block font-mono text-[9px] uppercase tracking-widest text-white/30">
             Yans Lounge © 2026
@@ -156,13 +156,13 @@ export function SiteFooter() {
             emmanuel rayan daka
           </Link>
         </div>
-        <div className="flex gap-4 text-[10px] uppercase tracking-widest text-white/40">
-          <Link to="/stories">Stories</Link>
-          <Link to="/diaries">Diaries</Link>
-          <Link to="/collection/dear-today">Dear Today</Link>
-          <Link to="/gallery">Gallery</Link>
-          <Link to="/shop">Shop</Link>
-          <Link to="/about">About</Link>
+        <div className="grid w-full grid-cols-3 gap-x-4 gap-y-3 text-[10px] uppercase tracking-widest text-white/40 sm:w-auto sm:flex sm:gap-4">
+          <Link to="/stories" className="py-1 hover:text-white">Stories</Link>
+          <Link to="/diaries" className="py-1 hover:text-white">Diaries</Link>
+          <Link to="/collection/dear-today" className="py-1 hover:text-white">Dear Today</Link>
+          <Link to="/gallery" className="py-1 hover:text-white">Gallery</Link>
+          <Link to="/shop" className="py-1 hover:text-white">Shop</Link>
+          <Link to="/about" className="py-1 hover:text-white">About</Link>
         </div>
       </div>
     </footer>
@@ -179,10 +179,10 @@ export function PageShell({ children }: { children: React.ReactNode }) {
           "radial-gradient(circle at 20% 30%, var(--site-glow-a) 0%, transparent 50%), radial-gradient(circle at 80% 70%, var(--site-glow-b) 0%, transparent 55%)",
       }}
     >
-      <SiteHeader />
-      <MobileNav />
+      <SiteNavBar />
       {children}
       <SiteFooter />
     </div>
   );
 }
+
