@@ -352,13 +352,13 @@ function Index() {
 
       {/* Latest Stories */}
       {(
-        <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
-          <div className="mb-8 flex items-end justify-between gap-6">
+        <section className="relative z-10 mx-auto max-w-6xl px-5 pb-16 md:px-12 md:pb-20">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-3 md:mb-8">
             <div>
               <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
                 Latest
               </p>
-              <h3 className="font-display text-4xl uppercase leading-none tracking-tight md:text-6xl">
+              <h3 className="font-display text-3xl uppercase leading-none tracking-tight sm:text-4xl md:text-6xl">
                 Stories
               </h3>
             </div>
@@ -407,13 +407,13 @@ function Index() {
 
       {/* Books / Shop */}
       {(
-        <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
-          <div className="mb-8 flex items-end justify-between gap-6">
+        <section className="relative z-10 mx-auto max-w-6xl px-5 pb-16 md:px-12 md:pb-20">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-3 md:mb-8">
             <div>
               <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
                 From the shelf
               </p>
-              <h3 className="font-display text-4xl uppercase leading-none tracking-tight md:text-6xl">
+              <h3 className="font-display text-3xl uppercase leading-none tracking-tight sm:text-4xl md:text-6xl">
                 Books &amp; Wares
               </h3>
             </div>
@@ -457,13 +457,13 @@ function Index() {
 
       {/* Dear Today */}
       {(
-        <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
-          <div className="mb-8 flex items-end justify-between gap-6">
+        <section className="relative z-10 mx-auto max-w-6xl px-5 pb-16 md:px-12 md:pb-20">
+          <div className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-3 md:mb-8">
             <div>
               <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
                 A collection
               </p>
-              <h3 className="font-display text-4xl uppercase leading-none tracking-tight md:text-6xl">
+              <h3 className="font-display text-3xl uppercase leading-none tracking-tight sm:text-4xl md:text-6xl">
                 Dear Today
               </h3>
             </div>
@@ -514,18 +514,18 @@ function Index() {
         </section>
       )}
 
-      <section className="relative z-10 mx-auto max-w-2xl px-6 pb-24 md:px-12">
+      <section className="relative z-10 mx-auto max-w-2xl px-5 pb-20 md:px-12 md:pb-24">
         <NewsletterForm source="home" variant="kraft" />
       </section>
 
-      <footer className="flex flex-col items-end justify-between gap-8 border-t border-white/5 p-12 md:flex-row">
+      <footer className="flex flex-col items-start justify-between gap-8 border-t border-white/5 px-5 py-10 md:flex-row md:items-end md:p-12">
         <div>
           <span className="mb-2 block font-mono text-[9px] uppercase tracking-widest text-white/30">
             Currently Residing
           </span>
           <span className="text-sm uppercase tracking-widest">{location}</span>
         </div>
-        <div className="text-right">
+        <div className="w-full md:w-auto md:text-right">
           <Link
             to="/about"
             className="inline-block cursor-pointer bg-kraft px-6 py-2 text-ink-dark shadow-lg transition-transform hover:-translate-y-0.5"
