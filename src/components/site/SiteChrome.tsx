@@ -1,6 +1,7 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { ThemeSwitcher } from "@/components/site/ThemeProvider";
 
 const links = [
   { to: "/collection", label: "Collection" },
@@ -55,7 +56,7 @@ function AuthAffordance() {
 export function SiteHeader() {
   const pathname = useRouterState({ select: (r) => r.location.pathname });
   return (
-    <header className="relative z-40 flex items-start justify-between px-6 py-6 md:px-12 md:py-8">
+    <header className="sticky top-0 z-40 flex items-start justify-between border-b border-white/5 bg-[color:var(--site-bg)]/85 px-6 py-5 backdrop-blur-md md:px-12 md:py-6">
       <Link to="/" className="block">
         <div
           className="-rotate-1 transform bg-kraft px-4 py-2 shadow-xl"
@@ -98,6 +99,7 @@ export function SiteHeader() {
             );
           })}
         </nav>
+        <ThemeSwitcher className="hidden md:flex" />
         <AuthAffordance />
       </div>
     </header>
@@ -107,7 +109,7 @@ export function SiteHeader() {
 export function MobileNav() {
   const pathname = useRouterState({ select: (r) => r.location.pathname });
   return (
-    <nav className="flex overflow-x-auto border-b border-white/10 bg-neutral-950 px-4 py-2 md:hidden">
+    <nav className="sticky top-[76px] z-30 flex items-center gap-1 overflow-x-auto border-b border-white/10 bg-[color:var(--site-bg)]/90 px-4 py-2 backdrop-blur md:hidden">
       {links.map((l) => {
         const active = pathname === l.to || pathname.startsWith(l.to + "/");
         return (
@@ -120,13 +122,15 @@ export function MobileNav() {
           </Link>
         );
       })}
+      <ThemeSwitcher className="ml-auto shrink-0 pl-3" />
     </nav>
   );
 }
 
 export function SiteFooter() {
   return (
-    <footer className="mt-24 border-t border-white/5 px-6 py-10 md:px-12">
+    <footer className="mt-24 border-t border-white/10 px-6 py-12 md:px-12">
+      <div className="mx-auto mb-8 h-px max-w-6xl rule-kraft opacity-60" />
       <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-4 text-xs md:flex-row md:items-end">
         <div>
           <span className="mb-1 block font-mono text-[9px] uppercase tracking-widest text-white/30">
@@ -154,9 +158,9 @@ export function PageShell({ children }: { children: React.ReactNode }) {
     <div
       className="min-h-screen w-full font-sans text-white"
       style={{
-        backgroundColor: "#0a0a0a",
+        backgroundColor: "var(--site-bg)",
         backgroundImage:
-          "radial-gradient(circle at 20% 30%, rgba(255,255,255,0.03) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(255,255,255,0.03) 0%, transparent 50%)",
+          "radial-gradient(circle at 20% 30%, var(--site-glow-a) 0%, transparent 50%), radial-gradient(circle at 80% 70%, var(--site-glow-b) 0%, transparent 55%)",
       }}
     >
       <SiteHeader />
