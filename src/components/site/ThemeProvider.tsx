@@ -66,7 +66,7 @@ export function ThemeSwitcher({ className = "" }: { className?: string }) {
           aria-label={t.label}
           title={t.label}
           onClick={() => setTheme(t.id)}
-          className={`h-3.5 w-3.5 rounded-full border transition-transform hover:scale-110 motion-reduce:hover:scale-100 ${
+          className={`h-5 w-5 rounded-full border transition-transform hover:scale-110 motion-reduce:hover:scale-100 md:h-3.5 md:w-3.5 ${
             theme === t.id ? "border-white ring-1 ring-white/60" : "border-white/25"
           }`}
           style={{ backgroundColor: t.swatch }}
