@@ -295,25 +295,25 @@ function Index() {
       </section>
 
 
-      <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
-        <div className="mb-10 flex items-end justify-between gap-6">
-          <div>
-            <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
+      <section className="relative z-10 mx-auto max-w-6xl px-5 pb-16 md:px-12 md:pb-20">
+        <div className="mb-6 flex items-end justify-between gap-6 md:mb-10">
+          <div className="min-w-0">
+            <p className="mb-2 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60 md:mb-3">
               Volume 01
             </p>
-            <h3 className="font-display text-5xl uppercase leading-none tracking-tight md:text-7xl">
+            <h3 className="font-display text-4xl uppercase leading-none tracking-tight sm:text-5xl md:text-7xl">
               Muyan Collection
             </h3>
           </div>
           <Link
             to="/collection"
-            className="hidden font-mono text-[10px] uppercase tracking-widest text-white/60 hover:text-white md:inline"
+            className="hidden shrink-0 font-mono text-[10px] uppercase tracking-widest text-white/60 hover:text-white md:inline"
           >
             View all →
           </Link>
         </div>
 
-        <div className="group/strip flex h-[46vh] w-full items-stretch gap-1 overflow-hidden md:h-[58vh] md:gap-2">
+        <div className="group/strip -mx-5 flex h-[36vh] snap-x snap-mandatory items-stretch gap-1 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:mx-0 md:h-[58vh] md:snap-none md:gap-2 md:overflow-hidden md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
           {tiles.slice(0, 8).map((t, i) => {
             const heights = ["h-[88%]", "h-full", "h-[72%]", "h-[95%]", "h-[80%]", "h-full", "h-[75%]", "h-[92%]"];
             const aligns = ["self-end", "self-start", "self-end", "self-center", "self-start", "self-end", "self-center", "self-start"];
@@ -322,35 +322,33 @@ function Index() {
                 key={t.id}
                 type="button"
                 onClick={() => open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label })}
-                className={`relative flex-1 overflow-hidden border border-white/10 bg-neutral-900 text-left ${heights[i % heights.length]} ${aligns[i % aligns.length]} ${imageTransitionClass} hover:z-10 hover:flex-[2] focus-visible:z-10 focus-visible:flex-[2] focus:outline-none`}
+                className={`relative w-[44vw] shrink-0 snap-start overflow-hidden border border-white/10 bg-neutral-900 text-left md:w-auto md:flex-1 md:shrink ${heights[i % heights.length]} ${aligns[i % aligns.length]} ${imageTransitionClass} md:hover:z-10 md:hover:flex-[2] md:focus-visible:z-10 md:focus-visible:flex-[2] focus:outline-none`}
                 aria-label={t.label}
               >
                 <img
                   src={t.image_url}
                   alt={t.label}
                   loading="lazy"
-                  className={`h-full w-full object-cover ${imageTransitionClass} ${hoverImageClass} group-hover/strip:opacity-40 hover:!opacity-100 focus-visible:!opacity-100`}
+                  className={`h-full w-full object-cover ${imageTransitionClass} md:${hoverImageClass ? "group-hover/strip:opacity-40" : ""} ${hoverImageClass} hover:!opacity-100 focus-visible:!opacity-100`}
                 />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-3 opacity-0 transition-opacity duration-500 hover:!opacity-100 group-hover/strip:opacity-0">
-                  <p className="font-mono text-[10px] uppercase tracking-widest text-white">{t.label}</p>
-                </div>
-                <div
-                  className="pointer-events-none absolute left-2 top-2 rotate-180 font-mono text-[9px] uppercase tracking-[0.35em] text-white/70 mix-blend-difference"
-                  style={{ writingMode: "vertical-rl" }}
-                >
-                  {t.label}
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2.5 md:p-3">
+                  <p className="font-mono text-[9px] uppercase tracking-widest text-white md:text-[10px]">{t.label}</p>
                 </div>
               </button>
             );
           })}
         </div>
 
-        <div className="mt-6 text-right md:hidden">
-          <Link to="/collection" className="font-mono text-[10px] uppercase tracking-widest text-white/60 hover:text-white">
+        <div className="mt-5 flex items-center justify-between md:hidden">
+          <span className="font-mono text-[9px] uppercase tracking-widest text-white/30">
+            Swipe →
+          </span>
+          <Link to="/collection" className="font-mono text-[10px] uppercase tracking-widest text-white/60">
             View all →
           </Link>
         </div>
       </section>
+
 
       {/* Latest Stories */}
       {(
