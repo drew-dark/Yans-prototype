@@ -76,7 +76,7 @@ function StoryPage() {
             {s.part_title && <> · {s.part_title}</>}
           </p>
         )}
-        <h1 className="mt-3 font-display text-5xl uppercase leading-none tracking-tight md:text-7xl">{s.title}</h1>
+        <h1 className="mt-3 font-display text-4xl uppercase leading-tight tracking-tight sm:text-5xl md:text-7xl">{s.title}</h1>
         {s.excerpt && (
           <p className="mt-6 border-l-2 border-white/30 pl-4 font-display text-xl italic tracking-tight text-white/70 md:text-2xl">
             {s.excerpt}

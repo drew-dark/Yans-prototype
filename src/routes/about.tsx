@@ -31,7 +31,7 @@ function AboutPage() {
       <section className="mx-auto max-w-4xl px-5 py-10 md:px-12 md:py-16">
         <div className="mb-12">
           <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">Colophon</p>
-          <h1 className="font-display text-6xl uppercase leading-none tracking-tight md:text-8xl">About</h1>
+          <h1 className="font-display text-5xl uppercase leading-none tracking-tight sm:text-6xl md:text-8xl">About</h1>
         </div>
 
         {isLoading ? (

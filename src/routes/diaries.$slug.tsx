@@ -79,7 +79,7 @@ function EntryPage() {
             {e.part_title && <> · {e.part_title}</>}
           </p>
         )}
-        <h1 className="mt-3 font-display text-5xl uppercase leading-none tracking-tight md:text-7xl">{e.title}</h1>
+        <h1 className="mt-3 font-display text-4xl uppercase leading-tight tracking-tight sm:text-5xl md:text-7xl">{e.title}</h1>
         {e.cover_image_url && (
           <button
             type="button"

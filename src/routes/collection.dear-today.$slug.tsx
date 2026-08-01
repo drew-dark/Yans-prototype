@@ -89,7 +89,7 @@ function EntryPage() {
             </>
           )}
         </div>
-        <h1 className="mt-3 font-display text-5xl uppercase leading-none tracking-tight md:text-7xl">
+        <h1 className="mt-3 font-display text-4xl uppercase leading-tight tracking-tight sm:text-5xl md:text-7xl">
           {e.title}
         </h1>
         {e.excerpt && (

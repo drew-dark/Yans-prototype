@@ -71,7 +71,7 @@ function StoriesPage() {
       <section className="mx-auto max-w-6xl px-5 py-10 md:px-12 md:py-16">
         <div className="mb-16 max-w-2xl">
           <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">The Longer Form</p>
-          <h1 className="font-display text-6xl uppercase leading-none tracking-tight md:text-8xl">Stories</h1>
+          <h1 className="font-display text-5xl uppercase leading-none tracking-tight sm:text-6xl md:text-8xl">Stories</h1>
           <p className="mt-6 text-sm text-white/50 md:text-base">
             Essays and reported pieces. Slower than a diary, sharper than a poem.
           </p>
