@@ -10,6 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { MediaViewerProvider } from "@/components/site/MediaViewer";
+import { ThemeProvider } from "@/components/site/ThemeProvider";
 
 import appCss from "../styles.css?url";
 
@@ -104,7 +105,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Anton&family=Courier+Prime:wght@400;700&family=Inter:wght@300;400;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Anton&family=Courier+Prime:wght@400;700&family=Barlow:wght@300;400;500;600;700&display=swap",
       },
     ],
   }),
@@ -133,11 +134,13 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <MediaViewerProvider>
+      <ThemeProvider>
+        <MediaViewerProvider>
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-        <Outlet />
-        <Toaster theme="dark" position="top-right" />
-      </MediaViewerProvider>
+          <Outlet />
+          <Toaster theme="dark" position="top-right" />
+        </MediaViewerProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
