@@ -166,7 +166,47 @@ function Index() {
         <div className="absolute -bottom-40 -right-20 h-[600px] w-[600px] rounded-full bg-white opacity-5 blur-[120px]" />
       </div>
 
-      <div className="absolute left-8 top-8 z-50">
+      {/* Mobile top bar: name tag + section nav */}
+      <div className="sticky top-0 z-50 bg-[#0a0a0a]/90 backdrop-blur-md md:hidden">
+        <div className="flex items-center justify-between gap-3 px-4 py-3">
+          <div
+            className="-rotate-1 transform bg-kraft px-3 py-1.5 shadow-xl"
+            style={{
+              clipPath:
+                "polygon(0% 5%, 5% 0%, 95% 2%, 100% 8%, 98% 92%, 100% 100%, 5% 98%, 0% 90%)",
+            }}
+          >
+            <h1 className="font-mono text-[11px] font-bold leading-none tracking-tight text-ink-dark">
+              {headline.toUpperCase()}
+            </h1>
+            <p className="mt-1 font-mono text-[8px] uppercase tracking-widest text-ink-dark/80">
+              Poet · Journalist · Broadcaster
+            </p>
+          </div>
+          <Link
+            to="/account"
+            className="shrink-0 border border-white/20 px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-white/60"
+          >
+            ◇ Account
+          </Link>
+        </div>
+        <nav
+          aria-label="Sections"
+          className="flex items-center gap-1 overflow-x-auto border-b border-white/10 px-3 pb-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {navLinks.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className="whitespace-nowrap px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-white/50"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
+      </div>
+
+      <div className="absolute left-8 top-8 z-50 hidden md:block">
         <div
           className="-rotate-1 transform bg-kraft px-6 py-3 shadow-xl"
           style={{
@@ -207,52 +247,53 @@ function Index() {
         </Link>
       </nav>
 
-      <section className="relative flex min-h-screen flex-col items-center justify-center px-4 py-20">
+      <section className="relative flex flex-col items-center justify-center px-4 py-12 md:min-h-screen md:py-20">
         <div
-          className="absolute right-8 top-1/2 -translate-y-1/2 rotate-180 font-mono text-[10px] uppercase tracking-[0.5em] text-white/30"
+          className="absolute right-8 top-1/2 hidden -translate-y-1/2 rotate-180 font-mono text-[10px] uppercase tracking-[0.5em] text-white/30 md:block"
           style={{ writingMode: "vertical-rl" }}
         >
           YANS LOUNGE © 2026
         </div>
 
-        <p className="font-mono text-[10px] uppercase tracking-[0.5em] text-white/40">
+        <p className="text-center font-mono text-[9px] uppercase tracking-[0.35em] text-white/40 md:text-[10px] md:tracking-[0.5em]">
           Poet · Author · Journalist · Broadcaster
         </p>
 
-        <div className="group relative mt-14 flex h-[42vh] w-full max-w-6xl items-center justify-center gap-2 md:h-[50vh] md:gap-4">
+        <div className="group relative mt-8 flex h-[34vh] w-full max-w-6xl items-center justify-center gap-1.5 md:mt-14 md:h-[50vh] md:gap-4">
           {heroImages.map((src, i) => (
             <div
               key={i}
-              className={`h-full flex-1 -skew-x-12 transform overflow-hidden ${heroOffsets[i % heroOffsets.length]}`}
+              className={`h-full flex-1 -skew-x-6 transform overflow-hidden md:-skew-x-12 ${heroOffsets[i % heroOffsets.length]} ${i > 2 ? "hidden sm:block" : ""}`}
             >
               <img
                 src={src}
                 alt=""
                 loading="lazy"
-                className={`h-full w-full skew-x-12 scale-150 transform object-cover ${imageTransitionClass} ${hoverImageClass}`}
+                className={`h-full w-full skew-x-6 scale-125 transform object-cover md:skew-x-12 md:scale-150 ${imageTransitionClass} ${hoverImageClass}`}
               />
             </div>
           ))}
         </div>
 
-        <p className="mt-12 max-w-xl text-center text-sm font-light leading-relaxed text-white/60 md:text-lg">
+        <p className="mt-8 max-w-xl text-balance text-center text-sm font-light leading-relaxed text-white/60 md:mt-12 md:text-lg">
           {tagline}
         </p>
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+        <div className="mt-8 flex w-full max-w-xs flex-col items-stretch gap-3 sm:w-auto sm:max-w-none sm:flex-row sm:items-center sm:justify-center sm:gap-4 md:mt-10">
           <Link
             to="/collection"
-            className="border border-white/30 px-6 py-3 font-mono text-[11px] uppercase tracking-[0.3em] text-white hover:bg-white hover:text-ink-dark"
+            className="border border-white/30 px-6 py-3.5 text-center font-mono text-[11px] uppercase tracking-[0.25em] text-white hover:bg-white hover:text-ink-dark"
           >
             Enter the Collection →
           </Link>
           <Link
             to="/stories"
-            className="font-mono text-[11px] uppercase tracking-[0.3em] text-white/60 hover:text-white"
+            className="px-6 py-3 text-center font-mono text-[11px] uppercase tracking-[0.25em] text-white/60 hover:text-white"
           >
             Read stories
           </Link>
         </div>
       </section>
+
 
       <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
         <div className="mb-10 flex items-end justify-between gap-6">
