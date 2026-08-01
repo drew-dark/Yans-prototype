@@ -257,7 +257,7 @@ function Index() {
       <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
         <div className="mb-10 flex items-end justify-between gap-6">
           <div>
-            <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.4em] text-white/40">
+            <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
               Volume 01
             </p>
             <h3 className="font-display text-5xl uppercase leading-none tracking-tight md:text-7xl">
@@ -316,7 +316,7 @@ function Index() {
         <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
           <div className="mb-8 flex items-end justify-between gap-6">
             <div>
-              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.4em] text-white/40">
+              <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
                 Latest
               </p>
               <h3 className="font-display text-4xl uppercase leading-none tracking-tight md:text-6xl">
@@ -338,7 +338,7 @@ function Index() {
                 key={s.id}
                 to="/stories/$slug"
                 params={{ slug: s.slug }}
-                className="group flex flex-col overflow-hidden border border-white/10 bg-neutral-900/40 transition-colors hover:border-white/40"
+                className="group flex flex-col overflow-hidden border border-white/10 bg-neutral-900/40 transition-colors duration-300 hover:border-kraft/40 transition-colors hover:border-white/40"
               >
                 {s.cover_image_url && (
                   <div className="aspect-[16/10] overflow-hidden">
@@ -371,7 +371,7 @@ function Index() {
         <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
           <div className="mb-8 flex items-end justify-between gap-6">
             <div>
-              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.4em] text-white/40">
+              <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
                 From the shelf
               </p>
               <h3 className="font-display text-4xl uppercase leading-none tracking-tight md:text-6xl">
@@ -392,7 +392,7 @@ function Index() {
               <Link
                 key={p.id}
                 to="/shop"
-                className="group flex flex-col overflow-hidden border border-white/10 bg-neutral-900/40 transition-colors hover:border-white/40"
+                className="group flex flex-col overflow-hidden border border-white/10 bg-neutral-900/40 transition-colors duration-300 hover:border-kraft/40 transition-colors hover:border-white/40"
               >
                 {p.image_url && (
                   <div className="aspect-[3/4] overflow-hidden">
@@ -421,7 +421,7 @@ function Index() {
         <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20 md:px-12">
           <div className="mb-8 flex items-end justify-between gap-6">
             <div>
-              <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.4em] text-white/40">
+              <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
                 A collection
               </p>
               <h3 className="font-display text-4xl uppercase leading-none tracking-tight md:text-6xl">
@@ -446,7 +446,7 @@ function Index() {
                 key={d.id}
                 to="/collection/dear-today/$slug"
                 params={{ slug: d.slug }}
-                className="group flex flex-col overflow-hidden border border-white/10 bg-neutral-900/40 transition-colors hover:border-white/40"
+                className="group flex flex-col overflow-hidden border border-white/10 bg-neutral-900/40 transition-colors duration-300 hover:border-kraft/40 transition-colors hover:border-white/40"
               >
                 {d.cover_url && (
                   <div className="aspect-[16/10] overflow-hidden">

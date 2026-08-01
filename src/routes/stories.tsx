@@ -70,7 +70,7 @@ function StoriesPage() {
     <PageShell>
       <section className="mx-auto max-w-6xl px-6 py-16 md:px-12">
         <div className="mb-16 max-w-2xl">
-          <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.4em] text-white/40">The Longer Form</p>
+          <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">The Longer Form</p>
           <h1 className="font-display text-6xl uppercase leading-none tracking-tight md:text-8xl">Stories</h1>
           <p className="mt-6 text-sm text-white/50 md:text-base">
             Essays and reported pieces. Slower than a diary, sharper than a poem.
@@ -91,7 +91,7 @@ function StoriesPage() {
                   key={s.id}
                   to="/stories/$slug"
                   params={{ slug: s.slug }}
-                  className="group block overflow-hidden border border-white/10 bg-neutral-900/40"
+                  className="group block overflow-hidden border border-white/10 bg-neutral-900/40 transition-colors duration-300 hover:border-kraft/40"
                 >
                   {s.cover_image_url && (
                     <div className="aspect-[16/10] overflow-hidden">

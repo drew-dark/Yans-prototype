@@ -78,7 +78,7 @@ function DearTodayList() {
     <PageShell>
       <section className="mx-auto max-w-4xl px-6 py-16 md:px-12">
         <div className="mb-12 max-w-2xl">
-          <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.4em] text-white/40">
+          <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
             A collection
           </p>
           <h1 className="font-display text-6xl uppercase leading-none tracking-tight md:text-8xl">
@@ -103,7 +103,7 @@ function DearTodayList() {
                   key={e.id}
                   to="/collection/dear-today/$slug"
                   params={{ slug: e.slug }}
-                  className="group flex gap-4 rounded border border-white/10 bg-neutral-900/40 p-4 transition-colors hover:border-white/40"
+                  className="group flex gap-4 rounded border border-white/10 bg-neutral-900/40 transition-colors duration-300 hover:border-kraft/40 p-4 transition-colors hover:border-white/40"
                 >
                   {e.cover_url && (
                     <img src={e.cover_url} alt="" loading="lazy" className="h-20 w-20 rounded object-cover md:h-24 md:w-24" />
