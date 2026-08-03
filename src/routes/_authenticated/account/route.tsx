@@ -11,6 +11,7 @@ const tabs = [
   { to: "/account", label: "Profile" },
   { to: "/account/bookmarks", label: "Bookmarks" },
   { to: "/account/comments", label: "Comments" },
+  { to: "/settings", label: "Settings" },
 ] as const;
 
 function AccountLayout() {
@@ -23,8 +24,9 @@ function AccountLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-white">
-      <header className="border-b border-white/10 bg-neutral-900/60 backdrop-blur">
+    <div className="min-h-screen bg-[color:var(--site-bg)] text-white">
+      <header className="border-b border-white/10 bg-white/[0.03] backdrop-blur">
+
         <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-6">
             <Link to="/" className="font-display text-lg uppercase tracking-tight">

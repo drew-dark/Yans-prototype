@@ -10,7 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { MediaViewerProvider } from "@/components/site/MediaViewer";
-import { ThemeProvider } from "@/components/site/ThemeProvider";
+import { ThemeProvider, themeInitScript } from "@/components/site/ThemeProvider";
 
 import appCss from "../styles.css?url";
 
@@ -120,6 +120,7 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>
       <body>
         {children}
