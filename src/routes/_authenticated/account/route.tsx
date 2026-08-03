@@ -40,7 +40,7 @@ function AccountLayout() {
                     key={t.to}
                     to={t.to}
                     className={`rounded px-3 py-1.5 text-xs uppercase tracking-widest ${
-                      active ? "bg-white text-neutral-950" : "text-white/60 hover:text-white"
+                      active ? "bg-kraft text-ink-dark" : "text-white/60 hover:text-white"
                     }`}
                   >
                     {t.label}

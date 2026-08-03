@@ -78,14 +78,21 @@ function AdminLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-950 text-white">
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-neutral-900/80 backdrop-blur">
+    <div className="min-h-screen bg-[color:var(--site-bg)] text-white">
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-[color:var(--site-bg)]/85 backdrop-blur">
+
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
           <Link to="/" className="shrink-0 font-display text-lg uppercase tracking-tight">
             Yans <span className="text-white/40">/ admin</span>
           </Link>
           <div className="flex items-center gap-3 text-xs">
             <span className="hidden max-w-[180px] truncate text-white/40 md:inline">{email}</span>
+            <Link
+              to="/settings"
+              className="rounded-full border border-white/20 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-white/60 hover:border-white hover:text-white"
+            >
+              Settings
+            </Link>
             <Button size="sm" variant="ghost" onClick={signOut}>Sign out</Button>
           </div>
         </div>
@@ -99,7 +106,7 @@ function AdminLayout() {
                   to={item.to}
                   className={`shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-[11px] uppercase tracking-widest transition-colors ${
                     active
-                      ? "border-white bg-white text-neutral-950"
+                      ? "border-kraft bg-kraft text-ink-dark"
                       : "border-white/15 text-white/60 hover:border-white/40 hover:text-white"
                   }`}
                 >
