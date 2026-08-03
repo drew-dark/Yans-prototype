@@ -73,7 +73,7 @@ export function Paginator({
 
       {totalPages > 1 && (
         <Pagination>
-          <PaginationContent className="flex-wrap">
+          <PaginationContent className="w-full flex-nowrap items-center justify-between gap-1 sm:w-auto sm:flex-wrap sm:justify-center">
             <PaginationItem>
               <PaginationPrevious
                 href="#"
@@ -90,8 +90,11 @@ export function Paginator({
 
             {/* Compact indicator on small screens */}
             <PaginationItem className="sm:hidden">
-              <span className="px-3 font-mono text-[10px] uppercase tracking-widest text-white/60">
-                Page {page} of {totalPages}
+              <span
+                aria-live="polite"
+                className="whitespace-nowrap px-2 font-mono text-[11px] uppercase tracking-widest text-white/60"
+              >
+                Page {page} / {totalPages}
               </span>
             </PaginationItem>
 
@@ -115,7 +118,7 @@ export function Paginator({
                       className={
                         p === page
                           ? "border-kraft bg-kraft text-ink-dark hover:bg-kraft-dark"
-                          : "text-white/70 hover:bg-white/10 hover:text-white"
+                          : "text-white/70 hover:bg-white/10 hover:text-white active:bg-white/20"
                       }
                     >
                       {p}
