@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import {
   adminListUsers,
   adminGrantRole,
@@ -36,6 +37,25 @@ function UsersAdmin() {
   });
 
   const [inviteEmail, setInviteEmail] = useState("");
+  const [q, setQ] = useState("");
+  const [roleFilter, setRoleFilter] = useState<Role | "all">("all");
+  const [meId, setMeId] = useState<string | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setMeId(data.user?.id ?? null));
+  }, []);
+
+  const term = q.trim().toLowerCase();
+  const visible = users.filter((u) => {
+    const matchesRole = roleFilter === "all" || u.roles.includes(roleFilter);
+    const matchesTerm =
+      !term ||
+      (u.email ?? "").toLowerCase().includes(term) ||
+      (u.display_name ?? "").toLowerCase().includes(term);
+    return matchesRole && matchesTerm;
+  });
+  const adminCount = users.filter((u) => u.roles.includes("admin")).length;
+
 
   const inviteMut = useMutation({
     mutationFn: (email: string) => invite({ data: { email } }),
