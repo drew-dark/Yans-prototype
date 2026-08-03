@@ -1,7 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ThemeSwitcher } from "@/components/site/ThemeProvider";
+import { Settings } from "lucide-react";
+
 
 const links = [
   { to: "/collection", label: "Collection" },
@@ -99,7 +100,15 @@ export function SiteHeader() {
             );
           })}
         </nav>
-        <ThemeSwitcher />
+        <Link
+          to="/settings"
+          aria-label="Settings"
+          title="Settings — colours & preferences"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/60 transition-colors hover:border-white hover:text-white md:h-7 md:w-7"
+        >
+          <Settings className="h-4 w-4 md:h-3.5 md:w-3.5" aria-hidden="true" />
+        </Link>
+
         <AuthAffordance />
       </div>
     </header>
@@ -163,6 +172,8 @@ export function SiteFooter() {
           <Link to="/gallery" className="py-1 hover:text-white">Gallery</Link>
           <Link to="/shop" className="py-1 hover:text-white">Shop</Link>
           <Link to="/about" className="py-1 hover:text-white">About</Link>
+          <Link to="/settings" className="py-1 hover:text-white">Settings</Link>
+
         </div>
       </div>
     </footer>

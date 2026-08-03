@@ -74,6 +74,17 @@ export const adminRevokeRole = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    if (data.userId === context.userId && data.role === "admin") {
+      throw new Error("You can't remove your own admin role.");
+    }
+    if (data.role === "admin") {
+      const { count, error: countErr } = await supabaseAdmin
+        .from("user_roles")
+        .select("user_id", { count: "exact", head: true })
+        .eq("role", "admin");
+      if (countErr) throw new Error(countErr.message);
+      if ((count ?? 0) <= 1) throw new Error("At least one admin must remain.");
+    }
     const { error } = await supabaseAdmin
       .from("user_roles")
       .delete()
