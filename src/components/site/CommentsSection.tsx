@@ -141,7 +141,7 @@ export function CommentsSection({
           />
           <div className="flex justify-end">
             <Button
-              size="sm"
+              className="h-11 w-full sm:h-9 sm:w-auto"
               disabled={posting || !body.trim()}
               onClick={() => post(null, body, () => setBody(""))}
             >
@@ -183,11 +183,15 @@ export function CommentsSection({
                   maxLength={4000}
                 />
                 <div className="flex justify-end gap-2">
-                  <Button size="sm" variant="ghost" onClick={() => setReplyTo(null)}>
+                  <Button
+                    variant="ghost"
+                    className="h-11 flex-1 sm:h-9 sm:flex-none"
+                    onClick={() => setReplyTo(null)}
+                  >
                     Cancel
                   </Button>
                   <Button
-                    size="sm"
+                    className="h-11 flex-1 sm:h-9 sm:flex-none"
                     disabled={posting || !replyBody.trim()}
                     onClick={() => post(c.id, replyBody, () => setReplyBody(""))}
                   >
@@ -258,20 +262,24 @@ function CommentItem({
             </span>
           )}
         </div>
-        <div className="flex shrink-0 gap-3 text-[10px] font-mono uppercase tracking-widest text-white/40 [&>button]:py-1">
+        <div className="flex shrink-0 flex-wrap items-center gap-1 font-mono text-[10px] uppercase tracking-widest text-white/40 sm:gap-2 [&>button]:inline-flex [&>button]:min-h-11 [&>button]:min-w-11 [&>button]:items-center [&>button]:justify-center [&>button]:rounded [&>button]:px-2 [&>button]:transition-colors sm:[&>button]:min-h-9 sm:[&>button]:min-w-0 sm:[&>button]:px-1.5">
 
           {onReply && userId && (
-            <button onClick={onReply} className="hover:text-white">
+            <button type="button" onClick={onReply} className="hover:bg-white/10 hover:text-white active:bg-white/20">
               Reply
             </button>
           )}
           {isMod && (
-            <button onClick={onToggleHide} className="hover:text-white">
+            <button type="button" onClick={onToggleHide} className="hover:bg-white/10 hover:text-white active:bg-white/20">
               {hidden ? "Restore" : "Hide"}
             </button>
           )}
           {canDelete && (
-            <button onClick={onDelete} className="text-red-400 hover:text-red-300">
+            <button
+              type="button"
+              onClick={onDelete}
+              className="text-red-400 hover:bg-red-500/10 hover:text-red-300 active:bg-red-500/20"
+            >
               Delete
             </button>
           )}

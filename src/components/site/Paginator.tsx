@@ -54,9 +54,11 @@ export function Paginator({
   const atEnd = page >= totalPages;
 
   const navClass = (disabled: boolean) =>
-    disabled
-      ? "pointer-events-none opacity-30"
-      : "text-white/70 hover:bg-white/10 hover:text-white";
+    `min-h-11 select-none px-3 sm:min-h-9 ${
+      disabled
+        ? "pointer-events-none opacity-30"
+        : "text-white/70 hover:bg-white/10 hover:text-white active:bg-white/20"
+    }`;
 
   return (
     <div className={`mt-12 flex flex-col items-center gap-3 ${className}`}>
