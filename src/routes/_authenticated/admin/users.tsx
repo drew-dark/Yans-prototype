@@ -41,6 +41,9 @@ function UsersAdmin() {
   });
 
   const [inviteEmail, setInviteEmail] = useState("");
+  const [inviteRole, setInviteRole] = useState<Role>("reader");
+  const [invitePassword, setInvitePassword] = useState("");
+  const [withPassword, setWithPassword] = useState(false);
   const [q, setQ] = useState("");
   const [roleFilter, setRoleFilter] = useState<Role | "all">("all");
   const [meId, setMeId] = useState<string | null>(null);
