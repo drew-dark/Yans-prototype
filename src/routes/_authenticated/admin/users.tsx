@@ -230,6 +230,7 @@ function UsersAdmin() {
         <div className="space-y-2">
           {visible.map((u) => {
             const isMe = u.id === meId;
+            const pending = !u.last_sign_in_at;
             return (
               <div key={u.id} className="rounded border border-white/10 bg-white/[0.04] p-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -241,23 +242,44 @@ function UsersAdmin() {
                           You
                         </span>
                       )}
+                      {pending && !isMe && (
+                        <span className="ml-2 rounded bg-white/10 px-1.5 py-0.5 text-[9px] uppercase tracking-widest text-white/60">
+                          Pending
+                        </span>
+                      )}
                     </p>
                     <p className="font-mono text-[10px] uppercase tracking-widest text-white/40">
                       {u.display_name || "—"} · joined {new Date(u.created_at).toLocaleDateString()}
-                      {u.last_sign_in_at &&
-                        ` · last seen ${new Date(u.last_sign_in_at).toLocaleDateString()}`}
+                      {u.last_sign_in_at
+                        ? ` · last seen ${new Date(u.last_sign_in_at).toLocaleDateString()}`
+                        : " · never signed in"}
                     </p>
                   </div>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    disabled={isMe}
-                    title={isMe ? "You can't delete your own account here" : "Delete user"}
-                    onClick={() => confirm(`Delete ${u.email}?`) && delMut.mutate(u.id)}
-                  >
-                    <Trash2 className="h-3 w-3 text-red-400" />
-                  </Button>
+                  <div className="flex items-center gap-1">
+                    {pending && u.email && (
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        title="Resend invite email"
+                        disabled={resendMut.isPending}
+                        onClick={() => resendMut.mutate(u.email!)}
+                      >
+                        <Send className="h-3 w-3" />
+                        <span className="ml-1 font-mono text-[10px] uppercase">Resend</span>
+                      </Button>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      disabled={isMe}
+                      title={isMe ? "You can't delete your own account here" : "Delete user"}
+                      onClick={() => confirm(`Delete ${u.email}?`) && delMut.mutate(u.id)}
+                    >
+                      <Trash2 className="h-3 w-3 text-red-400" />
+                    </Button>
+                  </div>
                 </div>
+
                 <div className="mt-3 flex flex-wrap gap-2">
                   {ROLES.map((role) => {
                     const has = u.roles.includes(role);
