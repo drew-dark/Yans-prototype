@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { getEmbedUrl, isPlayable, mediaKind, mimeTypeFor, IMAGE_EXT_RE, VIDEO_EXT_RE } from "@/lib/media";
 
 type MediaItem =
   | { kind: "image"; src: string; alt?: string; caption?: string }
@@ -13,9 +14,19 @@ export function useMediaViewer() {
   return ctx;
 }
 
+/** Build a viewer item from any URL — uploaded file or pasted link. */
+export function mediaItemFor(src: string, caption?: string): MediaItem {
+  return isPlayable(src)
+    ? { kind: "video", src, caption }
+    : { kind: "image", src, alt: caption ?? "", caption };
+}
+
 export function MediaViewerProvider({ children }: { children: ReactNode }) {
   const [item, setItem] = useState<MediaItem | null>(null);
-  const open = useCallback((i: MediaItem) => setItem(i), []);
+  const open = useCallback((i: MediaItem) => {
+    // Normalise: an "image" that is actually a video/embed URL still plays.
+    setItem(i.kind === "image" && isPlayable(i.src) ? { kind: "video", src: i.src, caption: i.caption } : i);
+  }, []);
   const close = useCallback(() => setItem(null), []);
 
   useEffect(() => {
@@ -38,12 +49,12 @@ export function MediaViewerProvider({ children }: { children: ReactNode }) {
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4"
           onClick={close}
         >
-          <div className="relative max-h-full max-w-6xl" onClick={(e) => e.stopPropagation()}>
+          <div className="relative max-h-full w-full max-w-6xl" onClick={(e) => e.stopPropagation()}>
             {item.kind === "image" ? (
               <img
                 src={item.src}
                 alt={item.alt ?? ""}
-                className="max-h-[85vh] w-auto object-contain"
+                className="mx-auto max-h-[85vh] w-auto object-contain"
               />
             ) : (
               <VideoPlayer src={item.src} poster={item.poster} autoPlay />
@@ -68,36 +79,76 @@ export function MediaViewerProvider({ children }: { children: ReactNode }) {
   );
 }
 
+/**
+ * Universal player: uploaded/direct video files play natively, provider links
+ * (YouTube, Vimeo, Dailymotion, Loom) play in an embedded frame.
+ */
 export function VideoPlayer({
   src,
   poster,
   autoPlay = false,
   className = "",
+  title = "Video",
 }: {
   src: string;
   poster?: string;
   autoPlay?: boolean;
   className?: string;
+  title?: string;
 }) {
+  const [failed, setFailed] = useState(false);
+  const embed = getEmbedUrl(src);
+
+  if (embed) {
+    return (
+      <div className={`relative w-full overflow-hidden bg-black ${className}`} style={{ aspectRatio: "16 / 9" }}>
+        <iframe
+          src={autoPlay ? `${embed}${embed.includes("?") ? "&" : "?"}autoplay=1` : embed}
+          title={title}
+          loading="lazy"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+          allowFullScreen
+          className="absolute inset-0 h-full w-full border-0"
+        />
+      </div>
+    );
+  }
+
+  if (failed) {
+    return (
+      <div className={`flex flex-col items-center gap-2 bg-black/60 p-6 text-center ${className}`}>
+        <p className="font-mono text-[10px] uppercase tracking-widest text-white/50">Video unavailable here</p>
+        <a href={src} target="_blank" rel="noreferrer" className="text-sm text-white underline underline-offset-4 break-all">
+          Open video in a new tab
+        </a>
+      </div>
+    );
+  }
+
   return (
     <video
-      src={src}
       poster={poster}
       controls
       playsInline
       preload="metadata"
       autoPlay={autoPlay}
+      onError={() => setFailed(true)}
       className={`max-h-[85vh] w-full bg-black ${className}`}
-    />
+    >
+      <source src={src} type={mimeTypeFor(src)} />
+      Your browser cannot play this video.
+    </video>
   );
 }
 
 // Renders text body with inline media tokens:
 //   ![alt](image-url)   → clickable image (opens viewer)
 //   @video(video-url)   → inline video player
-// Any bare http(s) URL ending in an image or video extension is also detected.
-const IMG_EXT = /\.(png|jpe?g|gif|webp|avif|svg)(\?.*)?$/i;
-const VID_EXT = /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i;
+// Any bare http(s) URL ending in an image or video extension, or a supported
+// video-provider link, is also detected.
+const IMG_EXT = IMAGE_EXT_RE;
+const VID_EXT = VIDEO_EXT_RE;
+
 
 export function RichBody({ text, className = "" }: { text: string; className?: string }) {
   const { open } = useMediaViewer();
