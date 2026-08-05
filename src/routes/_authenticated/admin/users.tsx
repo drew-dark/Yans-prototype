@@ -30,6 +30,8 @@ function UsersAdmin() {
   const grant = useServerFn(adminGrantRole);
   const revoke = useServerFn(adminRevokeRole);
   const invite = useServerFn(adminInviteUser);
+  const resend = useServerFn(adminResendInvite);
+  const createUser = useServerFn(adminCreateUser);
   const del = useServerFn(adminDeleteUser);
 
   const qc = useQueryClient();
