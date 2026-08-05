@@ -62,15 +62,30 @@ function UsersAdmin() {
     return matchesRole && matchesTerm;
   });
   const adminCount = users.filter((u) => u.roles.includes("admin")).length;
+  const pendingCount = users.filter((u) => !u.last_sign_in_at).length;
 
+  const redirectTo =
+    typeof window !== "undefined" ? `${window.location.origin}/auth` : undefined;
 
   const inviteMut = useMutation({
-    mutationFn: (email: string) => invite({ data: { email } }),
-    onSuccess: () => {
-      toast.success("Invite sent");
+    mutationFn: () =>
+      withPassword
+        ? createUser({
+            data: { email: inviteEmail, password: invitePassword, role: inviteRole },
+          })
+        : invite({ data: { email: inviteEmail, role: inviteRole, redirectTo } }),
+    onSuccess: (res: { message?: string }) => {
+      toast.success(res?.message ?? "Invite sent");
       setInviteEmail("");
+      setInvitePassword("");
       qc.invalidateQueries({ queryKey: ["admin", "users"] });
     },
+    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Failed"),
+  });
+
+  const resendMut = useMutation({
+    mutationFn: (email: string) => resend({ data: { email, redirectTo } }),
+    onSuccess: (res: { message?: string }) => toast.success(res?.message ?? "Invite re-sent"),
     onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Failed"),
   });
 
