@@ -116,29 +116,86 @@ function UsersAdmin() {
         <h1 className="font-display text-3xl uppercase">Users</h1>
         <p className="text-sm text-white/50">
           {users.length} account{users.length === 1 ? "" : "s"} · {adminCount} admin
-          {adminCount === 1 ? "" : "s"}. Roles: admin, editor, moderator, guest_author, reader.
+          {adminCount === 1 ? "" : "s"} · {pendingCount} pending invite
+          {pendingCount === 1 ? "" : "s"}. Roles: admin, editor, moderator, guest_author, reader.
         </p>
       </div>
 
       <div className="rounded border border-white/10 bg-white/[0.04] p-4">
-        <Label>Invite by email</Label>
+        <Label htmlFor="invite-email">Add someone</Label>
         <div className="mt-2 flex flex-col gap-2 sm:flex-row">
           <Input
+            id="invite-email"
             type="email"
             value={inviteEmail}
             onChange={(e) => setInviteEmail(e.target.value)}
             placeholder="person@example.com"
             className="border-white/15 bg-black/40"
           />
+          {withPassword && (
+            <Input
+              type="text"
+              value={invitePassword}
+              onChange={(e) => setInvitePassword(e.target.value)}
+              placeholder="temporary password (min 8)"
+              aria-label="Temporary password"
+              className="border-white/15 bg-black/40 sm:max-w-[16rem]"
+            />
+          )}
           <Button
             className="h-11 sm:h-9"
-            onClick={() => inviteMut.mutate(inviteEmail)}
-            disabled={!inviteEmail || inviteMut.isPending}
+            onClick={() => inviteMut.mutate()}
+            disabled={
+              !inviteEmail ||
+              inviteMut.isPending ||
+              (withPassword && invitePassword.length < 8)
+            }
           >
-            <UserPlus className="mr-1 h-4 w-4" /> Invite
+            {withPassword ? (
+              <>
+                <KeyRound className="mr-1 h-4 w-4" /> Create
+              </>
+            ) : (
+              <>
+                <UserPlus className="mr-1 h-4 w-4" /> Invite
+              </>
+            )}
           </Button>
         </div>
+
+        <div className="mt-3 flex flex-wrap items-center gap-1.5">
+          <span className="mr-1 font-mono text-[10px] uppercase tracking-widest text-white/40">
+            Role
+          </span>
+          {ROLES.map((r) => (
+            <button
+              key={r}
+              type="button"
+              onClick={() => setInviteRole(r)}
+              aria-pressed={inviteRole === r}
+              className={`rounded border px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-widest transition-colors ${
+                inviteRole === r
+                  ? "border-kraft bg-kraft text-ink-dark"
+                  : "border-white/20 text-white/60 hover:border-white hover:text-white"
+              }`}
+            >
+              {r}
+            </button>
+          ))}
+        </div>
+
+        <label className="mt-3 flex items-center gap-2 text-xs text-white/55">
+          <input
+            type="checkbox"
+            checked={withPassword}
+            onChange={(e) => setWithPassword(e.target.checked)}
+            className="h-4 w-4 accent-[var(--kraft,#c8a26a)]"
+          />
+          Create the account directly with a temporary password (use if invite emails aren’t
+          arriving).
+        </label>
       </div>
+
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <Input
