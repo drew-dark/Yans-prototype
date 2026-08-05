@@ -94,17 +94,112 @@ export const adminRevokeRole = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+const inviteInput = z.object({
+  email: z.string().trim().toLowerCase().email().max(255),
+  role: z.enum(ROLES).default("reader"),
+  redirectTo: z.string().url().optional(),
+});
+
 export const adminInviteUser = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { email: string }) =>
-    z.object({ email: z.string().email() }).parse(input),
+  .inputValidator((input: { email: string; role?: Role; redirectTo?: string }) =>
+    inviteInput.parse(input),
   )
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.auth.admin.inviteUserByEmail(data.email);
+
+    // Does an account already exist for this email?
+    const { data: existingList } = await supabaseAdmin.auth.admin.listUsers({
+      page: 1,
+      perPage: 1000,
+    });
+    const existing = existingList?.users.find(
+      (u) => (u.email ?? "").toLowerCase() === data.email,
+    );
+
+    if (existing) {
+      const { error: roleErr } = await supabaseAdmin
+        .from("user_roles")
+        .upsert({ user_id: existing.id, role: data.role }, { onConflict: "user_id,role" });
+      if (roleErr) throw new Error(roleErr.message);
+      return {
+        ok: true,
+        status: existing.last_sign_in_at ? ("existing" as const) : ("pending" as const),
+        userId: existing.id,
+        message: existing.last_sign_in_at
+          ? `${data.email} already has an account — role “${data.role}” granted.`
+          : `${data.email} was already invited — role “${data.role}” granted. Use Resend to send the link again.`,
+      };
+    }
+
+    const { data: invited, error } = await supabaseAdmin.auth.admin.inviteUserByEmail(data.email, {
+      redirectTo: data.redirectTo,
+    });
     if (error) throw new Error(error.message);
-    return { ok: true };
+
+    if (invited?.user && data.role !== "reader") {
+      await supabaseAdmin
+        .from("user_roles")
+        .upsert({ user_id: invited.user.id, role: data.role }, { onConflict: "user_id,role" });
+    }
+    return {
+      ok: true,
+      status: "invited" as const,
+      userId: invited?.user?.id ?? null,
+      message: `Invite email sent to ${data.email} (${data.role}).`,
+    };
+  });
+
+export const adminResendInvite = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { email: string; redirectTo?: string }) =>
+    z
+      .object({
+        email: z.string().trim().toLowerCase().email(),
+        redirectTo: z.string().url().optional(),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.auth.admin.inviteUserByEmail(data.email, {
+      redirectTo: data.redirectTo,
+    });
+    if (error) throw new Error(error.message);
+    return { ok: true, message: `Invite re-sent to ${data.email}.` };
+  });
+
+/** Create an account directly with a password — useful when invite email delivery isn't set up. */
+export const adminCreateUser = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { email: string; password: string; role?: Role; displayName?: string }) =>
+    z
+      .object({
+        email: z.string().trim().toLowerCase().email().max(255),
+        password: z.string().min(8).max(72),
+        role: z.enum(ROLES).default("reader"),
+        displayName: z.string().trim().max(80).optional(),
+      })
+      .parse(input),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: created, error } = await supabaseAdmin.auth.admin.createUser({
+      email: data.email,
+      password: data.password,
+      email_confirm: true,
+      user_metadata: data.displayName ? { display_name: data.displayName } : undefined,
+    });
+    if (error) throw new Error(error.message);
+    if (created.user && data.role !== "reader") {
+      await supabaseAdmin
+        .from("user_roles")
+        .upsert({ user_id: created.user.id, role: data.role }, { onConflict: "user_id,role" });
+    }
+    return { ok: true, message: `Account created for ${data.email} (${data.role}).` };
   });
 
 export const adminDeleteUser = createServerFn({ method: "POST" })
