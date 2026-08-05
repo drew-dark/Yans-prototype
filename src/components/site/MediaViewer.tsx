@@ -179,7 +179,11 @@ export function RichBody({ text, className = "" }: { text: string; className?: s
           return <VideoPlayer key={i} src={vid[1]} className="my-6 border border-white/10" />;
         }
 
-        if (IMG_EXT.test(trimmed) && /^https?:\/\//.test(trimmed)) {
+        if (/^https?:\/\//.test(trimmed) && isPlayable(trimmed)) {
+          return <VideoPlayer key={i} src={trimmed} className="my-6 border border-white/10" />;
+        }
+
+        if (/^https?:\/\//.test(trimmed) && (IMG_EXT.test(trimmed) || mediaKind(trimmed) === "image")) {
           return (
             <button
               key={i}
@@ -192,9 +196,6 @@ export function RichBody({ text, className = "" }: { text: string; className?: s
           );
         }
 
-        if (VID_EXT.test(trimmed) && /^https?:\/\//.test(trimmed)) {
-          return <VideoPlayer key={i} src={trimmed} className="my-6 border border-white/10" />;
-        }
 
         return (
           <p key={i} className="whitespace-pre-wrap">
