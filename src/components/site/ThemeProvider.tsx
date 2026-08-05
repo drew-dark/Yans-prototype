@@ -23,16 +23,62 @@ export function useTheme() {
   return useContext(ThemeCtx);
 }
 
+function isTheme(v: unknown): v is ThemeId {
+  return typeof v === "string" && THEMES.some((t) => t.id === v);
+}
+
+/** Broadcast channel name used to keep every open tab on the same theme. */
+const THEME_CHANNEL = "yans-theme-sync";
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemeId>("kraft");
 
+  // Adopt whatever was stored (survives login, logout, reloads and new tabs).
   useEffect(() => {
-    const stored = window.localStorage.getItem(THEME_STORAGE_KEY) as ThemeId | null;
-    if (stored && THEMES.some((t) => t.id === stored)) setThemeState(stored);
+    const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
+    if (isTheme(stored)) setThemeState(stored);
   }, []);
+
+  // Keep other tabs / windows in sync, both ways.
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== THEME_STORAGE_KEY) return;
+      if (isTheme(e.newValue)) setThemeState(e.newValue);
+      else if (e.newValue === null) {
+        // Another tab cleared storage (e.g. a sign-out) — restore our choice.
+        try {
+          window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+        } catch {
+          /* storage unavailable */
+        }
+      }
+    };
+    window.addEventListener("storage", onStorage);
+
+    let channel: BroadcastChannel | null = null;
+    if (typeof BroadcastChannel !== "undefined") {
+      channel = new BroadcastChannel(THEME_CHANNEL);
+      channel.onmessage = (e) => {
+        if (isTheme(e.data)) setThemeState(e.data);
+      };
+    }
+
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      channel?.close();
+    };
+  }, [theme]);
 
   useEffect(() => {
     document.documentElement.dataset["theme"] = theme;
+    // Re-assert storage in case an auth flow wiped it.
+    try {
+      if (window.localStorage.getItem(THEME_STORAGE_KEY) !== theme) {
+        window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+      }
+    } catch {
+      /* storage unavailable */
+    }
   }, [theme]);
 
   const value = useMemo<Ctx>(
@@ -45,6 +91,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         } catch {
           /* storage unavailable */
         }
+        try {
+          if (typeof BroadcastChannel !== "undefined") {
+            const ch = new BroadcastChannel(THEME_CHANNEL);
+            ch.postMessage(t);
+            ch.close();
+          }
+        } catch {
+          /* channel unavailable */
+        }
       },
     }),
     [theme],
@@ -52,6 +107,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   return <ThemeCtx.Provider value={value}>{children}</ThemeCtx.Provider>;
 }
+
 
 /** Compact swatch row for switching the site accent/theme. */
 export function ThemeSwitcher({ className = "" }: { className?: string }) {

@@ -6,13 +6,13 @@ import { Paginator } from "@/components/site/Paginator";
 import { GridSkeleton } from "@/components/site/GridSkeleton";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { useMediaViewer } from "@/components/site/MediaViewer";
+import { getEmbedThumbnail, isPlayable } from "@/lib/media";
 import { BookmarkButton } from "@/components/site/BookmarkButton";
 import { CommentsSection } from "@/components/site/CommentsSection";
 import { isRangeOutOfBounds, pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
 import { useEffect, useState } from "react";
 
 const PAGE_SIZE = 12;
-const VIDEO_RE = /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i;
 
 export const Route = createFileRoute("/gallery")({
   validateSearch: validatePageSearch,
@@ -98,7 +98,8 @@ function GalleryPage() {
               className={`grid grid-cols-2 gap-2 transition-opacity duration-200 motion-reduce:transition-none md:grid-cols-3 md:gap-4 lg:grid-cols-4 ${isFetching ? "opacity-50" : "opacity-100"}`}
             >
               {photos.map((p, i) => {
-                const isVideo = VIDEO_RE.test(p.image_url);
+                const isVideo = isPlayable(p.image_url);
+                const embedThumb = getEmbedThumbnail(p.image_url);
                 return (
                   <button
                     key={p.id}
@@ -114,13 +115,22 @@ function GalleryPage() {
                     aria-label={p.caption ?? (isVideo ? "Play video" : "Open image")}
                   >
                     {isVideo ? (
-                      <video
-                        src={p.image_url}
-                        muted
-                        playsInline
-                        preload="metadata"
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-                      />
+                      embedThumb ? (
+                        <img
+                          src={embedThumb}
+                          alt={p.caption ?? ""}
+                          loading="lazy"
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                        />
+                      ) : (
+                        <video
+                          src={p.image_url}
+                          muted
+                          playsInline
+                          preload="metadata"
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                        />
+                      )
                     ) : (
                       <img
                         src={p.image_url}
@@ -154,7 +164,11 @@ function GalleryPage() {
             {selected && (
               <div className="mt-16 border-t border-white/10 pt-8">
                 <div className="flex flex-wrap items-center gap-4">
-                  <img src={selected.image_url} alt="" className="h-16 w-16 border border-white/10 object-cover" />
+                  {isPlayable(selected.image_url) ? (
+                    <span className="flex h-16 w-16 items-center justify-center border border-white/10 bg-black/60 font-mono text-[10px] uppercase tracking-widest text-white/60">▶</span>
+                  ) : (
+                    <img src={selected.image_url} alt="" className="h-16 w-16 border border-white/10 object-cover" />
+                  )}
                   <div className="flex-1 min-w-[12rem]">
                     <p className="font-mono text-[10px] uppercase tracking-widest text-white/40">Selected frame</p>
                     <p className="text-sm text-white/80">{selected.caption ?? "Untitled"}</p>

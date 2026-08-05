@@ -6,7 +6,8 @@ import { PageShell } from "@/components/site/SiteChrome";
 import { Paginator } from "@/components/site/Paginator";
 import { GridSkeleton } from "@/components/site/GridSkeleton";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
-import { useMediaViewer } from "@/components/site/MediaViewer";
+import { useMediaViewer, mediaItemFor } from "@/components/site/MediaViewer";
+import { getEmbedThumbnail, isPlayable } from "@/lib/media";
 import { BookmarkButton } from "@/components/site/BookmarkButton";
 import { CommentsSection } from "@/components/site/CommentsSection";
 import { isRangeOutOfBounds, pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
@@ -133,17 +134,32 @@ function CollectionPage() {
                   type="button"
                   onClick={() => {
                     setSelectedId(t.id);
-                    open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label });
+                    open(mediaItemFor(t.image_url, t.label));
                   }}
                   className="group relative aspect-[3/4] overflow-hidden border border-white/10 bg-neutral-900 text-left"
                   aria-label={t.label}
                 >
-                  <img
-                    src={t.image_url}
-                    alt={t.label}
-                    loading="lazy"
-                    className="h-full w-full object-cover"
-                  />
+                  {isPlayable(t.image_url) && !getEmbedThumbnail(t.image_url) ? (
+                    <video
+                      src={t.image_url}
+                      muted
+                      playsInline
+                      preload="metadata"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <img
+                      src={getEmbedThumbnail(t.image_url) ?? t.image_url}
+                      alt={t.label}
+                      loading="lazy"
+                      className="h-full w-full object-cover"
+                    />
+                  )}
+                  {isPlayable(t.image_url) && (
+                    <span className="pointer-events-none absolute right-2 top-2 rounded bg-black/70 px-2 py-0.5 font-mono text-[9px] uppercase tracking-widest text-white/80">
+                      ▶ Video
+                    </span>
+                  )}
                   <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-3">
                     <p className="font-mono text-[10px] uppercase tracking-widest text-white">
                       {t.label}
