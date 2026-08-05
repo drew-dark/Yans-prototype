@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
-import { getEmbedUrl, isPlayable, mediaKind, mimeTypeFor, IMAGE_EXT_RE, VIDEO_EXT_RE } from "@/lib/media";
+import { getEmbedUrl, isPlayable, mediaKind, mimeTypeFor, IMAGE_EXT_RE } from "@/lib/media";
 
 type MediaItem =
   | { kind: "image"; src: string; alt?: string; caption?: string }
@@ -147,7 +147,6 @@ export function VideoPlayer({
 // Any bare http(s) URL ending in an image or video extension, or a supported
 // video-provider link, is also detected.
 const IMG_EXT = IMAGE_EXT_RE;
-const VID_EXT = VIDEO_EXT_RE;
 
 
 export function RichBody({ text, className = "" }: { text: string; className?: string }) {

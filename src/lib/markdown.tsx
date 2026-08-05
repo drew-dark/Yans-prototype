@@ -1,5 +1,6 @@
 import { Fragment, type ReactNode } from "react";
 import { useMediaViewer, VideoPlayer } from "@/components/site/MediaViewer";
+import { IMAGE_EXT_RE, isPlayable, mediaKind } from "@/lib/media";
 
 // Small, safe-ish markdown renderer tuned for the site's editor tokens.
 // Supported block:  # / ## / ### headings, > blockquote, - / * / 1. lists,
@@ -9,8 +10,7 @@ import { useMediaViewer, VideoPlayer } from "@/components/site/MediaViewer";
 //                   bare http(s) image/video URLs.
 // Anything unrecognised falls through as plain text.
 
-const IMG_EXT = /\.(png|jpe?g|gif|webp|avif|svg)(\?.*)?$/i;
-const VID_EXT = /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i;
+const IMG_EXT = IMAGE_EXT_RE;
 
 function renderInline(text: string, keyPrefix = ""): ReactNode[] {
   const nodes: ReactNode[] = [];
@@ -120,8 +120,8 @@ function parseBlocks(md: string): Block[] {
       continue;
     }
     const bare = line.trim();
-    if (/^https?:\/\//.test(bare) && IMG_EXT.test(bare)) { flushAll(); blocks.push({ kind: "image", alt: "", src: bare }); continue; }
-    if (/^https?:\/\//.test(bare) && VID_EXT.test(bare)) { flushAll(); blocks.push({ kind: "video", src: bare }); continue; }
+    if (/^https?:\/\//.test(bare) && isPlayable(bare)) { flushAll(); blocks.push({ kind: "video", src: bare }); continue; }
+    if (/^https?:\/\//.test(bare) && (IMG_EXT.test(bare) || mediaKind(bare) === "image")) { flushAll(); blocks.push({ kind: "image", alt: "", src: bare }); continue; }
 
     if (/^---+$/.test(line.trim())) { flushAll(); blocks.push({ kind: "hr" }); continue; }
 
