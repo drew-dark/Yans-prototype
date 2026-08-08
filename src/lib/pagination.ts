@@ -1,9 +1,12 @@
 import { useEffect } from "react";
+import type { SearchSchemaInput } from "@tanstack/react-router";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 /** Validates/normalises the `?page=` search param for listing routes. */
-export function validatePageSearch(search: Record<string, unknown>): { page: number } {
-  const raw = Number(search.page);
+export function validatePageSearch(
+  search: { page?: number | string } & SearchSchemaInput,
+): { page: number } {
+  const raw = Number((search as { page?: number | string }).page);
   const page = Number.isFinite(raw) && raw >= 1 ? Math.floor(raw) : 1;
   return { page };
 }
