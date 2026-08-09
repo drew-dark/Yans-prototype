@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StoriesRouteImport } from './routes/stories'
+import { Route as ShowRouteImport } from './routes/show'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as GalleryRouteImport } from './routes/gallery'
@@ -30,6 +31,7 @@ import { Route as CollectionDearTodaySlugRouteImport } from './routes/collection
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as AuthenticatedAdminTaxonomyRouteImport } from './routes/_authenticated/admin/taxonomy'
 import { Route as AuthenticatedAdminStoriesRouteImport } from './routes/_authenticated/admin/stories'
+import { Route as AuthenticatedAdminShowsRouteImport } from './routes/_authenticated/admin/shows'
 import { Route as AuthenticatedAdminShopRouteImport } from './routes/_authenticated/admin/shop'
 import { Route as AuthenticatedAdminHeroRouteImport } from './routes/_authenticated/admin/hero'
 import { Route as AuthenticatedAdminGalleryRouteImport } from './routes/_authenticated/admin/gallery'
@@ -44,6 +46,11 @@ import { Route as AuthenticatedAccountBookmarksRouteImport } from './routes/_aut
 const StoriesRoute = StoriesRouteImport.update({
   id: '/stories',
   path: '/stories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShowRoute = ShowRouteImport.update({
+  id: '/show',
+  path: '/show',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShopRoute = ShopRouteImport.update({
@@ -149,6 +156,11 @@ const AuthenticatedAdminStoriesRoute =
     path: '/stories',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminShowsRoute = AuthenticatedAdminShowsRouteImport.update({
+  id: '/shows',
+  path: '/shows',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 const AuthenticatedAdminShopRoute = AuthenticatedAdminShopRouteImport.update({
   id: '/shop',
   path: '/shop',
@@ -215,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/gallery': typeof GalleryRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
+  '/show': typeof ShowRoute
   '/stories': typeof StoriesRouteWithChildren
   '/account': typeof AuthenticatedAccountRouteRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
@@ -231,6 +244,7 @@ export interface FileRoutesByFullPath {
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/admin/hero': typeof AuthenticatedAdminHeroRoute
   '/admin/shop': typeof AuthenticatedAdminShopRoute
+  '/admin/shows': typeof AuthenticatedAdminShowsRoute
   '/admin/stories': typeof AuthenticatedAdminStoriesRoute
   '/admin/taxonomy': typeof AuthenticatedAdminTaxonomyRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -247,6 +261,7 @@ export interface FileRoutesByTo {
   '/gallery': typeof GalleryRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
+  '/show': typeof ShowRoute
   '/stories': typeof StoriesRouteWithChildren
   '/collection/dear-today': typeof CollectionDearTodayRouteWithChildren
   '/diaries/$slug': typeof DiariesSlugRoute
@@ -261,6 +276,7 @@ export interface FileRoutesByTo {
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/admin/hero': typeof AuthenticatedAdminHeroRoute
   '/admin/shop': typeof AuthenticatedAdminShopRoute
+  '/admin/shows': typeof AuthenticatedAdminShowsRoute
   '/admin/stories': typeof AuthenticatedAdminStoriesRoute
   '/admin/taxonomy': typeof AuthenticatedAdminTaxonomyRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -279,6 +295,7 @@ export interface FileRoutesById {
   '/gallery': typeof GalleryRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
+  '/show': typeof ShowRoute
   '/stories': typeof StoriesRouteWithChildren
   '/_authenticated/account': typeof AuthenticatedAccountRouteRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
@@ -295,6 +312,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/_authenticated/admin/hero': typeof AuthenticatedAdminHeroRoute
   '/_authenticated/admin/shop': typeof AuthenticatedAdminShopRoute
+  '/_authenticated/admin/shows': typeof AuthenticatedAdminShowsRoute
   '/_authenticated/admin/stories': typeof AuthenticatedAdminStoriesRoute
   '/_authenticated/admin/taxonomy': typeof AuthenticatedAdminTaxonomyRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -313,6 +331,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/settings'
     | '/shop'
+    | '/show'
     | '/stories'
     | '/account'
     | '/admin'
@@ -329,6 +348,7 @@ export interface FileRouteTypes {
     | '/admin/gallery'
     | '/admin/hero'
     | '/admin/shop'
+    | '/admin/shows'
     | '/admin/stories'
     | '/admin/taxonomy'
     | '/admin/users'
@@ -345,6 +365,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/settings'
     | '/shop'
+    | '/show'
     | '/stories'
     | '/collection/dear-today'
     | '/diaries/$slug'
@@ -359,6 +380,7 @@ export interface FileRouteTypes {
     | '/admin/gallery'
     | '/admin/hero'
     | '/admin/shop'
+    | '/admin/shows'
     | '/admin/stories'
     | '/admin/taxonomy'
     | '/admin/users'
@@ -376,6 +398,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/settings'
     | '/shop'
+    | '/show'
     | '/stories'
     | '/_authenticated/account'
     | '/_authenticated/admin'
@@ -392,6 +415,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/gallery'
     | '/_authenticated/admin/hero'
     | '/_authenticated/admin/shop'
+    | '/_authenticated/admin/shows'
     | '/_authenticated/admin/stories'
     | '/_authenticated/admin/taxonomy'
     | '/_authenticated/admin/users'
@@ -410,6 +434,7 @@ export interface RootRouteChildren {
   GalleryRoute: typeof GalleryRoute
   SettingsRoute: typeof SettingsRoute
   ShopRoute: typeof ShopRoute
+  ShowRoute: typeof ShowRoute
   StoriesRoute: typeof StoriesRouteWithChildren
 }
 
@@ -420,6 +445,13 @@ declare module '@tanstack/react-router' {
       path: '/stories'
       fullPath: '/stories'
       preLoaderRoute: typeof StoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/show': {
+      id: '/show'
+      path: '/show'
+      fullPath: '/show'
+      preLoaderRoute: typeof ShowRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shop': {
@@ -562,6 +594,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminStoriesRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/shows': {
+      id: '/_authenticated/admin/shows'
+      path: '/shows'
+      fullPath: '/admin/shows'
+      preLoaderRoute: typeof AuthenticatedAdminShowsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/shop': {
       id: '/_authenticated/admin/shop'
       path: '/shop'
@@ -662,6 +701,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminGalleryRoute: typeof AuthenticatedAdminGalleryRoute
   AuthenticatedAdminHeroRoute: typeof AuthenticatedAdminHeroRoute
   AuthenticatedAdminShopRoute: typeof AuthenticatedAdminShopRoute
+  AuthenticatedAdminShowsRoute: typeof AuthenticatedAdminShowsRoute
   AuthenticatedAdminStoriesRoute: typeof AuthenticatedAdminStoriesRoute
   AuthenticatedAdminTaxonomyRoute: typeof AuthenticatedAdminTaxonomyRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
@@ -678,6 +718,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminGalleryRoute: AuthenticatedAdminGalleryRoute,
     AuthenticatedAdminHeroRoute: AuthenticatedAdminHeroRoute,
     AuthenticatedAdminShopRoute: AuthenticatedAdminShopRoute,
+    AuthenticatedAdminShowsRoute: AuthenticatedAdminShowsRoute,
     AuthenticatedAdminStoriesRoute: AuthenticatedAdminStoriesRoute,
     AuthenticatedAdminTaxonomyRoute: AuthenticatedAdminTaxonomyRoute,
     AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
@@ -757,18 +798,9 @@ const rootRouteChildren: RootRouteChildren = {
   GalleryRoute: GalleryRoute,
   SettingsRoute: SettingsRoute,
   ShopRoute: ShopRoute,
+  ShowRoute: ShowRoute,
   StoriesRoute: StoriesRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

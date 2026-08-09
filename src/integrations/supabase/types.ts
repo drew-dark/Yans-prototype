@@ -563,6 +563,98 @@ export type Database = {
         }
         Relationships: []
       }
+      show_stream_keys: {
+        Row: {
+          created_at: string
+          id: string
+          ingest_url: string
+          rotated_at: string
+          show_id: string
+          stream_key: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ingest_url?: string
+          rotated_at?: string
+          show_id: string
+          stream_key?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ingest_url?: string
+          rotated_at?: string
+          show_id?: string
+          stream_key?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "show_stream_keys_show_id_fkey"
+            columns: ["show_id"]
+            isOneToOne: true
+            referencedRelation: "shows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shows: {
+        Row: {
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          ended_at: string | null
+          id: string
+          playback_url: string | null
+          published: boolean
+          recording_url: string | null
+          scheduled_at: string | null
+          slug: string
+          sort_order: number
+          started_at: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          ended_at?: string | null
+          id?: string
+          playback_url?: string | null
+          published?: boolean
+          recording_url?: string | null
+          scheduled_at?: string | null
+          slug: string
+          sort_order?: number
+          started_at?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          ended_at?: string | null
+          id?: string
+          playback_url?: string | null
+          published?: boolean
+          recording_url?: string | null
+          scheduled_at?: string | null
+          slug?: string
+          sort_order?: number
+          started_at?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       stories: {
         Row: {
           body: string | null
