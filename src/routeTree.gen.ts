@@ -31,6 +31,7 @@ import { Route as CollectionDearTodaySlugRouteImport } from './routes/collection
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as AuthenticatedAdminTaxonomyRouteImport } from './routes/_authenticated/admin/taxonomy'
 import { Route as AuthenticatedAdminStoriesRouteImport } from './routes/_authenticated/admin/stories'
+import { Route as AuthenticatedAdminShowsRouteImport } from './routes/_authenticated/admin/shows'
 import { Route as AuthenticatedAdminShopRouteImport } from './routes/_authenticated/admin/shop'
 import { Route as AuthenticatedAdminHeroRouteImport } from './routes/_authenticated/admin/hero'
 import { Route as AuthenticatedAdminGalleryRouteImport } from './routes/_authenticated/admin/gallery'
@@ -155,6 +156,11 @@ const AuthenticatedAdminStoriesRoute =
     path: '/stories',
     getParentRoute: () => AuthenticatedAdminRouteRoute,
   } as any)
+const AuthenticatedAdminShowsRoute = AuthenticatedAdminShowsRouteImport.update({
+  id: '/shows',
+  path: '/shows',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
 const AuthenticatedAdminShopRoute = AuthenticatedAdminShopRouteImport.update({
   id: '/shop',
   path: '/shop',
@@ -238,6 +244,7 @@ export interface FileRoutesByFullPath {
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/admin/hero': typeof AuthenticatedAdminHeroRoute
   '/admin/shop': typeof AuthenticatedAdminShopRoute
+  '/admin/shows': typeof AuthenticatedAdminShowsRoute
   '/admin/stories': typeof AuthenticatedAdminStoriesRoute
   '/admin/taxonomy': typeof AuthenticatedAdminTaxonomyRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -269,6 +276,7 @@ export interface FileRoutesByTo {
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/admin/hero': typeof AuthenticatedAdminHeroRoute
   '/admin/shop': typeof AuthenticatedAdminShopRoute
+  '/admin/shows': typeof AuthenticatedAdminShowsRoute
   '/admin/stories': typeof AuthenticatedAdminStoriesRoute
   '/admin/taxonomy': typeof AuthenticatedAdminTaxonomyRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -304,6 +312,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/_authenticated/admin/hero': typeof AuthenticatedAdminHeroRoute
   '/_authenticated/admin/shop': typeof AuthenticatedAdminShopRoute
+  '/_authenticated/admin/shows': typeof AuthenticatedAdminShowsRoute
   '/_authenticated/admin/stories': typeof AuthenticatedAdminStoriesRoute
   '/_authenticated/admin/taxonomy': typeof AuthenticatedAdminTaxonomyRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -339,6 +348,7 @@ export interface FileRouteTypes {
     | '/admin/gallery'
     | '/admin/hero'
     | '/admin/shop'
+    | '/admin/shows'
     | '/admin/stories'
     | '/admin/taxonomy'
     | '/admin/users'
@@ -370,6 +380,7 @@ export interface FileRouteTypes {
     | '/admin/gallery'
     | '/admin/hero'
     | '/admin/shop'
+    | '/admin/shows'
     | '/admin/stories'
     | '/admin/taxonomy'
     | '/admin/users'
@@ -404,6 +415,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/gallery'
     | '/_authenticated/admin/hero'
     | '/_authenticated/admin/shop'
+    | '/_authenticated/admin/shows'
     | '/_authenticated/admin/stories'
     | '/_authenticated/admin/taxonomy'
     | '/_authenticated/admin/users'
@@ -582,6 +594,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminStoriesRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/shows': {
+      id: '/_authenticated/admin/shows'
+      path: '/shows'
+      fullPath: '/admin/shows'
+      preLoaderRoute: typeof AuthenticatedAdminShowsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/shop': {
       id: '/_authenticated/admin/shop'
       path: '/shop'
@@ -682,6 +701,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminGalleryRoute: typeof AuthenticatedAdminGalleryRoute
   AuthenticatedAdminHeroRoute: typeof AuthenticatedAdminHeroRoute
   AuthenticatedAdminShopRoute: typeof AuthenticatedAdminShopRoute
+  AuthenticatedAdminShowsRoute: typeof AuthenticatedAdminShowsRoute
   AuthenticatedAdminStoriesRoute: typeof AuthenticatedAdminStoriesRoute
   AuthenticatedAdminTaxonomyRoute: typeof AuthenticatedAdminTaxonomyRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
@@ -698,6 +718,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminGalleryRoute: AuthenticatedAdminGalleryRoute,
     AuthenticatedAdminHeroRoute: AuthenticatedAdminHeroRoute,
     AuthenticatedAdminShopRoute: AuthenticatedAdminShopRoute,
+    AuthenticatedAdminShowsRoute: AuthenticatedAdminShowsRoute,
     AuthenticatedAdminStoriesRoute: AuthenticatedAdminStoriesRoute,
     AuthenticatedAdminTaxonomyRoute: AuthenticatedAdminTaxonomyRoute,
     AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,

@@ -13,6 +13,7 @@ const allNavItems = [
   { to: "/admin/diary", label: "Diary", roles: ["admin", "editor"] },
   { to: "/admin/dear-today", label: "Dear Today", roles: ["admin", "editor", "guest_author"] },
   { to: "/admin/gallery", label: "Gallery", roles: ["admin", "editor"] },
+  { to: "/admin/shows", label: "Shows", roles: ["admin", "editor"] },
   { to: "/admin/shop", label: "Shop", roles: ["admin", "editor"] },
   { to: "/admin/about", label: "About", roles: ["admin", "editor"] },
   { to: "/admin/comments", label: "Comments", roles: ["admin", "moderator"] },

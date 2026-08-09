@@ -178,9 +178,9 @@ function ShowsAdmin() {
 
   const statusMut = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const patch: Record<string, unknown> = { status };
-      if (status === "live") patch['started_at'] = new Date().toISOString();
-      if (status === "ended") patch['ended_at'] = new Date().toISOString();
+      const patch: { status: string; started_at?: string; ended_at?: string } = { status };
+      if (status === "live") patch.started_at = new Date().toISOString();
+      if (status === "ended") patch.ended_at = new Date().toISOString();
       const { error } = await supabase.from("shows").update(patch).eq("id", id);
       if (error) throw error;
     },
@@ -199,11 +199,11 @@ function ShowsAdmin() {
       rotate?: boolean;
     }) => {
       const existing = keys.find((k) => k.show_id === showId);
-      const patch: Record<string, unknown> = {};
-      if (ingest_url !== undefined) patch['ingest_url'] = ingest_url;
+      const patch: { ingest_url?: string; stream_key?: string; rotated_at?: string } = {};
+      if (ingest_url !== undefined) patch.ingest_url = ingest_url;
       if (rotate) {
-        patch['stream_key'] = randomKey();
-        patch['rotated_at'] = new Date().toISOString();
+        patch.stream_key = randomKey();
+        patch.rotated_at = new Date().toISOString();
       }
       if (existing) {
         const { error } = await supabase
