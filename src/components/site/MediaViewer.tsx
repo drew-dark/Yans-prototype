@@ -151,18 +151,39 @@ export function VideoPlayer({
   }
 
   return (
-    <video
-      poster={poster}
-      controls
-      playsInline
-      preload="metadata"
-      autoPlay={autoPlay}
-      onError={() => setFailed(true)}
-      className={`max-h-[85vh] w-full bg-black ${className}`}
-    >
-      <source src={src} type={mimeTypeFor(src)} />
-      Your browser cannot play this video.
-    </video>
+    <div ref={wrapRef} className={`group/player relative bg-black ${className}`}>
+      <video
+        ref={videoRef}
+        poster={poster}
+        controls
+        playsInline
+        preload="metadata"
+        autoPlay={autoPlay}
+        onError={() => setFailed(true)}
+        className="max-h-[85vh] w-full bg-black"
+      >
+        <source src={src} type={mimeTypeFor(src)} />
+        Your browser cannot play this video.
+      </video>
+      <div className="pointer-events-none absolute right-2 top-2 flex gap-2 opacity-0 transition-opacity group-hover/player:opacity-100 focus-within:opacity-100 motion-reduce:transition-none">
+        <button
+          type="button"
+          onClick={togglePip}
+          aria-label="Picture in picture"
+          className="pointer-events-auto rounded bg-black/70 px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-white/80 hover:text-white"
+        >
+          PiP
+        </button>
+        <button
+          type="button"
+          onClick={toggleFullscreen}
+          aria-label="Fullscreen"
+          className="pointer-events-auto rounded bg-black/70 px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-white/80 hover:text-white"
+        >
+          ⛶
+        </button>
+      </div>
+    </div>
   );
 }
 
