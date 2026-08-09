@@ -171,6 +171,7 @@ export function SiteFooter() {
           <Link to="/diaries" className="py-1 hover:text-white">Diaries</Link>
           <Link to="/collection/dear-today" className="py-1 hover:text-white">Dear Today</Link>
           <Link to="/gallery" className="py-1 hover:text-white">Gallery</Link>
+          <Link to="/show" className="py-1 hover:text-white">Show</Link>
           <Link to="/shop" className="py-1 hover:text-white">Shop</Link>
           <Link to="/about" className="py-1 hover:text-white">About</Link>
           <Link to="/settings" className="py-1 hover:text-white">Settings</Link>
