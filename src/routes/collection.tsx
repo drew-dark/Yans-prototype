@@ -23,13 +23,13 @@ export const Route = createFileRoute("/collection")({
   validateSearch: validatePageSearch,
   head: () => ({
     meta: [
-      { title: "Muyan Collection — Emmanuel Rayan Daka" },
+      { title: "The Last Mukwasu — Emmanuel Rayan Daka" },
       {
         name: "description",
         content:
-          "The Muyan Collection — a curated set of frames tracing verse, broadcast, portrait, and stage across Lusaka and Tokyo.",
+          "The Last Mukwasu — a curated set of frames tracing verse, broadcast, portrait, and stage across Lusaka and Tokyo.",
       },
-      { property: "og:title", content: "Muyan Collection — Yans Lounge" },
+      { property: "og:title", content: "The Last Mukwasu — Yans Lounge" },
       {
         property: "og:description",
         content: "A curated set of frames — verse, broadcast, portrait, and stage.",
@@ -109,7 +109,7 @@ function CollectionPage() {
             Volume 01
           </p>
           <h1 className="font-display text-5xl uppercase leading-none tracking-tight sm:text-6xl md:text-8xl">
-            Muyan Collection
+            The Last Mukwasu
           </h1>
           <p className="mt-6 text-sm text-white/50 md:text-base">
             Frames pulled from the quiet places — portrait, broadcast, verse,
@@ -196,7 +196,7 @@ function CollectionPage() {
         )}
 
         <div className="mt-16 flex items-center justify-between border-t border-white/10 pt-6 font-mono text-[10px] uppercase tracking-widest text-white/40">
-          <span>Muyan · Series 01</span>
+          <span>The Last Mukwasu · Series 01</span>
           <Link to="/gallery" className="hover:text-white">
             View full gallery →
           </Link>

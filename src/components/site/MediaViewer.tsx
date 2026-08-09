@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { getEmbedUrl, isPlayable, mediaKind, mimeTypeFor, IMAGE_EXT_RE } from "@/lib/media";
 
 type MediaItem =
@@ -97,7 +97,32 @@ export function VideoPlayer({
   title?: string;
 }) {
   const [failed, setFailed] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
   const embed = getEmbedUrl(src);
+
+  const togglePip = async () => {
+    const v = videoRef.current as (HTMLVideoElement & { requestPictureInPicture?: () => Promise<unknown> }) | null;
+    if (!v) return;
+    try {
+      if (document.pictureInPictureElement) await document.exitPictureInPicture();
+      else await v.requestPictureInPicture?.();
+    } catch {
+      /* unsupported or blocked */
+    }
+  };
+
+  const toggleFullscreen = async () => {
+    const el = wrapRef.current;
+    const v = videoRef.current as (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | null;
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else if (el?.requestFullscreen) await el.requestFullscreen();
+      else v?.webkitEnterFullscreen?.();
+    } catch {
+      /* unsupported */
+    }
+  };
 
   if (embed) {
     return (
@@ -126,18 +151,39 @@ export function VideoPlayer({
   }
 
   return (
-    <video
-      poster={poster}
-      controls
-      playsInline
-      preload="metadata"
-      autoPlay={autoPlay}
-      onError={() => setFailed(true)}
-      className={`max-h-[85vh] w-full bg-black ${className}`}
-    >
-      <source src={src} type={mimeTypeFor(src)} />
-      Your browser cannot play this video.
-    </video>
+    <div ref={wrapRef} className={`group/player relative bg-black ${className}`}>
+      <video
+        ref={videoRef}
+        poster={poster}
+        controls
+        playsInline
+        preload="metadata"
+        autoPlay={autoPlay}
+        onError={() => setFailed(true)}
+        className="max-h-[85vh] w-full bg-black"
+      >
+        <source src={src} type={mimeTypeFor(src)} />
+        Your browser cannot play this video.
+      </video>
+      <div className="pointer-events-none absolute right-2 top-2 flex gap-2 opacity-0 transition-opacity group-hover/player:opacity-100 focus-within:opacity-100 motion-reduce:transition-none">
+        <button
+          type="button"
+          onClick={togglePip}
+          aria-label="Picture in picture"
+          className="pointer-events-auto rounded bg-black/70 px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-white/80 hover:text-white"
+        >
+          PiP
+        </button>
+        <button
+          type="button"
+          onClick={toggleFullscreen}
+          aria-label="Fullscreen"
+          className="pointer-events-auto rounded bg-black/70 px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-white/80 hover:text-white"
+        >
+          ⛶
+        </button>
+      </div>
+    </div>
   );
 }
 

@@ -34,9 +34,9 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "The Muyan Collection — words carved from quiet places by Zambian poet and journalist Emmanuel Rayan Daka.",
+          "The Last Mukwasu — words carved from quiet places by Zambian poet and journalist Emmanuel Rayan Daka.",
       },
-      { property: "og:title", content: "Emmanuel Rayan Daka — Muyan Collection" },
+      { property: "og:title", content: "Emmanuel Rayan Daka — The Last Mukwasu" },
       {
         property: "og:description",
         content:
@@ -302,7 +302,7 @@ function Index() {
               Volume 01
             </p>
             <h3 className="font-display text-4xl uppercase leading-none tracking-tight sm:text-5xl md:text-7xl">
-              Muyan Collection
+              The Last Mukwasu
             </h3>
           </div>
           <Link

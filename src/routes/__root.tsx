@@ -85,10 +85,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "The Muyan Collection — words carved from quiet places by Zambian poet, author, journalist, and broadcaster Emmanuel Rayan Daka.",
+          "The Last Mukwasu — words carved from quiet places by Zambian poet, author, journalist, and broadcaster Emmanuel Rayan Daka.",
       },
       { name: "author", content: "Emmanuel Rayan Daka" },
-      { property: "og:title", content: "Emmanuel Rayan Daka — Muyan Collection" },
+      { property: "og:title", content: "Emmanuel Rayan Daka — The Last Mukwasu" },
       {
         property: "og:description",
         content:
