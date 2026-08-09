@@ -97,7 +97,32 @@ export function VideoPlayer({
   title?: string;
 }) {
   const [failed, setFailed] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
   const embed = getEmbedUrl(src);
+
+  const togglePip = async () => {
+    const v = videoRef.current as (HTMLVideoElement & { requestPictureInPicture?: () => Promise<unknown> }) | null;
+    if (!v) return;
+    try {
+      if (document.pictureInPictureElement) await document.exitPictureInPicture();
+      else await v.requestPictureInPicture?.();
+    } catch {
+      /* unsupported or blocked */
+    }
+  };
+
+  const toggleFullscreen = async () => {
+    const el = wrapRef.current;
+    const v = videoRef.current as (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | null;
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else if (el?.requestFullscreen) await el.requestFullscreen();
+      else v?.webkitEnterFullscreen?.();
+    } catch {
+      /* unsupported */
+    }
+  };
 
   if (embed) {
     return (
