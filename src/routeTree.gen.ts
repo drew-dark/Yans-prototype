@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StoriesRouteImport } from './routes/stories'
+import { Route as ShowRouteImport } from './routes/show'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as GalleryRouteImport } from './routes/gallery'
@@ -44,6 +45,11 @@ import { Route as AuthenticatedAccountBookmarksRouteImport } from './routes/_aut
 const StoriesRoute = StoriesRouteImport.update({
   id: '/stories',
   path: '/stories',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShowRoute = ShowRouteImport.update({
+  id: '/show',
+  path: '/show',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ShopRoute = ShopRouteImport.update({
@@ -215,6 +221,7 @@ export interface FileRoutesByFullPath {
   '/gallery': typeof GalleryRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
+  '/show': typeof ShowRoute
   '/stories': typeof StoriesRouteWithChildren
   '/account': typeof AuthenticatedAccountRouteRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
@@ -247,6 +254,7 @@ export interface FileRoutesByTo {
   '/gallery': typeof GalleryRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
+  '/show': typeof ShowRoute
   '/stories': typeof StoriesRouteWithChildren
   '/collection/dear-today': typeof CollectionDearTodayRouteWithChildren
   '/diaries/$slug': typeof DiariesSlugRoute
@@ -279,6 +287,7 @@ export interface FileRoutesById {
   '/gallery': typeof GalleryRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
+  '/show': typeof ShowRoute
   '/stories': typeof StoriesRouteWithChildren
   '/_authenticated/account': typeof AuthenticatedAccountRouteRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
@@ -313,6 +322,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/settings'
     | '/shop'
+    | '/show'
     | '/stories'
     | '/account'
     | '/admin'
@@ -345,6 +355,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/settings'
     | '/shop'
+    | '/show'
     | '/stories'
     | '/collection/dear-today'
     | '/diaries/$slug'
@@ -376,6 +387,7 @@ export interface FileRouteTypes {
     | '/gallery'
     | '/settings'
     | '/shop'
+    | '/show'
     | '/stories'
     | '/_authenticated/account'
     | '/_authenticated/admin'
@@ -410,6 +422,7 @@ export interface RootRouteChildren {
   GalleryRoute: typeof GalleryRoute
   SettingsRoute: typeof SettingsRoute
   ShopRoute: typeof ShopRoute
+  ShowRoute: typeof ShowRoute
   StoriesRoute: typeof StoriesRouteWithChildren
 }
 
@@ -420,6 +433,13 @@ declare module '@tanstack/react-router' {
       path: '/stories'
       fullPath: '/stories'
       preLoaderRoute: typeof StoriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/show': {
+      id: '/show'
+      path: '/show'
+      fullPath: '/show'
+      preLoaderRoute: typeof ShowRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/shop': {
@@ -757,18 +777,9 @@ const rootRouteChildren: RootRouteChildren = {
   GalleryRoute: GalleryRoute,
   SettingsRoute: SettingsRoute,
   ShopRoute: ShopRoute,
+  ShowRoute: ShowRoute,
   StoriesRoute: StoriesRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
