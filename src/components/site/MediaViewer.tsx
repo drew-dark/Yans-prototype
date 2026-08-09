@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { getEmbedUrl, isPlayable, mediaKind, mimeTypeFor, IMAGE_EXT_RE } from "@/lib/media";
 
 type MediaItem =
