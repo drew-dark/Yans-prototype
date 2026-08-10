@@ -18,9 +18,9 @@ export const Route = createFileRoute("/gallery")({
   validateSearch: validatePageSearch,
   head: () => ({
     meta: [
-      { title: "Gallery — Emmanuel Rayan Daka" },
+      { title: "Gallery — The Last Mukwasu" },
       { name: "description", content: "Photographs from Lusaka to Tokyo — quiet corners, faces, and light." },
-      { property: "og:title", content: "Gallery — Yans Lounge" },
+      { property: "og:title", content: "Gallery — The Last Mukwasu" },
       { property: "og:description", content: "Photographs from Lusaka to Tokyo." },
     ],
   }),

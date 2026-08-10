@@ -14,9 +14,9 @@ export const Route = createFileRoute("/diaries")({
   validateSearch: validatePageSearch,
   head: () => ({
     meta: [
-      { title: "Gaijin Diaries — Emmanuel Rayan Daka" },
+      { title: "Gaijin Diaries — The Last Mukwasu" },
       { name: "description", content: "Field notes from a Zambian abroad — dispatches on distance, language, and small kindnesses." },
-      { property: "og:title", content: "Gaijin Diaries" },
+      { property: "og:title", content: "Gaijin Diaries — The Last Mukwasu" },
       { property: "og:description", content: "Field notes from a Zambian abroad." },
     ],
   }),
