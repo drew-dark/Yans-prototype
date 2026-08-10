@@ -1,0 +1,1 @@
+UPDATE public.about_content SET headline = 'The Last Mukwasu' WHERE headline = 'Emmanuel Rayan Daka';
