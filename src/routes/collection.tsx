@@ -23,13 +23,13 @@ export const Route = createFileRoute("/collection")({
   validateSearch: validatePageSearch,
   head: () => ({
     meta: [
-      { title: "The Last Mukwasu — Emmanuel Rayan Daka" },
+      { title: "The Last Mukwasu — Poetry & Stories" },
       {
         name: "description",
         content:
           "The Last Mukwasu — a curated set of frames tracing verse, broadcast, portrait, and stage across Lusaka and Tokyo.",
       },
-      { property: "og:title", content: "The Last Mukwasu — Yans Lounge" },
+      { property: "og:title", content: "The Last Mukwasu — Poetry & Stories" },
       {
         property: "og:description",
         content: "A curated set of frames — verse, broadcast, portrait, and stage.",

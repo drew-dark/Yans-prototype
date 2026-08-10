@@ -14,9 +14,9 @@ export const Route = createFileRoute("/stories")({
   validateSearch: validatePageSearch,
   head: () => ({
     meta: [
-      { title: "Stories — Emmanuel Rayan Daka" },
+      { title: "Stories — The Last Mukwasu" },
       { name: "description", content: "Long-form stories, essays, and reportage." },
-      { property: "og:title", content: "Stories — Yans Lounge" },
+      { property: "og:title", content: "Stories — The Last Mukwasu" },
       { property: "og:description", content: "Long-form stories, essays, and reportage." },
     ],
   }),

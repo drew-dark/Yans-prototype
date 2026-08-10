@@ -7,16 +7,16 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
-      { title: "Settings — Colours & Reading | Yans Lounge" },
+      { title: "Settings — Colours & Reading | The Last Mukwasu" },
       {
         name: "description",
         content:
-          "Choose your colour theme and reading preferences for the Yans Lounge archive of poetry, stories and diaries.",
+          "Choose your colour theme and reading preferences for The Last Mukwasu archive of poetry, stories and diaries.",
       },
-      { property: "og:title", content: "Settings — Yans Lounge" },
+      { property: "og:title", content: "Settings — The Last Mukwasu" },
       {
         property: "og:description",
-        content: "Pick a colour theme and reading preferences for Yans Lounge.",
+        content: "Pick a colour theme and reading preferences for The Last Mukwasu.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -115,7 +115,7 @@ function SettingsPage() {
             Motion
           </h2>
           <p className="mt-1 text-sm text-white/50">
-            Yans Lounge follows your system “reduce motion” setting automatically — hover reveals and
+            The Last Mukwasu follows your system “reduce motion” setting automatically — hover reveals and
             zooms are minimised when it is switched on in your device accessibility settings.
           </p>
         </section>

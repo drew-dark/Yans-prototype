@@ -14,10 +14,10 @@ export const Route = createFileRoute("/shop")({
   validateSearch: validatePageSearch,
   head: () => ({
     meta: [
-      { title: "Shop — Emmanuel Rayan Daka" },
-      { name: "description", content: "Books, prints, and small things from the Yans Lounge." },
-      { property: "og:title", content: "Shop — Yans Lounge" },
-      { property: "og:description", content: "Books, prints, and small things from the Yans Lounge." },
+      { title: "Shop — The Last Mukwasu" },
+      { name: "description", content: "Books, prints, and small things from The Last Mukwasu." },
+      { property: "og:title", content: "Shop — The Last Mukwasu" },
+      { property: "og:description", content: "Books, prints, and small things from The Last Mukwasu." },
     ],
   }),
   component: ShopPage,

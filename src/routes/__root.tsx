@@ -81,14 +81,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Emmanuel Rayan Daka — Poet · Author · Journalist · Broadcaster" },
+      { title: "The Last Mukwasu — Poet · Author · Journalist · Broadcaster" },
       {
         name: "description",
         content:
           "The Last Mukwasu — words carved from quiet places by Zambian poet, author, journalist, and broadcaster Emmanuel Rayan Daka.",
       },
       { name: "author", content: "Emmanuel Rayan Daka" },
-      { property: "og:title", content: "Emmanuel Rayan Daka — The Last Mukwasu" },
+      { property: "og:title", content: "The Last Mukwasu — Poet · Author · Journalist · Broadcaster" },
       {
         property: "og:description",
         content:

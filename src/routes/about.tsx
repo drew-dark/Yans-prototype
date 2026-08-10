@@ -8,9 +8,9 @@ import { Markdown } from "@/lib/markdown";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About — Emmanuel Rayan Daka" },
+      { title: "About — The Last Mukwasu" },
       { name: "description", content: "Zambian poet, author, journalist, and broadcaster. Currently between Lusaka and Tokyo." },
-      { property: "og:title", content: "About — Emmanuel Rayan Daka" },
+      { property: "og:title", content: "About — The Last Mukwasu" },
       { property: "og:description", content: "Zambian poet, author, journalist, and broadcaster." },
     ],
   }),
@@ -53,7 +53,7 @@ function AboutPage() {
 
             <div>
               <h2 className="font-display text-3xl uppercase leading-tight tracking-tight md:text-4xl">
-                {about?.headline ?? "Emmanuel Rayan Daka"}
+                {about?.headline ?? "The Last Mukwasu"}
               </h2>
               {about?.location && (
                 <p className="mt-2 font-mono text-[10px] uppercase tracking-widest text-white/50">{about.location}</p>

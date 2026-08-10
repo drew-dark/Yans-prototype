@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/account")({
-  head: () => ({ meta: [{ title: "Your Account — Yans Lounge" }] }),
+  head: () => ({ meta: [{ title: "Your Account — The Last Mukwasu" }] }),
   component: AccountLayout,
 });
 

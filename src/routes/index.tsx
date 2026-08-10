@@ -30,13 +30,13 @@ const fallbackTiles = [
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Emmanuel Rayan Daka — Poet · Author · Journalist · Broadcaster" },
+      { title: "The Last Mukwasu — Poet · Author · Journalist · Broadcaster" },
       {
         name: "description",
         content:
           "The Last Mukwasu — words carved from quiet places by Zambian poet and journalist Emmanuel Rayan Daka.",
       },
-      { property: "og:title", content: "Emmanuel Rayan Daka — The Last Mukwasu" },
+      { property: "og:title", content: "The Last Mukwasu — Poet · Author · Journalist · Broadcaster" },
       {
         property: "og:description",
         content:
@@ -142,7 +142,7 @@ function Index() {
     },
   });
 
-  const headline = about?.headline || "EMMANUEL RAYAN DAKA";
+  const headline = about?.headline || "THE LAST MUKWASU";
   const tagline =
     about?.tagline ||
     "These are words carved from quiet places — am just a Zambian poet and journalist writing the things we rarely say out loud.";
@@ -252,7 +252,7 @@ function Index() {
           className="absolute right-8 top-1/2 hidden -translate-y-1/2 rotate-180 font-mono text-[10px] uppercase tracking-[0.5em] text-white/30 md:block"
           style={{ writingMode: "vertical-rl" }}
         >
-          YANS LOUNGE © 2026
+          THE LAST MUKWASU © 2026
         </div>
 
         <p className="text-center font-mono text-[9px] uppercase tracking-[0.35em] text-white/40 md:text-[10px] md:tracking-[0.5em]">

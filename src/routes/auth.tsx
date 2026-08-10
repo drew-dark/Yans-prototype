@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/auth")({
-  head: () => ({ meta: [{ title: "Sign in — Yans Lounge" }] }),
+  head: () => ({ meta: [{ title: "Sign in — The Last Mukwasu" }] }),
   component: AuthPage,
 });
 
@@ -70,7 +70,7 @@ function AuthPage() {
       <div className="w-full max-w-sm space-y-6">
         <div>
           <Link to="/" className="font-mono text-xs uppercase tracking-widest text-white/40 hover:text-white">
-            ← Yans Lounge
+            ← The Last Mukwasu
           </Link>
           <h1 className="mt-4 font-display text-3xl uppercase tracking-tight">
             {mode === "signin" ? "Sign in" : "Create account"}

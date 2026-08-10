@@ -21,7 +21,7 @@ const allNavItems = [
 ] as const;
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  head: () => ({ meta: [{ title: "Admin — Yans Lounge" }] }),
+  head: () => ({ meta: [{ title: "Admin — The Last Mukwasu" }] }),
   component: AdminLayout,
 });
 

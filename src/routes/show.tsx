@@ -9,7 +9,7 @@ import { useState } from "react";
 export const Route = createFileRoute("/show")({
   head: () => ({
     meta: [
-      { title: "The Show — Emmanuel Rayan Daka" },
+      { title: "The Show — The Last Mukwasu" },
       {
         name: "description",
         content:
