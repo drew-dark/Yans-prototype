@@ -14,9 +14,9 @@ export const Route = createFileRoute("/collection/dear-today")({
   validateSearch: validatePageSearch,
   head: () => ({
     meta: [
-      { title: "Dear Today — Yans Lounge" },
+      { title: "Dear Today — The Last Mukwasu" },
       { name: "description", content: "Dear Today — dated snippets, small notes, and quiet observations." },
-      { property: "og:title", content: "Dear Today — Yans Lounge" },
+      { property: "og:title", content: "Dear Today — The Last Mukwasu" },
       { property: "og:description", content: "Dated snippets, small notes, and quiet observations." },
       { property: "og:type", content: "website" },
     ],
