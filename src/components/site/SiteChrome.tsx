@@ -70,14 +70,14 @@ export function SiteHeader() {
           <div className="flex min-w-0 items-center gap-2 md:gap-2.5">
             <img
               src="/favicon.png"
-              alt="Emmanuel Rayan Daka monogram"
+              alt="The Last Mukwasu monogram"
               width={28}
               height={28}
               className="h-6 w-6 shrink-0 object-contain mix-blend-multiply md:h-7 md:w-7"
             />
             <div className="min-w-0">
               <h1 className="truncate font-mono text-[11px] font-bold leading-none tracking-tight text-ink-dark md:text-sm">
-                EMMANUEL RAYAN DAKA
+                THE LAST MUKWASU
               </h1>
               <p className="mt-1 font-mono text-[8px] uppercase tracking-widest text-ink-dark/80 md:text-[9px]">
                 Yans Lounge
@@ -160,10 +160,10 @@ export function SiteFooter() {
       <div className="mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 text-xs md:flex-row md:items-end">
         <div>
           <span className="mb-1 block font-mono text-[9px] uppercase tracking-widest text-white/30">
-            Yans Lounge © 2026
+            The Last Mukwasu © 2026
           </span>
           <Link to="/" className="text-white/60 hover:text-white">
-            emmanuel rayan daka
+            the last mukwasu
           </Link>
         </div>
         <div className="grid w-full grid-cols-3 gap-x-4 gap-y-3 text-[10px] uppercase tracking-widest text-white/40 sm:w-auto sm:flex sm:gap-4">
