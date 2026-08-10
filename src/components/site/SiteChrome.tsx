@@ -70,7 +70,7 @@ export function SiteHeader() {
           <div className="flex min-w-0 items-center gap-2 md:gap-2.5">
             <img
               src="/favicon.png"
-              alt="The Last Mukwasu monogram"
+              alt="ER monogram"
               width={28}
               height={28}
               className="h-6 w-6 shrink-0 object-contain mix-blend-multiply md:h-7 md:w-7"
