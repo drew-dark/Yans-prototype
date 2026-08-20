@@ -3,10 +3,13 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import type { Database } from "@/integrations/supabase/types";
 
 export const Route = createFileRoute("/_authenticated/account/bookmarks")({
   component: BookmarksPage,
 });
+
+type TableName = keyof Database["public"]["Tables"];
 
 type Row = {
   id: string;
@@ -16,7 +19,27 @@ type Row = {
   meta?: { title: string; slug?: string | null; image_url?: string | null } | null;
 };
 
-const TABLES: Record<Row["content_type"], { table: string; select: string; toPath: (r: any) => string; label: string }> = {
+type BookmarkTarget = {
+  table: TableName;
+  select: string;
+  toPath: (r: { slug?: string | null }) => string;
+  label: string;
+};
+
+// Each target table returns a different subset of these columns depending on
+// `select`; only the id is guaranteed.
+type MetaRow = {
+  id: string;
+  title?: string | null;
+  label?: string | null;
+  caption?: string | null;
+  slug?: string | null;
+  image_url?: string | null;
+  cover_image_url?: string | null;
+  cover_url?: string | null;
+};
+
+const TABLES: Record<Row["content_type"], BookmarkTarget> = {
   story: { table: "stories", select: "id, title, slug, cover_image_url", toPath: (r) => `/stories/${r.slug}`, label: "Story" },
   diary: { table: "diary_entries", select: "id, title, slug, cover_image_url", toPath: (r) => `/diaries/${r.slug}`, label: "Diary" },
   collection_item: { table: "collection_items", select: "id, label, image_url", toPath: () => `/collection`, label: "Collection" },
@@ -33,7 +56,7 @@ function BookmarksPage() {
     const { data: userData } = await supabase.auth.getUser();
     if (!userData.user) return;
     const { data, error } = await supabase
-      .from("bookmarks" as never)
+      .from("bookmarks")
       .select("id, content_type, content_id, created_at")
       .eq("user_id", userData.user.id)
       .order("created_at", { ascending: false });
@@ -50,15 +73,15 @@ function BookmarksPage() {
       arr.push(r.content_id);
       grouped.set(r.content_type, arr);
     }
-    const metaByKey = new Map<string, any>();
+    const metaByKey = new Map<string, MetaRow>();
     await Promise.all(
       Array.from(grouped.entries()).map(async ([kind, ids]) => {
         const cfg = TABLES[kind as Row["content_type"]];
         const { data: items } = await supabase
-          .from(cfg.table as never)
+          .from(cfg.table)
           .select(cfg.select)
           .in("id", ids);
-        for (const it of ((items ?? []) as unknown as any[])) {
+        for (const it of (items ?? []) as unknown as MetaRow[]) {
           metaByKey.set(`${kind}:${it.id}`, it);
         }
       }),
@@ -85,7 +108,7 @@ function BookmarksPage() {
   }, []);
 
   async function remove(id: string) {
-    const { error } = await supabase.from("bookmarks" as never).delete().eq("id", id);
+    const { error } = await supabase.from("bookmarks").delete().eq("id", id);
     if (error) return toast.error(error.message);
     await load();
   }

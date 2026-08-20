@@ -32,7 +32,7 @@ function CommentsAdmin() {
     queryFn: async () => {
       const { from, to } = pageRangeBounds(page, PAGE_SIZE);
       const { data, error, count } = await supabase
-        .from("comments" as never)
+        .from("comments")
         .select("id, user_id, body, status, content_type, content_id, created_at", { count: "exact" })
         .order("created_at", { ascending: false })
         .range(from, to);
@@ -48,8 +48,8 @@ function CommentsAdmin() {
   const setStatus = useMutation({
     mutationFn: async (v: { id: string; status: "visible" | "hidden" }) => {
       const { error } = await supabase
-        .from("comments" as never)
-        .update({ status: v.status } as never)
+        .from("comments")
+        .update({ status: v.status })
         .eq("id", v.id);
       if (error) throw error;
     },
@@ -59,7 +59,7 @@ function CommentsAdmin() {
 
   const del = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("comments" as never).delete().eq("id", id);
+      const { error } = await supabase.from("comments").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => qc.invalidateQueries({ queryKey: ["admin", "comments"] }),

@@ -70,7 +70,7 @@ export function useCollections() {
     queryKey: ["taxonomy", "collections"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("collections" as never)
+        .from("collections")
         .select("*")
         .order("sort_order", { ascending: true });
       if (error) throw error;
@@ -85,7 +85,7 @@ export function useVolumes(collectionId: string | null | undefined) {
     enabled: !!collectionId,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("volumes" as never)
+        .from("volumes")
         .select("*")
         .eq("collection_id", collectionId!)
         .order("sort_order", { ascending: true });
@@ -101,7 +101,7 @@ export function useSeasons(volumeId: string | null | undefined) {
     enabled: !!volumeId,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("seasons" as never)
+        .from("seasons")
         .select("*")
         .eq("volume_id", volumeId!)
         .order("sort_order", { ascending: true });

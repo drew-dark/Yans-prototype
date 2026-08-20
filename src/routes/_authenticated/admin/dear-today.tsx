@@ -12,6 +12,9 @@ import { ImageUpload } from "@/components/admin/ImageUpload";
 import { MarkdownEditor, UnsavedChangesGuard } from "@/components/admin/MarkdownEditor";
 import { toast } from "sonner";
 import { Trash2, Pencil, Plus } from "lucide-react";
+import type { Database } from "@/integrations/supabase/types";
+
+type DearTodayInsert = Database["public"]["Tables"]["dear_today"]["Insert"];
 
 export const Route = createFileRoute("/_authenticated/admin/dear-today")({
   component: DearTodayAdmin,
@@ -48,7 +51,7 @@ function DearTodayAdmin() {
     queryKey: ["admin", "dear_today"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("dear_today" as never)
+        .from("dear_today")
         .select("*")
         .order("entry_date", { ascending: false });
       if (error) throw error;
@@ -93,15 +96,15 @@ function DearTodayAdmin() {
     mutationFn: async () => {
       if (!form.title) throw new Error("Title required");
       const slug = form.slug || slugify(form.title);
-      const payload: any = { ...form, slug };
+      const payload: DearTodayInsert = { ...form, slug };
       if (form.published && !editing?.published) payload.published_at = new Date().toISOString();
       if (editing) {
-        const { error } = await supabase.from("dear_today" as never).update(payload as never).eq("id", editing.id);
+        const { error } = await supabase.from("dear_today").update(payload).eq("id", editing.id);
         if (error) throw error;
       } else {
         const { data: u } = await supabase.auth.getUser();
         payload.author_id = u.user?.id ?? null;
-        const { error } = await supabase.from("dear_today" as never).insert(payload as never);
+        const { error } = await supabase.from("dear_today").insert(payload);
         if (error) throw error;
       }
     },
@@ -117,7 +120,7 @@ function DearTodayAdmin() {
 
   const del = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("dear_today" as never).delete().eq("id", id);
+      const { error } = await supabase.from("dear_today").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
