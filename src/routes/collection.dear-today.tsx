@@ -38,7 +38,7 @@ const dearTodayQuery = (page: number) => ({
   queryFn: async () => {
     const { from, to } = pageRangeBounds(page, PAGE_SIZE);
     const { data, error, count } = await supabase
-      .from("dear_today" as never)
+      .from("dear_today")
       .select("id, entry_date, title, slug, excerpt, cover_url", { count: "exact" })
       .eq("published", true)
       .order("entry_date", { ascending: false })

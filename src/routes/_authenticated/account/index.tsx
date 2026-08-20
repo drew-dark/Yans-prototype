@@ -26,7 +26,7 @@ function ProfilePage() {
       setUserId(u.user.id);
       setEmail(u.user.email ?? "");
       const { data } = await supabase
-        .from("profiles" as never)
+        .from("profiles")
         .select("display_name, avatar_url, bio")
         .eq("user_id", u.user.id)
         .maybeSingle();
@@ -47,8 +47,8 @@ function ProfilePage() {
     setSaving(true);
     try {
       const { error } = await supabase
-        .from("profiles" as never)
-        .upsert({ user_id: userId, ...form } as never, { onConflict: "user_id" });
+        .from("profiles")
+        .upsert({ user_id: userId, ...form }, { onConflict: "user_id" });
       if (error) throw error;
       toast.success("Profile saved");
     } catch (e) {

@@ -35,7 +35,7 @@ export function CommentsSection({
   const load = useCallback(async () => {
     setLoading(true);
     const { data, error } = await supabase
-      .from("comments" as never)
+      .from("comments")
       .select("id, user_id, parent_id, body, status, created_at")
       .eq("content_type", contentType)
       .eq("content_id", contentId)
@@ -50,7 +50,7 @@ export function CommentsSection({
     let profiles: Record<string, { display_name: string | null; avatar_url: string | null }> = {};
     if (userIds.length) {
       const { data: profs } = await supabase
-        .from("profiles" as never)
+        .from("profiles")
         .select("user_id, display_name, avatar_url")
         .in("user_id", userIds);
       profiles = Object.fromEntries(
@@ -87,14 +87,14 @@ export function CommentsSection({
     setPosting(true);
     try {
       const { error } = await supabase
-        .from("comments" as never)
+        .from("comments")
         .insert({
           user_id: userId,
           content_type: contentType,
           content_id: contentId,
           parent_id: parentId,
           body: t,
-        } as never);
+        });
       if (error) throw error;
       clear();
       setReplyTo(null);
@@ -108,7 +108,7 @@ export function CommentsSection({
 
   async function del(id: string) {
     if (!confirm("Delete this comment?")) return;
-    const { error } = await supabase.from("comments" as never).delete().eq("id", id);
+    const { error } = await supabase.from("comments").delete().eq("id", id);
     if (error) return toast.error(error.message);
     await load();
   }
@@ -116,8 +116,8 @@ export function CommentsSection({
   async function toggleHide(row: CommentRow) {
     const next = row.status === "visible" ? "hidden" : "visible";
     const { error } = await supabase
-      .from("comments" as never)
-      .update({ status: next } as never)
+      .from("comments")
+      .update({ status: next })
       .eq("id", row.id);
     if (error) return toast.error(error.message);
     await load();

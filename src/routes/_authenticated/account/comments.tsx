@@ -26,7 +26,7 @@ function MyCommentsPage() {
     const { data: userData } = await supabase.auth.getUser();
     if (!userData.user) return;
     const { data, error } = await supabase
-      .from("comments" as never)
+      .from("comments")
       .select("id, body, status, content_type, content_id, created_at")
       .eq("user_id", userData.user.id)
       .order("created_at", { ascending: false });
@@ -45,7 +45,7 @@ function MyCommentsPage() {
 
   async function del(id: string) {
     if (!confirm("Delete this comment?")) return;
-    const { error } = await supabase.from("comments" as never).delete().eq("id", id);
+    const { error } = await supabase.from("comments").delete().eq("id", id);
     if (error) return toast.error(error.message);
     await load();
   }

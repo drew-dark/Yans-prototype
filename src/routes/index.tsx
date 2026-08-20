@@ -125,7 +125,7 @@ function Index() {
     queryKey: ["public", "home", "dear_today"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("dear_today" as never)
+        .from("dear_today")
         .select("id, slug, title, excerpt, cover_url, entry_date")
         .eq("published", true)
         .order("entry_date", { ascending: false })

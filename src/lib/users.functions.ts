@@ -1,11 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Database } from "@/integrations/supabase/types";
 
 const ROLES = ["admin", "editor", "moderator", "guest_author", "reader"] as const;
 type Role = (typeof ROLES)[number];
 
-async function assertAdmin(supabase: any, userId: string) {
+async function assertAdmin(supabase: SupabaseClient<Database>, userId: string) {
   const { data, error } = await supabase.rpc("has_role", {
     _user_id: userId,
     _role: "admin",
@@ -28,7 +30,7 @@ export const adminListUsers = createServerFn({ method: "GET" })
     const ids = users.map((u) => u.id);
     const [{ data: roles }, { data: profs }] = await Promise.all([
       supabaseAdmin.from("user_roles").select("user_id, role").in("user_id", ids),
-      supabaseAdmin.from("profiles" as never).select("user_id, display_name, avatar_url").in("user_id", ids),
+      supabaseAdmin.from("profiles").select("user_id, display_name, avatar_url").in("user_id", ids),
     ]);
     const roleMap = new Map<string, string[]>();
     for (const r of (roles ?? []) as Array<{ user_id: string; role: string }>) {
