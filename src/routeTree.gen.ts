@@ -9,78 +9,47 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as StoriesRouteImport } from './routes/stories'
-import { Route as ShowRouteImport } from './routes/show'
-import { Route as ShopRouteImport } from './routes/shop'
-import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as GalleryRouteImport } from './routes/gallery'
-import { Route as DiariesRouteImport } from './routes/diaries'
-import { Route as CollectionRouteImport } from './routes/collection'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AboutRouteImport } from './routes/about'
-import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as StoriesSlugRouteImport } from './routes/stories.$slug'
-import { Route as DiariesSlugRouteImport } from './routes/diaries.$slug'
-import { Route as CollectionDearTodayRouteImport } from './routes/collection.dear-today'
-import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as CollectionRouteImport } from './routes/collection'
+import { Route as DiariesRouteImport } from './routes/diaries'
+import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ShopRouteImport } from './routes/shop'
+import { Route as ShowRouteImport } from './routes/show'
+import { Route as StoriesRouteImport } from './routes/stories'
 import { Route as AuthenticatedAccountRouteRouteImport } from './routes/_authenticated/account/route'
-import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
+import { Route as CollectionDearTodayRouteImport } from './routes/collection.dear-today'
+import { Route as DiariesSlugRouteImport } from './routes/diaries_.$slug'
+import { Route as StoriesSlugRouteImport } from './routes/stories_.$slug'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account/index'
-import { Route as CollectionDearTodaySlugRouteImport } from './routes/collection.dear-today.$slug'
-import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
-import { Route as AuthenticatedAdminTaxonomyRouteImport } from './routes/_authenticated/admin/taxonomy'
-import { Route as AuthenticatedAdminStoriesRouteImport } from './routes/_authenticated/admin/stories'
-import { Route as AuthenticatedAdminShowsRouteImport } from './routes/_authenticated/admin/shows'
-import { Route as AuthenticatedAdminShopRouteImport } from './routes/_authenticated/admin/shop'
-import { Route as AuthenticatedAdminHeroRouteImport } from './routes/_authenticated/admin/hero'
-import { Route as AuthenticatedAdminGalleryRouteImport } from './routes/_authenticated/admin/gallery'
-import { Route as AuthenticatedAdminDiaryRouteImport } from './routes/_authenticated/admin/diary'
-import { Route as AuthenticatedAdminDearTodayRouteImport } from './routes/_authenticated/admin/dear-today'
-import { Route as AuthenticatedAdminCommentsRouteImport } from './routes/_authenticated/admin/comments'
-import { Route as AuthenticatedAdminCollectionRouteImport } from './routes/_authenticated/admin/collection'
-import { Route as AuthenticatedAdminAboutRouteImport } from './routes/_authenticated/admin/about'
-import { Route as AuthenticatedAccountCommentsRouteImport } from './routes/_authenticated/account/comments'
 import { Route as AuthenticatedAccountBookmarksRouteImport } from './routes/_authenticated/account/bookmarks'
+import { Route as AuthenticatedAccountCommentsRouteImport } from './routes/_authenticated/account/comments'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin/index'
+import { Route as AuthenticatedAdminAboutRouteImport } from './routes/_authenticated/admin/about'
+import { Route as AuthenticatedAdminCollectionRouteImport } from './routes/_authenticated/admin/collection'
+import { Route as AuthenticatedAdminCommentsRouteImport } from './routes/_authenticated/admin/comments'
+import { Route as AuthenticatedAdminDearTodayRouteImport } from './routes/_authenticated/admin/dear-today'
+import { Route as AuthenticatedAdminDiaryRouteImport } from './routes/_authenticated/admin/diary'
+import { Route as AuthenticatedAdminGalleryRouteImport } from './routes/_authenticated/admin/gallery'
+import { Route as AuthenticatedAdminHeroRouteImport } from './routes/_authenticated/admin/hero'
+import { Route as AuthenticatedAdminShopRouteImport } from './routes/_authenticated/admin/shop'
+import { Route as AuthenticatedAdminShowsRouteImport } from './routes/_authenticated/admin/shows'
+import { Route as AuthenticatedAdminStoriesRouteImport } from './routes/_authenticated/admin/stories'
+import { Route as AuthenticatedAdminTaxonomyRouteImport } from './routes/_authenticated/admin/taxonomy'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
+import { Route as CollectionDearTodaySlugRouteImport } from './routes/collection_.dear-today_.$slug'
 
-const StoriesRoute = StoriesRouteImport.update({
-  id: '/stories',
-  path: '/stories',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ShowRoute = ShowRouteImport.update({
-  id: '/show',
-  path: '/show',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ShopRoute = ShopRouteImport.update({
-  id: '/shop',
-  path: '/shop',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GalleryRoute = GalleryRouteImport.update({
-  id: '/gallery',
-  path: '/gallery',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DiariesRoute = DiariesRouteImport.update({
-  id: '/diaries',
-  path: '/diaries',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CollectionRoute = CollectionRouteImport.update({
-  id: '/collection',
-  path: '/collection',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -88,34 +57,45 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
-  id: '/_authenticated',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const CollectionRoute = CollectionRouteImport.update({
+  id: '/collection',
+  path: '/collection',
   getParentRoute: () => rootRouteImport,
 } as any)
-const StoriesSlugRoute = StoriesSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => StoriesRoute,
+const DiariesRoute = DiariesRouteImport.update({
+  id: '/diaries',
+  path: '/diaries',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const DiariesSlugRoute = DiariesSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => DiariesRoute,
+const GalleryRoute = GalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const CollectionDearTodayRoute = CollectionDearTodayRouteImport.update({
-  id: '/dear-today',
-  path: '/dear-today',
-  getParentRoute: () => CollectionRoute,
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => AuthenticatedRouteRoute,
+const ShopRoute = ShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShowRoute = ShowRouteImport.update({
+  id: '/show',
+  path: '/show',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoriesRoute = StoriesRouteImport.update({
+  id: '/stories',
+  path: '/stories',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAccountRouteRoute =
   AuthenticatedAccountRouteRouteImport.update({
@@ -123,92 +103,30 @@ const AuthenticatedAccountRouteRoute =
     path: '/account',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
-const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthenticatedAdminRouteRoute,
+const AuthenticatedAdminRouteRoute = AuthenticatedAdminRouteRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const CollectionDearTodayRoute = CollectionDearTodayRouteImport.update({
+  id: '/dear-today',
+  path: '/dear-today',
+  getParentRoute: () => CollectionRoute,
+} as any)
+const DiariesSlugRoute = DiariesSlugRouteImport.update({
+  id: '/diaries_/$slug',
+  path: '/diaries/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoriesSlugRoute = StoriesSlugRouteImport.update({
+  id: '/stories_/$slug',
+  path: '/stories/$slug',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAccountIndexRoute =
   AuthenticatedAccountIndexRouteImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedAccountRouteRoute,
-  } as any)
-const CollectionDearTodaySlugRoute = CollectionDearTodaySlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => CollectionDearTodayRoute,
-} as any)
-const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => AuthenticatedAdminRouteRoute,
-} as any)
-const AuthenticatedAdminTaxonomyRoute =
-  AuthenticatedAdminTaxonomyRouteImport.update({
-    id: '/taxonomy',
-    path: '/taxonomy',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminStoriesRoute =
-  AuthenticatedAdminStoriesRouteImport.update({
-    id: '/stories',
-    path: '/stories',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminShowsRoute = AuthenticatedAdminShowsRouteImport.update({
-  id: '/shows',
-  path: '/shows',
-  getParentRoute: () => AuthenticatedAdminRouteRoute,
-} as any)
-const AuthenticatedAdminShopRoute = AuthenticatedAdminShopRouteImport.update({
-  id: '/shop',
-  path: '/shop',
-  getParentRoute: () => AuthenticatedAdminRouteRoute,
-} as any)
-const AuthenticatedAdminHeroRoute = AuthenticatedAdminHeroRouteImport.update({
-  id: '/hero',
-  path: '/hero',
-  getParentRoute: () => AuthenticatedAdminRouteRoute,
-} as any)
-const AuthenticatedAdminGalleryRoute =
-  AuthenticatedAdminGalleryRouteImport.update({
-    id: '/gallery',
-    path: '/gallery',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminDiaryRoute = AuthenticatedAdminDiaryRouteImport.update({
-  id: '/diary',
-  path: '/diary',
-  getParentRoute: () => AuthenticatedAdminRouteRoute,
-} as any)
-const AuthenticatedAdminDearTodayRoute =
-  AuthenticatedAdminDearTodayRouteImport.update({
-    id: '/dear-today',
-    path: '/dear-today',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminCommentsRoute =
-  AuthenticatedAdminCommentsRouteImport.update({
-    id: '/comments',
-    path: '/comments',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminCollectionRoute =
-  AuthenticatedAdminCollectionRouteImport.update({
-    id: '/collection',
-    path: '/collection',
-    getParentRoute: () => AuthenticatedAdminRouteRoute,
-  } as any)
-const AuthenticatedAdminAboutRoute = AuthenticatedAdminAboutRouteImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => AuthenticatedAdminRouteRoute,
-} as any)
-const AuthenticatedAccountCommentsRoute =
-  AuthenticatedAccountCommentsRouteImport.update({
-    id: '/comments',
-    path: '/comments',
     getParentRoute: () => AuthenticatedAccountRouteRoute,
   } as any)
 const AuthenticatedAccountBookmarksRoute =
@@ -217,21 +135,103 @@ const AuthenticatedAccountBookmarksRoute =
     path: '/bookmarks',
     getParentRoute: () => AuthenticatedAccountRouteRoute,
   } as any)
+const AuthenticatedAccountCommentsRoute =
+  AuthenticatedAccountCommentsRouteImport.update({
+    id: '/comments',
+    path: '/comments',
+    getParentRoute: () => AuthenticatedAccountRouteRoute,
+  } as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminAboutRoute = AuthenticatedAdminAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminCollectionRoute =
+  AuthenticatedAdminCollectionRouteImport.update({
+    id: '/collection',
+    path: '/collection',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminCommentsRoute =
+  AuthenticatedAdminCommentsRouteImport.update({
+    id: '/comments',
+    path: '/comments',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminDearTodayRoute =
+  AuthenticatedAdminDearTodayRouteImport.update({
+    id: '/dear-today',
+    path: '/dear-today',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminDiaryRoute = AuthenticatedAdminDiaryRouteImport.update({
+  id: '/diary',
+  path: '/diary',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminGalleryRoute =
+  AuthenticatedAdminGalleryRouteImport.update({
+    id: '/gallery',
+    path: '/gallery',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminHeroRoute = AuthenticatedAdminHeroRouteImport.update({
+  id: '/hero',
+  path: '/hero',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminShopRoute = AuthenticatedAdminShopRouteImport.update({
+  id: '/shop',
+  path: '/shop',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminShowsRoute = AuthenticatedAdminShowsRouteImport.update({
+  id: '/shows',
+  path: '/shows',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const AuthenticatedAdminStoriesRoute =
+  AuthenticatedAdminStoriesRouteImport.update({
+    id: '/stories',
+    path: '/stories',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminTaxonomyRoute =
+  AuthenticatedAdminTaxonomyRouteImport.update({
+    id: '/taxonomy',
+    path: '/taxonomy',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedAdminRouteRoute,
+} as any)
+const CollectionDearTodaySlugRoute = CollectionDearTodaySlugRouteImport.update({
+  id: '/collection_/dear-today_/$slug',
+  path: '/collection/dear-today/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/collection': typeof CollectionRouteWithChildren
-  '/diaries': typeof DiariesRouteWithChildren
+  '/diaries': typeof DiariesRoute
   '/gallery': typeof GalleryRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/show': typeof ShowRoute
-  '/stories': typeof StoriesRouteWithChildren
+  '/stories': typeof StoriesRoute
   '/account': typeof AuthenticatedAccountRouteRouteWithChildren
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
-  '/collection/dear-today': typeof CollectionDearTodayRouteWithChildren
+  '/collection/dear-today': typeof CollectionDearTodayRoute
   '/diaries/$slug': typeof DiariesSlugRoute
   '/stories/$slug': typeof StoriesSlugRoute
   '/account/bookmarks': typeof AuthenticatedAccountBookmarksRoute
@@ -257,13 +257,13 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/collection': typeof CollectionRouteWithChildren
-  '/diaries': typeof DiariesRouteWithChildren
+  '/diaries': typeof DiariesRoute
   '/gallery': typeof GalleryRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/show': typeof ShowRoute
-  '/stories': typeof StoriesRouteWithChildren
-  '/collection/dear-today': typeof CollectionDearTodayRouteWithChildren
+  '/stories': typeof StoriesRoute
+  '/collection/dear-today': typeof CollectionDearTodayRoute
   '/diaries/$slug': typeof DiariesSlugRoute
   '/stories/$slug': typeof StoriesSlugRoute
   '/account/bookmarks': typeof AuthenticatedAccountBookmarksRoute
@@ -291,17 +291,17 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/auth': typeof AuthRoute
   '/collection': typeof CollectionRouteWithChildren
-  '/diaries': typeof DiariesRouteWithChildren
+  '/diaries': typeof DiariesRoute
   '/gallery': typeof GalleryRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/show': typeof ShowRoute
-  '/stories': typeof StoriesRouteWithChildren
+  '/stories': typeof StoriesRoute
   '/_authenticated/account': typeof AuthenticatedAccountRouteRouteWithChildren
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
-  '/collection/dear-today': typeof CollectionDearTodayRouteWithChildren
-  '/diaries/$slug': typeof DiariesSlugRoute
-  '/stories/$slug': typeof StoriesSlugRoute
+  '/collection/dear-today': typeof CollectionDearTodayRoute
+  '/diaries_/$slug': typeof DiariesSlugRoute
+  '/stories_/$slug': typeof StoriesSlugRoute
   '/_authenticated/account/bookmarks': typeof AuthenticatedAccountBookmarksRoute
   '/_authenticated/account/comments': typeof AuthenticatedAccountCommentsRoute
   '/_authenticated/admin/about': typeof AuthenticatedAdminAboutRoute
@@ -316,7 +316,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/stories': typeof AuthenticatedAdminStoriesRoute
   '/_authenticated/admin/taxonomy': typeof AuthenticatedAdminTaxonomyRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
-  '/collection/dear-today/$slug': typeof CollectionDearTodaySlugRoute
+  '/collection_/dear-today_/$slug': typeof CollectionDearTodaySlugRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
@@ -403,8 +403,8 @@ export interface FileRouteTypes {
     | '/_authenticated/account'
     | '/_authenticated/admin'
     | '/collection/dear-today'
-    | '/diaries/$slug'
-    | '/stories/$slug'
+    | '/diaries_/$slug'
+    | '/stories_/$slug'
     | '/_authenticated/account/bookmarks'
     | '/_authenticated/account/comments'
     | '/_authenticated/admin/about'
@@ -419,7 +419,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/stories'
     | '/_authenticated/admin/taxonomy'
     | '/_authenticated/admin/users'
-    | '/collection/dear-today/$slug'
+    | '/collection_/dear-today_/$slug'
     | '/_authenticated/account/'
     | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
@@ -430,77 +430,24 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AuthRoute: typeof AuthRoute
   CollectionRoute: typeof CollectionRouteWithChildren
-  DiariesRoute: typeof DiariesRouteWithChildren
+  DiariesRoute: typeof DiariesRoute
   GalleryRoute: typeof GalleryRoute
   SettingsRoute: typeof SettingsRoute
   ShopRoute: typeof ShopRoute
   ShowRoute: typeof ShowRoute
-  StoriesRoute: typeof StoriesRouteWithChildren
+  StoriesRoute: typeof StoriesRoute
+  DiariesSlugRoute: typeof DiariesSlugRoute
+  StoriesSlugRoute: typeof StoriesSlugRoute
+  CollectionDearTodaySlugRoute: typeof CollectionDearTodaySlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/stories': {
-      id: '/stories'
-      path: '/stories'
-      fullPath: '/stories'
-      preLoaderRoute: typeof StoriesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/show': {
-      id: '/show'
-      path: '/show'
-      fullPath: '/show'
-      preLoaderRoute: typeof ShowRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/shop': {
-      id: '/shop'
-      path: '/shop'
-      fullPath: '/shop'
-      preLoaderRoute: typeof ShopRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/gallery': {
-      id: '/gallery'
-      path: '/gallery'
-      fullPath: '/gallery'
-      preLoaderRoute: typeof GalleryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/diaries': {
-      id: '/diaries'
-      path: '/diaries'
-      fullPath: '/diaries'
-      preLoaderRoute: typeof DiariesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/collection': {
-      id: '/collection'
-      path: '/collection'
-      fullPath: '/collection'
-      preLoaderRoute: typeof CollectionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated': {
@@ -510,40 +457,68 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/stories/$slug': {
-      id: '/stories/$slug'
-      path: '/$slug'
-      fullPath: '/stories/$slug'
-      preLoaderRoute: typeof StoriesSlugRouteImport
-      parentRoute: typeof StoriesRoute
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/diaries/$slug': {
-      id: '/diaries/$slug'
-      path: '/$slug'
-      fullPath: '/diaries/$slug'
-      preLoaderRoute: typeof DiariesSlugRouteImport
-      parentRoute: typeof DiariesRoute
+    '/collection': {
+      id: '/collection'
+      path: '/collection'
+      fullPath: '/collection'
+      preLoaderRoute: typeof CollectionRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/collection/dear-today': {
-      id: '/collection/dear-today'
-      path: '/dear-today'
-      fullPath: '/collection/dear-today'
-      preLoaderRoute: typeof CollectionDearTodayRouteImport
-      parentRoute: typeof CollectionRoute
+    '/diaries': {
+      id: '/diaries'
+      path: '/diaries'
+      fullPath: '/diaries'
+      preLoaderRoute: typeof DiariesRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/admin': {
-      id: '/_authenticated/admin'
-      path: '/admin'
-      fullPath: '/admin'
-      preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+    '/gallery': {
+      id: '/gallery'
+      path: '/gallery'
+      fullPath: '/gallery'
+      preLoaderRoute: typeof GalleryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/shop': {
+      id: '/shop'
+      path: '/shop'
+      fullPath: '/shop'
+      preLoaderRoute: typeof ShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/show': {
+      id: '/show'
+      path: '/show'
+      fullPath: '/show'
+      preLoaderRoute: typeof ShowRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stories': {
+      id: '/stories'
+      path: '/stories'
+      fullPath: '/stories'
+      preLoaderRoute: typeof StoriesRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/account': {
       id: '/_authenticated/account'
@@ -552,12 +527,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountRouteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
-    '/_authenticated/admin/': {
-      id: '/_authenticated/admin/'
-      path: '/'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/collection/dear-today': {
+      id: '/collection/dear-today'
+      path: '/dear-today'
+      fullPath: '/collection/dear-today'
+      preLoaderRoute: typeof CollectionDearTodayRouteImport
+      parentRoute: typeof CollectionRoute
+    }
+    '/diaries_/$slug': {
+      id: '/diaries_/$slug'
+      path: '/diaries/$slug'
+      fullPath: '/diaries/$slug'
+      preLoaderRoute: typeof DiariesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stories_/$slug': {
+      id: '/stories_/$slug'
+      path: '/stories/$slug'
+      fullPath: '/stories/$slug'
+      preLoaderRoute: typeof StoriesSlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/account/': {
       id: '/_authenticated/account/'
@@ -566,88 +562,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccountIndexRouteImport
       parentRoute: typeof AuthenticatedAccountRouteRoute
     }
-    '/collection/dear-today/$slug': {
-      id: '/collection/dear-today/$slug'
-      path: '/$slug'
-      fullPath: '/collection/dear-today/$slug'
-      preLoaderRoute: typeof CollectionDearTodaySlugRouteImport
-      parentRoute: typeof CollectionDearTodayRoute
+    '/_authenticated/account/bookmarks': {
+      id: '/_authenticated/account/bookmarks'
+      path: '/bookmarks'
+      fullPath: '/account/bookmarks'
+      preLoaderRoute: typeof AuthenticatedAccountBookmarksRouteImport
+      parentRoute: typeof AuthenticatedAccountRouteRoute
     }
-    '/_authenticated/admin/users': {
-      id: '/_authenticated/admin/users'
-      path: '/users'
-      fullPath: '/admin/users'
-      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/taxonomy': {
-      id: '/_authenticated/admin/taxonomy'
-      path: '/taxonomy'
-      fullPath: '/admin/taxonomy'
-      preLoaderRoute: typeof AuthenticatedAdminTaxonomyRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/stories': {
-      id: '/_authenticated/admin/stories'
-      path: '/stories'
-      fullPath: '/admin/stories'
-      preLoaderRoute: typeof AuthenticatedAdminStoriesRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/shows': {
-      id: '/_authenticated/admin/shows'
-      path: '/shows'
-      fullPath: '/admin/shows'
-      preLoaderRoute: typeof AuthenticatedAdminShowsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/shop': {
-      id: '/_authenticated/admin/shop'
-      path: '/shop'
-      fullPath: '/admin/shop'
-      preLoaderRoute: typeof AuthenticatedAdminShopRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/hero': {
-      id: '/_authenticated/admin/hero'
-      path: '/hero'
-      fullPath: '/admin/hero'
-      preLoaderRoute: typeof AuthenticatedAdminHeroRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/gallery': {
-      id: '/_authenticated/admin/gallery'
-      path: '/gallery'
-      fullPath: '/admin/gallery'
-      preLoaderRoute: typeof AuthenticatedAdminGalleryRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/diary': {
-      id: '/_authenticated/admin/diary'
-      path: '/diary'
-      fullPath: '/admin/diary'
-      preLoaderRoute: typeof AuthenticatedAdminDiaryRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/dear-today': {
-      id: '/_authenticated/admin/dear-today'
-      path: '/dear-today'
-      fullPath: '/admin/dear-today'
-      preLoaderRoute: typeof AuthenticatedAdminDearTodayRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
-    }
-    '/_authenticated/admin/comments': {
-      id: '/_authenticated/admin/comments'
+    '/_authenticated/account/comments': {
+      id: '/_authenticated/account/comments'
       path: '/comments'
-      fullPath: '/admin/comments'
-      preLoaderRoute: typeof AuthenticatedAdminCommentsRouteImport
-      parentRoute: typeof AuthenticatedAdminRouteRoute
+      fullPath: '/account/comments'
+      preLoaderRoute: typeof AuthenticatedAccountCommentsRouteImport
+      parentRoute: typeof AuthenticatedAccountRouteRoute
     }
-    '/_authenticated/admin/collection': {
-      id: '/_authenticated/admin/collection'
-      path: '/collection'
-      fullPath: '/admin/collection'
-      preLoaderRoute: typeof AuthenticatedAdminCollectionRouteImport
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
     '/_authenticated/admin/about': {
@@ -657,19 +590,89 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminAboutRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
-    '/_authenticated/account/comments': {
-      id: '/_authenticated/account/comments'
-      path: '/comments'
-      fullPath: '/account/comments'
-      preLoaderRoute: typeof AuthenticatedAccountCommentsRouteImport
-      parentRoute: typeof AuthenticatedAccountRouteRoute
+    '/_authenticated/admin/collection': {
+      id: '/_authenticated/admin/collection'
+      path: '/collection'
+      fullPath: '/admin/collection'
+      preLoaderRoute: typeof AuthenticatedAdminCollectionRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
     }
-    '/_authenticated/account/bookmarks': {
-      id: '/_authenticated/account/bookmarks'
-      path: '/bookmarks'
-      fullPath: '/account/bookmarks'
-      preLoaderRoute: typeof AuthenticatedAccountBookmarksRouteImport
-      parentRoute: typeof AuthenticatedAccountRouteRoute
+    '/_authenticated/admin/comments': {
+      id: '/_authenticated/admin/comments'
+      path: '/comments'
+      fullPath: '/admin/comments'
+      preLoaderRoute: typeof AuthenticatedAdminCommentsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/dear-today': {
+      id: '/_authenticated/admin/dear-today'
+      path: '/dear-today'
+      fullPath: '/admin/dear-today'
+      preLoaderRoute: typeof AuthenticatedAdminDearTodayRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/diary': {
+      id: '/_authenticated/admin/diary'
+      path: '/diary'
+      fullPath: '/admin/diary'
+      preLoaderRoute: typeof AuthenticatedAdminDiaryRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/gallery': {
+      id: '/_authenticated/admin/gallery'
+      path: '/gallery'
+      fullPath: '/admin/gallery'
+      preLoaderRoute: typeof AuthenticatedAdminGalleryRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/hero': {
+      id: '/_authenticated/admin/hero'
+      path: '/hero'
+      fullPath: '/admin/hero'
+      preLoaderRoute: typeof AuthenticatedAdminHeroRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/shop': {
+      id: '/_authenticated/admin/shop'
+      path: '/shop'
+      fullPath: '/admin/shop'
+      preLoaderRoute: typeof AuthenticatedAdminShopRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/shows': {
+      id: '/_authenticated/admin/shows'
+      path: '/shows'
+      fullPath: '/admin/shows'
+      preLoaderRoute: typeof AuthenticatedAdminShowsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/stories': {
+      id: '/_authenticated/admin/stories'
+      path: '/stories'
+      fullPath: '/admin/stories'
+      preLoaderRoute: typeof AuthenticatedAdminStoriesRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/taxonomy': {
+      id: '/_authenticated/admin/taxonomy'
+      path: '/taxonomy'
+      fullPath: '/admin/taxonomy'
+      preLoaderRoute: typeof AuthenticatedAdminTaxonomyRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
+    '/collection_/dear-today_/$slug': {
+      id: '/collection_/dear-today_/$slug'
+      path: '/collection/dear-today/$slug'
+      fullPath: '/collection/dear-today/$slug'
+      preLoaderRoute: typeof CollectionDearTodaySlugRouteImport
+      parentRoute: typeof rootRouteImport
     }
   }
 }
@@ -743,50 +746,17 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
 const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
-interface CollectionDearTodayRouteChildren {
-  CollectionDearTodaySlugRoute: typeof CollectionDearTodaySlugRoute
-}
-
-const CollectionDearTodayRouteChildren: CollectionDearTodayRouteChildren = {
-  CollectionDearTodaySlugRoute: CollectionDearTodaySlugRoute,
-}
-
-const CollectionDearTodayRouteWithChildren =
-  CollectionDearTodayRoute._addFileChildren(CollectionDearTodayRouteChildren)
-
 interface CollectionRouteChildren {
-  CollectionDearTodayRoute: typeof CollectionDearTodayRouteWithChildren
+  CollectionDearTodayRoute: typeof CollectionDearTodayRoute
 }
 
 const CollectionRouteChildren: CollectionRouteChildren = {
-  CollectionDearTodayRoute: CollectionDearTodayRouteWithChildren,
+  CollectionDearTodayRoute: CollectionDearTodayRoute,
 }
 
 const CollectionRouteWithChildren = CollectionRoute._addFileChildren(
   CollectionRouteChildren,
 )
-
-interface DiariesRouteChildren {
-  DiariesSlugRoute: typeof DiariesSlugRoute
-}
-
-const DiariesRouteChildren: DiariesRouteChildren = {
-  DiariesSlugRoute: DiariesSlugRoute,
-}
-
-const DiariesRouteWithChildren =
-  DiariesRoute._addFileChildren(DiariesRouteChildren)
-
-interface StoriesRouteChildren {
-  StoriesSlugRoute: typeof StoriesSlugRoute
-}
-
-const StoriesRouteChildren: StoriesRouteChildren = {
-  StoriesSlugRoute: StoriesSlugRoute,
-}
-
-const StoriesRouteWithChildren =
-  StoriesRoute._addFileChildren(StoriesRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -794,12 +764,15 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AuthRoute: AuthRoute,
   CollectionRoute: CollectionRouteWithChildren,
-  DiariesRoute: DiariesRouteWithChildren,
+  DiariesRoute: DiariesRoute,
   GalleryRoute: GalleryRoute,
   SettingsRoute: SettingsRoute,
   ShopRoute: ShopRoute,
   ShowRoute: ShowRoute,
-  StoriesRoute: StoriesRouteWithChildren,
+  StoriesRoute: StoriesRoute,
+  DiariesSlugRoute: DiariesSlugRoute,
+  StoriesSlugRoute: StoriesSlugRoute,
+  CollectionDearTodaySlugRoute: CollectionDearTodaySlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

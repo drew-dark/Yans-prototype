@@ -9,7 +9,7 @@ import { BookmarkButton } from "@/components/site/BookmarkButton";
 import { StudioEditLink } from "@/components/site/StudioEditLink";
 import { CommentsSection } from "@/components/site/CommentsSection";
 
-export const Route = createFileRoute("/diaries/$slug")({
+export const Route = createFileRoute("/diaries_/$slug")({
   head: ({ loaderData }) => {
     const e = loaderData as { title?: string; body?: string | null; cover_image_url?: string | null } | undefined;
     if (!e) return { meta: [{ title: "Entry — Gaijin Diaries" }, { name: "robots", content: "noindex" }] };

@@ -9,7 +9,7 @@ import { BookmarkButton } from "@/components/site/BookmarkButton";
 import { StudioEditLink } from "@/components/site/StudioEditLink";
 import { CommentsSection } from "@/components/site/CommentsSection";
 
-export const Route = createFileRoute("/stories/$slug")({
+export const Route = createFileRoute("/stories_/$slug")({
   head: ({ loaderData }) => {
     const s = loaderData as { title?: string; excerpt?: string | null; cover_image_url?: string | null } | undefined;
     if (!s) return { meta: [{ title: "Story" }, { name: "robots", content: "noindex" }] };
