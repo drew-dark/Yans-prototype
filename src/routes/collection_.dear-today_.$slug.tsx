@@ -12,7 +12,7 @@ import type { Database } from "@/integrations/supabase/types";
 
 type DearTodayRow = Database["public"]["Tables"]["dear_today"]["Row"];
 
-export const Route = createFileRoute("/collection/dear-today/$slug")({
+export const Route = createFileRoute("/collection_/dear-today_/$slug")({
   head: ({ loaderData }) => {
     const e = loaderData as { title?: string; excerpt?: string | null; cover_url?: string | null } | undefined;
     if (!e) return { meta: [{ title: "Dear Today" }, { name: "robots", content: "noindex" }] };
