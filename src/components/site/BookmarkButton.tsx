@@ -35,7 +35,7 @@ export function BookmarkButton({
         return;
       }
       const { data: row } = await supabase
-        .from("bookmarks" as never)
+        .from("bookmarks")
         .select("id")
         .eq("user_id", uid)
         .eq("content_type", contentType)
@@ -56,7 +56,7 @@ export function BookmarkButton({
     try {
       if (saved) {
         const { error } = await supabase
-          .from("bookmarks" as never)
+          .from("bookmarks")
           .delete()
           .eq("user_id", userId)
           .eq("content_type", contentType)
@@ -66,8 +66,8 @@ export function BookmarkButton({
         toast.success("Removed from bookmarks");
       } else {
         const { error } = await supabase
-          .from("bookmarks" as never)
-          .insert({ user_id: userId, content_type: contentType, content_id: contentId } as never);
+          .from("bookmarks")
+          .insert({ user_id: userId, content_type: contentType, content_id: contentId });
         if (error) throw error;
         setSaved(true);
         toast.success("Saved to bookmarks");

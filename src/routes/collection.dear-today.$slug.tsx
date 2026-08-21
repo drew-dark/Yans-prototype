@@ -8,6 +8,9 @@ import { Markdown, readingTimeMinutes } from "@/lib/markdown";
 import { BookmarkButton } from "@/components/site/BookmarkButton";
 import { StudioEditLink } from "@/components/site/StudioEditLink";
 import { CommentsSection } from "@/components/site/CommentsSection";
+import type { Database } from "@/integrations/supabase/types";
+
+type DearTodayRow = Database["public"]["Tables"]["dear_today"]["Row"];
 
 export const Route = createFileRoute("/collection/dear-today/$slug")({
   head: ({ loaderData }) => {
@@ -26,13 +29,13 @@ export const Route = createFileRoute("/collection/dear-today/$slug")({
   },
   loader: async ({ params }) => {
     const { data } = await supabase
-      .from("dear_today" as never)
+      .from("dear_today")
       .select("*")
       .eq("slug", params.slug)
       .eq("published", true)
       .maybeSingle();
     if (!data) throw notFound();
-    return data as any;
+    return data;
   },
   errorComponent: ({ error }) => (
     <PageShell>
@@ -58,15 +61,15 @@ function EntryPage() {
     queryKey: ["public", "dear_today", params.slug],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("dear_today" as never)
+        .from("dear_today")
         .select("*")
         .eq("slug", params.slug)
         .eq("published", true)
         .maybeSingle();
       if (error) throw error;
-      return data as any;
+      return data;
     },
-    initialData: Route.useLoaderData() as any,
+    initialData: Route.useLoaderData() as DearTodayRow | undefined,
   });
   const { open } = useMediaViewer();
   if (!e) return null;
