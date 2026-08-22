@@ -10,7 +10,7 @@ import { isRangeOutOfBounds, pageRangeBounds, totalPagesFor, useScrollTopOnPageC
 
 const PAGE_SIZE = 10;
 
-export const Route = createFileRoute("/collection/dear-today")({
+export const Route = createFileRoute("/collection_/dear-today")({
   validateSearch: validatePageSearch,
   head: () => ({
     meta: [
