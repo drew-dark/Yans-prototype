@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { useMediaViewer } from "@/components/site/MediaViewer";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import { navLinks, AuthAffordance } from "@/components/site/SiteChrome";
+import { LanguageToggle } from "@/components/site/LanguageProvider";
 import portraitImg from "@/assets/muyan-portrait.jpg";
 import broadcastImg from "@/assets/muyan-broadcast.jpg";
 import foodImg from "@/assets/muyan-food.jpg";
@@ -49,15 +51,6 @@ export const Route = createFileRoute("/")({
   }),
   component: Index,
 });
-
-const navLinks = [
-  { to: "/collection", labelKey: "nav.collection" },
-  { to: "/gallery", labelKey: "nav.gallery" },
-  { to: "/diaries", labelKey: "nav.diaries" },
-  { to: "/stories", labelKey: "nav.stories" },
-  { to: "/shop", labelKey: "nav.shop" },
-  { to: "/about", labelKey: "nav.about" },
-] as const;
 
 function Index() {
   const { t } = useTranslation();
@@ -185,12 +178,10 @@ function Index() {
               Poet · Journalist · Broadcaster
             </p>
           </div>
-          <Link
-            to="/account"
-            className="shrink-0 border border-white/20 px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-white/60"
-          >
-            ◇ {t("nav.account")}
-          </Link>
+          <div className="flex shrink-0 items-center gap-2">
+            <LanguageToggle />
+            <AuthAffordance />
+          </div>
         </div>
         <nav
           aria-label="Sections"
@@ -233,20 +224,8 @@ function Index() {
           </Link>
         ))}
 
-        <Link
-          to="/account"
-          className="ml-2 border border-white/20 px-2 py-1 font-mono text-[10px] tracking-widest text-white/40 hover:border-white hover:text-white"
-          title={t("nav.accountTitle")}
-        >
-          ◇ {t("nav.account")}
-        </Link>
-        <Link
-          to="/admin"
-          className="border border-white/20 px-2 py-1 font-mono text-[10px] tracking-widest text-white/40 hover:border-white hover:text-white"
-          title="Studio access for the editor"
-        >
-          ◆ Studio
-        </Link>
+        <LanguageToggle className="ml-2" />
+        <AuthAffordance />
       </nav>
 
       <section className="relative flex flex-col items-center justify-center px-4 py-12 md:min-h-screen md:py-20">
