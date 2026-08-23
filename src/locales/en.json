@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "collection": "Collection",
+    "gallery": "Gallery",
+    "diaries": "Gaijin Diaries",
+    "stories": "Stories",
+    "show": "Show",
+    "shop": "Shop",
+    "about": "About",
+    "settingsLabel": "Settings",
+    "settingsTitle": "Settings — colours & preferences",
+    "sectionsAriaLabel": "Sections",
+    "signIn": "Sign in",
+    "account": "Account",
+    "accountTitle": "Your account"
+  },
+  "footer": {
+    "copyright": "The Last Mukwasu © 2026",
+    "sections": "Sections",
+    "dearToday": "Dear Today"
+  },
+  "language": {
+    "toggleLabel": "Language",
+    "en": "EN",
+    "ja": "JA"
+  }
+}

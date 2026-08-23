@@ -10,7 +10,8 @@ import {
 import { type ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { MediaViewerProvider } from "@/components/site/MediaViewer";
-import { ThemeProvider } from "@/components/site/ThemeProvider";
+import { ThemeProvider, themeInitScript } from "@/components/site/ThemeProvider";
+import { LanguageProvider, languageInitScript } from "@/components/site/LanguageProvider";
 
 import appCss from "../styles.css?url";
 
@@ -114,6 +115,8 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script dangerouslySetInnerHTML={{ __html: languageInitScript }} />
         <HeadContent />
       </head>
       <body>
@@ -130,13 +133,15 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <MediaViewerProvider>
-        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
-          <Toaster theme="dark" position="top-right" />
-        </MediaViewerProvider>
-      </ThemeProvider>
+      <LanguageProvider>
+        <ThemeProvider>
+          <MediaViewerProvider>
+          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+            <Outlet />
+            <Toaster theme="dark" position="top-right" />
+          </MediaViewerProvider>
+        </ThemeProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }
