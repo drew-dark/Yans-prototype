@@ -1,0 +1,27 @@
+{
+  "nav": {
+    "collection": "コレクション",
+    "gallery": "ギャラリー",
+    "diaries": "外人日記",
+    "stories": "物語",
+    "show": "ショー",
+    "shop": "ショップ",
+    "about": "概要",
+    "settingsLabel": "設定",
+    "settingsTitle": "設定 — 配色と表示",
+    "sectionsAriaLabel": "セクション",
+    "signIn": "ログイン",
+    "account": "アカウント",
+    "accountTitle": "アカウント情報"
+  },
+  "footer": {
+    "copyright": "The Last Mukwasu © 2026",
+    "sections": "セクション",
+    "dearToday": "Dear Today"
+  },
+  "language": {
+    "toggleLabel": "言語",
+    "en": "EN",
+    "ja": "JA"
+  }
+}

@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { useMediaViewer } from "@/components/site/MediaViewer";
@@ -50,15 +51,16 @@ export const Route = createFileRoute("/")({
 });
 
 const navLinks = [
-  { to: "/collection", label: "Collection" },
-  { to: "/gallery", label: "Gallery" },
-  { to: "/diaries", label: "Gaijin Diaries" },
-  { to: "/stories", label: "Stories" },
-  { to: "/shop", label: "Shop" },
-  { to: "/about", label: "About" },
+  { to: "/collection", labelKey: "nav.collection" },
+  { to: "/gallery", labelKey: "nav.gallery" },
+  { to: "/diaries", labelKey: "nav.diaries" },
+  { to: "/stories", labelKey: "nav.stories" },
+  { to: "/shop", labelKey: "nav.shop" },
+  { to: "/about", labelKey: "nav.about" },
 ] as const;
 
 function Index() {
+  const { t } = useTranslation();
   const { data: heroImages = fallbackHero } = useQuery({
     queryKey: ["public", "hero_images"],
     queryFn: async () => {
@@ -187,7 +189,7 @@ function Index() {
             to="/account"
             className="shrink-0 border border-white/20 px-2.5 py-1.5 font-mono text-[10px] uppercase tracking-widest text-white/60"
           >
-            ◇ Account
+            ◇ {t("nav.account")}
           </Link>
         </div>
         <nav
@@ -200,7 +202,7 @@ function Index() {
               to={link.to}
               className="whitespace-nowrap px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-white/50"
             >
-              {link.label}
+              {t(link.labelKey)}
             </Link>
           ))}
         </nav>
@@ -227,16 +229,16 @@ function Index() {
       <nav className="absolute right-12 top-12 z-40 hidden items-center space-x-8 text-[11px] font-bold uppercase tracking-[0.3em] text-white/70 md:flex">
         {navLinks.map((link) => (
           <Link key={link.to} to={link.to} className="transition-colors hover:text-white">
-            {link.label}
+            {t(link.labelKey)}
           </Link>
         ))}
 
         <Link
           to="/account"
           className="ml-2 border border-white/20 px-2 py-1 font-mono text-[10px] tracking-widest text-white/40 hover:border-white hover:text-white"
-          title="Your account"
+          title={t("nav.accountTitle")}
         >
-          ◇ Account
+          ◇ {t("nav.account")}
         </Link>
         <Link
           to="/admin"
