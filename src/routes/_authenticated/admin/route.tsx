@@ -17,6 +17,7 @@ const allNavItems = [
   { to: "/admin/shop", label: "Shop", roles: ["admin", "editor"] },
   { to: "/admin/about", label: "About", roles: ["admin", "editor"] },
   { to: "/admin/comments", label: "Comments", roles: ["admin", "moderator"] },
+  { to: "/admin/newsletter", label: "Newsletter", roles: ["admin"] },
   { to: "/admin/users", label: "Users", roles: ["admin"] },
 ] as const;
 

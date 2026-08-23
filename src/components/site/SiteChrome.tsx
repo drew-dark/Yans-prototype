@@ -6,8 +6,9 @@ import { LanguageToggle } from "@/components/site/LanguageProvider";
 import { Settings } from "lucide-react";
 
 
-const links = [
+export const navLinks = [
   { to: "/collection", labelKey: "nav.collection" },
+  { to: "/collection/dear-today", labelKey: "nav.dearToday" },
   { to: "/gallery", labelKey: "nav.gallery" },
   { to: "/diaries", labelKey: "nav.diaries" },
   { to: "/stories", labelKey: "nav.stories" },
@@ -15,6 +16,8 @@ const links = [
   { to: "/shop", labelKey: "nav.shop" },
   { to: "/about", labelKey: "nav.about" },
 ] as const;
+
+const STAFF_ROLES = ["admin", "editor", "moderator", "guest_author"] as const;
 
 function useSessionEmail() {
   const [email, setEmail] = useState<string | null>(null);
@@ -34,27 +37,88 @@ function useSessionEmail() {
   return email;
 }
 
-function AuthAffordance() {
+/** Whether the signed-in user holds any staff role (admin/editor/moderator/guest_author). */
+function useIsStaff() {
+  const [userId, setUserId] = useState<string | null>(null);
+  const [staff, setStaff] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (mounted) setUserId(data.session?.user?.id ?? null);
+    });
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      if (mounted) setUserId(session?.user?.id ?? null);
+    });
+    return () => {
+      mounted = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!userId) {
+      setStaff(false);
+      return;
+    }
+    let mounted = true;
+    supabase
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userId)
+      .then(({ data }) => {
+        if (!mounted) return;
+        const roles = (data ?? []).map((r: { role: string }) => r.role);
+        setStaff(roles.some((r) => (STAFF_ROLES as readonly string[]).includes(r)));
+      });
+    return () => {
+      mounted = false;
+    };
+  }, [userId]);
+
+  return staff;
+}
+
+/**
+ * Single sign-in entry point that reveals itself after login: signed-out
+ * visitors see one "Sign in" link (shared by readers and staff alike —
+ * the system distinguishes only after authenticating); signed-in readers
+ * see "Account"; signed-in staff see both "Account" and "Studio".
+ */
+export function AuthAffordance({ className = "" }: { className?: string }) {
   const { t } = useTranslation();
   const email = useSessionEmail();
+  const staff = useIsStaff();
+
   if (!email) {
     return (
       <Link
         to="/auth"
-        className="border border-white/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-white/60 hover:border-white hover:text-white"
+        className={`border border-white/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-white/60 hover:border-white hover:text-white ${className}`}
       >
         {t("nav.signIn")}
       </Link>
     );
   }
   return (
-    <Link
-      to="/account"
-      className="border border-white/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-white/70 hover:border-white hover:text-white"
-      title={email}
-    >
-      ◇ {t("nav.account")}
-    </Link>
+    <div className={`flex items-center gap-2 ${className}`}>
+      <Link
+        to="/account"
+        className="border border-white/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-white/70 hover:border-white hover:text-white"
+        title={email}
+      >
+        ◇ {t("nav.account")}
+      </Link>
+      {staff && (
+        <Link
+          to="/admin"
+          className="border border-white/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-white/70 hover:border-white hover:text-white"
+          title="Studio access for staff"
+        >
+          ◆ {t("nav.studio")}
+        </Link>
+      )}
+    </div>
   );
 }
 
@@ -92,7 +156,7 @@ export function SiteHeader() {
       </Link>
       <div className="flex shrink-0 items-center gap-3 md:gap-6 md:pt-2">
         <nav className="hidden items-center gap-6 text-[11px] font-bold uppercase tracking-[0.3em] text-white/60 md:flex">
-          {links.map((l) => {
+          {navLinks.map((l) => {
             const active = pathname === l.to || pathname.startsWith(l.to + "/");
             return (
               <Link
@@ -129,7 +193,7 @@ export function MobileNav() {
       aria-label={t("nav.sectionsAriaLabel")}
       className="relative flex items-center gap-1 overflow-x-auto border-b border-white/10 px-3 py-1.5 [scrollbar-width:none] md:hidden [&::-webkit-scrollbar]:hidden"
     >
-      {links.map((l) => {
+      {navLinks.map((l) => {
         const active = pathname === l.to || pathname.startsWith(l.to + "/");
         return (
           <Link
@@ -177,7 +241,7 @@ export function SiteFooter() {
         <div className="grid w-full grid-cols-3 gap-x-4 gap-y-3 text-[10px] uppercase tracking-widest text-white/40 sm:w-auto sm:flex sm:gap-4">
           <Link to="/stories" className="py-1 hover:text-white">{t("nav.stories")}</Link>
           <Link to="/diaries" className="py-1 hover:text-white">{t("nav.diaries")}</Link>
-          <Link to="/collection/dear-today" className="py-1 hover:text-white">{t("footer.dearToday")}</Link>
+          <Link to="/collection/dear-today" className="py-1 hover:text-white">{t("nav.dearToday")}</Link>
           <Link to="/gallery" className="py-1 hover:text-white">{t("nav.gallery")}</Link>
           <Link to="/show" className="py-1 hover:text-white">{t("nav.show")}</Link>
           <Link to="/shop" className="py-1 hover:text-white">{t("nav.shop")}</Link>

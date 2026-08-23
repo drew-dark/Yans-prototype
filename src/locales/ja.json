@@ -1,6 +1,7 @@
 {
   "nav": {
     "collection": "コレクション",
+    "dearToday": "Dear Today",
     "gallery": "ギャラリー",
     "diaries": "外人日記",
     "stories": "物語",
@@ -12,12 +13,12 @@
     "sectionsAriaLabel": "セクション",
     "signIn": "ログイン",
     "account": "アカウント",
-    "accountTitle": "アカウント情報"
+    "accountTitle": "アカウント情報",
+    "studio": "スタジオ"
   },
   "footer": {
     "copyright": "The Last Mukwasu © 2026",
-    "sections": "セクション",
-    "dearToday": "Dear Today"
+    "sections": "セクション"
   },
   "language": {
     "toggleLabel": "言語",

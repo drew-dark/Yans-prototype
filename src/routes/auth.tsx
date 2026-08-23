@@ -1,13 +1,21 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 
+const authSearchSchema = z.object({
+  // Present when arriving via a staff-only entry point (e.g. redirected from
+  // /admin). Locks the page to sign-in — no self-signup for staff accounts.
+  mode: z.enum(["signin"]).optional(),
+});
+
 export const Route = createFileRoute("/auth")({
   head: () => ({ meta: [{ title: "Sign in — The Last Mukwasu" }] }),
+  validateSearch: authSearchSchema,
   component: AuthPage,
 });
 
@@ -21,6 +29,8 @@ async function routeAfterSignIn(userId: string): Promise<"/admin" | "/account"> 
 
 function AuthPage() {
   const navigate = useNavigate();
+  const { mode: lockedMode } = Route.useSearch();
+  const staffOnly = lockedMode === "signin";
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,7 +50,7 @@ function AuthPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      if (mode === "signup") {
+      if (mode === "signup" && !staffOnly) {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
@@ -73,12 +83,14 @@ function AuthPage() {
             ← The Last Mukwasu
           </Link>
           <h1 className="mt-4 font-display text-3xl uppercase tracking-tight">
-            {mode === "signin" ? "Sign in" : "Create account"}
+            {staffOnly ? "Studio sign-in" : mode === "signin" ? "Sign in" : "Create account"}
           </h1>
           <p className="mt-2 text-xs text-white/50">
-            {mode === "signup"
-              ? "Readers get their own space to bookmark, comment, and manage a profile."
-              : "Readers sign in for bookmarks and comments. Staff continue to the studio."}
+            {staffOnly
+              ? "Staff accounts are provisioned by appointment or directly in Supabase — this page is sign-in only."
+              : mode === "signup"
+                ? "Readers get their own space to bookmark, comment, and manage a profile."
+                : "Readers sign in for bookmarks and comments. Staff continue to the studio."}
           </p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -94,13 +106,15 @@ function AuthPage() {
             {loading ? "…" : mode === "signin" ? "Sign in" : "Sign up"}
           </Button>
         </form>
-        <button
-          type="button"
-          onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          className="text-xs text-white/50 hover:text-white"
-        >
-          {mode === "signin" ? "Need an account? Sign up" : "Have an account? Sign in"}
-        </button>
+        {!staffOnly && (
+          <button
+            type="button"
+            onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
+            className="text-xs text-white/50 hover:text-white"
+          >
+            {mode === "signin" ? "Need an account? Sign up" : "Have an account? Sign in"}
+          </button>
+        )}
       </div>
     </main>
   );
