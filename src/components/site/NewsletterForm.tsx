@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
+import { subscribeToNewsletter } from "@/lib/newsletter.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -38,23 +38,21 @@ export function NewsletterForm({
 
     setStatus("loading");
     try {
-      const { error } = await supabase
-        .from("newsletter_subscribers")
-        .insert({ email: parsed.data.toLowerCase(), source });
-
-      if (error) {
-        // 23505 = unique_violation → already subscribed; still treat as success
-        if (error.code === "23505") {
-          setStatus("success");
-          toast.success("You're already on the list.");
-          return;
-        }
-        throw error;
-      }
+      const result = await subscribeToNewsletter({
+        data: { email: parsed.data.toLowerCase(), source },
+      });
 
       setStatus("success");
-      toast.success("You're in. Check your inbox for a confirmation.");
       setEmail("");
+      if (result.status === "already_subscribed") {
+        toast.success("You're already on the list.");
+      } else if (result.status === "saved_email_failed") {
+        toast.success(
+          "You're on the list — but the confirmation email didn't send. Contact us if it doesn't turn up.",
+        );
+      } else {
+        toast.success("You're in. Check your inbox for a confirmation.");
+      }
     } catch (err) {
       setStatus("idle");
       toast.error(err instanceof Error ? err.message : "Couldn't subscribe. Try again.");

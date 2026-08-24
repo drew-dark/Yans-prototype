@@ -413,32 +413,41 @@ export type Database = {
       }
       newsletter_subscribers: {
         Row: {
+          confirm_token: string | null
+          confirm_token_expires_at: string | null
           confirmed: boolean
           confirmed_at: string | null
           created_at: string
           email: string
           id: string
           source: string | null
+          unsubscribe_token: string
           unsubscribed_at: string | null
           updated_at: string
         }
         Insert: {
+          confirm_token?: string | null
+          confirm_token_expires_at?: string | null
           confirmed?: boolean
           confirmed_at?: string | null
           created_at?: string
           email: string
           id?: string
           source?: string | null
+          unsubscribe_token?: string
           unsubscribed_at?: string | null
           updated_at?: string
         }
         Update: {
+          confirm_token?: string | null
+          confirm_token_expires_at?: string | null
           confirmed?: boolean
           confirmed_at?: string | null
           created_at?: string
           email?: string
           id?: string
           source?: string | null
+          unsubscribe_token?: string
           unsubscribed_at?: string | null
           updated_at?: string
         }
@@ -807,6 +816,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      confirm_newsletter_subscriber: {
+        Args: {
+          p_token: string
+        }
+        Returns: boolean
+      }
       has_any_role: {
         Args: {
           _roles: Database["public"]["Enums"]["app_role"][]
@@ -818,6 +833,12 @@ export type Database = {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
+        }
+        Returns: boolean
+      }
+      unsubscribe_newsletter_subscriber: {
+        Args: {
+          p_token: string
         }
         Returns: boolean
       }

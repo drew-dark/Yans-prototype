@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { LanguageToggle } from "@/components/site/LanguageProvider";
 import { Settings } from "lucide-react";
 
-
 export const navLinks = [
   { to: "/collection", labelKey: "nav.collection" },
   { to: "/collection/dear-today", labelKey: "nav.dearToday" },
@@ -131,8 +130,7 @@ export function SiteHeader() {
         <div
           className="-rotate-1 transform bg-kraft px-3 py-1.5 shadow-xl md:px-4 md:py-2"
           style={{
-            clipPath:
-              "polygon(0% 5%, 5% 0%, 95% 2%, 100% 8%, 98% 92%, 100% 100%, 5% 98%, 0% 90%)",
+            clipPath: "polygon(0% 5%, 5% 0%, 95% 2%, 100% 8%, 98% 92%, 100% 100%, 5% 98%, 0% 90%)",
           }}
         >
           <div className="flex min-w-0 items-center gap-2 md:gap-2.5">
@@ -223,7 +221,6 @@ export function SiteNavBar() {
   );
 }
 
-
 export function SiteFooter() {
   const { t } = useTranslation();
   return (
@@ -239,15 +236,33 @@ export function SiteFooter() {
           </Link>
         </div>
         <div className="grid w-full grid-cols-3 gap-x-4 gap-y-3 text-[10px] uppercase tracking-widest text-white/40 sm:w-auto sm:flex sm:gap-4">
-          <Link to="/stories" className="py-1 hover:text-white">{t("nav.stories")}</Link>
-          <Link to="/diaries" className="py-1 hover:text-white">{t("nav.diaries")}</Link>
-          <Link to="/collection/dear-today" className="py-1 hover:text-white">{t("nav.dearToday")}</Link>
-          <Link to="/gallery" className="py-1 hover:text-white">{t("nav.gallery")}</Link>
-          <Link to="/show" className="py-1 hover:text-white">{t("nav.show")}</Link>
-          <Link to="/shop" className="py-1 hover:text-white">{t("nav.shop")}</Link>
-          <Link to="/about" className="py-1 hover:text-white">{t("nav.about")}</Link>
-          <Link to="/settings" className="py-1 hover:text-white">{t("nav.settingsLabel")}</Link>
-
+          <Link to="/stories" className="py-1 hover:text-white">
+            {t("nav.stories")}
+          </Link>
+          <Link to="/diaries" className="py-1 hover:text-white">
+            {t("nav.diaries")}
+          </Link>
+          <Link to="/collection/dear-today" className="py-1 hover:text-white">
+            {t("nav.dearToday")}
+          </Link>
+          <Link to="/gallery" className="py-1 hover:text-white">
+            {t("nav.gallery")}
+          </Link>
+          <Link to="/show" className="py-1 hover:text-white">
+            {t("nav.show")}
+          </Link>
+          <Link to="/shop" className="py-1 hover:text-white">
+            {t("nav.shop")}
+          </Link>
+          <Link to="/about" className="py-1 hover:text-white">
+            {t("nav.about")}
+          </Link>
+          <Link to="/newsletter" className="py-1 hover:text-white">
+            {t("nav.newsletter")}
+          </Link>
+          <Link to="/settings" className="py-1 hover:text-white">
+            {t("nav.settingsLabel")}
+          </Link>
         </div>
       </div>
     </footer>
@@ -270,4 +285,3 @@ export function PageShell({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
-

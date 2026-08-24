@@ -16,6 +16,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as DiariesRouteImport } from './routes/diaries'
 import { Route as GalleryRouteImport } from './routes/gallery'
+import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ShopRouteImport } from './routes/shop'
 import { Route as ShowRouteImport } from './routes/show'
@@ -24,6 +25,8 @@ import { Route as AuthenticatedAccountRouteRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminRouteRouteImport } from './routes/_authenticated/admin/route'
 import { Route as CollectionDearTodayRouteImport } from './routes/collection_.dear-today'
 import { Route as DiariesSlugRouteImport } from './routes/diaries_.$slug'
+import { Route as NewsletterConfirmRouteImport } from './routes/newsletter_.confirm'
+import { Route as NewsletterUnsubscribeRouteImport } from './routes/newsletter_.unsubscribe'
 import { Route as StoriesSlugRouteImport } from './routes/stories_.$slug'
 import { Route as AuthenticatedAccountIndexRouteImport } from './routes/_authenticated/account/index'
 import { Route as AuthenticatedAccountBookmarksRouteImport } from './routes/_authenticated/account/bookmarks'
@@ -79,6 +82,11 @@ const GalleryRoute = GalleryRouteImport.update({
   path: '/gallery',
   getParentRoute: () => rootRouteImport,
 } as any)
+const NewsletterRoute = NewsletterRouteImport.update({
+  id: '/newsletter',
+  path: '/newsletter',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -118,6 +126,16 @@ const CollectionDearTodayRoute = CollectionDearTodayRouteImport.update({
 const DiariesSlugRoute = DiariesSlugRouteImport.update({
   id: '/diaries_/$slug',
   path: '/diaries/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsletterConfirmRoute = NewsletterConfirmRouteImport.update({
+  id: '/newsletter_/confirm',
+  path: '/newsletter/confirm',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NewsletterUnsubscribeRoute = NewsletterUnsubscribeRouteImport.update({
+  id: '/newsletter_/unsubscribe',
+  path: '/newsletter/unsubscribe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StoriesSlugRoute = StoriesSlugRouteImport.update({
@@ -238,6 +256,7 @@ export interface FileRoutesByFullPath {
   '/collection': typeof CollectionRoute
   '/diaries': typeof DiariesRoute
   '/gallery': typeof GalleryRoute
+  '/newsletter': typeof NewsletterRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/show': typeof ShowRoute
@@ -246,6 +265,8 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/collection/dear-today': typeof CollectionDearTodayRoute
   '/diaries/$slug': typeof DiariesSlugRoute
+  '/newsletter/confirm': typeof NewsletterConfirmRoute
+  '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/stories/$slug': typeof StoriesSlugRoute
   '/account/bookmarks': typeof AuthenticatedAccountBookmarksRoute
   '/account/comments': typeof AuthenticatedAccountCommentsRoute
@@ -274,12 +295,15 @@ export interface FileRoutesByTo {
   '/collection': typeof CollectionRoute
   '/diaries': typeof DiariesRoute
   '/gallery': typeof GalleryRoute
+  '/newsletter': typeof NewsletterRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/show': typeof ShowRoute
   '/stories': typeof StoriesRoute
   '/collection/dear-today': typeof CollectionDearTodayRoute
   '/diaries/$slug': typeof DiariesSlugRoute
+  '/newsletter/confirm': typeof NewsletterConfirmRoute
+  '/newsletter/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/stories/$slug': typeof StoriesSlugRoute
   '/account/bookmarks': typeof AuthenticatedAccountBookmarksRoute
   '/account/comments': typeof AuthenticatedAccountCommentsRoute
@@ -310,6 +334,7 @@ export interface FileRoutesById {
   '/collection': typeof CollectionRoute
   '/diaries': typeof DiariesRoute
   '/gallery': typeof GalleryRoute
+  '/newsletter': typeof NewsletterRoute
   '/settings': typeof SettingsRoute
   '/shop': typeof ShopRoute
   '/show': typeof ShowRoute
@@ -318,6 +343,8 @@ export interface FileRoutesById {
   '/_authenticated/admin': typeof AuthenticatedAdminRouteRouteWithChildren
   '/collection_/dear-today': typeof CollectionDearTodayRoute
   '/diaries_/$slug': typeof DiariesSlugRoute
+  '/newsletter_/confirm': typeof NewsletterConfirmRoute
+  '/newsletter_/unsubscribe': typeof NewsletterUnsubscribeRoute
   '/stories_/$slug': typeof StoriesSlugRoute
   '/_authenticated/account/bookmarks': typeof AuthenticatedAccountBookmarksRoute
   '/_authenticated/account/comments': typeof AuthenticatedAccountCommentsRoute
@@ -348,6 +375,7 @@ export interface FileRouteTypes {
     | '/collection'
     | '/diaries'
     | '/gallery'
+    | '/newsletter'
     | '/settings'
     | '/shop'
     | '/show'
@@ -356,6 +384,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/collection/dear-today'
     | '/diaries/$slug'
+    | '/newsletter/confirm'
+    | '/newsletter/unsubscribe'
     | '/stories/$slug'
     | '/account/bookmarks'
     | '/account/comments'
@@ -384,12 +414,15 @@ export interface FileRouteTypes {
     | '/collection'
     | '/diaries'
     | '/gallery'
+    | '/newsletter'
     | '/settings'
     | '/shop'
     | '/show'
     | '/stories'
     | '/collection/dear-today'
     | '/diaries/$slug'
+    | '/newsletter/confirm'
+    | '/newsletter/unsubscribe'
     | '/stories/$slug'
     | '/account/bookmarks'
     | '/account/comments'
@@ -419,6 +452,7 @@ export interface FileRouteTypes {
     | '/collection'
     | '/diaries'
     | '/gallery'
+    | '/newsletter'
     | '/settings'
     | '/shop'
     | '/show'
@@ -427,6 +461,8 @@ export interface FileRouteTypes {
     | '/_authenticated/admin'
     | '/collection_/dear-today'
     | '/diaries_/$slug'
+    | '/newsletter_/confirm'
+    | '/newsletter_/unsubscribe'
     | '/stories_/$slug'
     | '/_authenticated/account/bookmarks'
     | '/_authenticated/account/comments'
@@ -457,12 +493,15 @@ export interface RootRouteChildren {
   CollectionRoute: typeof CollectionRoute
   DiariesRoute: typeof DiariesRoute
   GalleryRoute: typeof GalleryRoute
+  NewsletterRoute: typeof NewsletterRoute
   SettingsRoute: typeof SettingsRoute
   ShopRoute: typeof ShopRoute
   ShowRoute: typeof ShowRoute
   StoriesRoute: typeof StoriesRoute
   CollectionDearTodayRoute: typeof CollectionDearTodayRoute
   DiariesSlugRoute: typeof DiariesSlugRoute
+  NewsletterConfirmRoute: typeof NewsletterConfirmRoute
+  NewsletterUnsubscribeRoute: typeof NewsletterUnsubscribeRoute
   StoriesSlugRoute: typeof StoriesSlugRoute
   CollectionDearTodaySlugRoute: typeof CollectionDearTodaySlugRoute
   CollectionSeriesSlugRoute: typeof CollectionSeriesSlugRoute
@@ -519,6 +558,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GalleryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/newsletter': {
+      id: '/newsletter'
+      path: '/newsletter'
+      fullPath: '/newsletter'
+      preLoaderRoute: typeof NewsletterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings': {
       id: '/settings'
       path: '/settings'
@@ -573,6 +619,20 @@ declare module '@tanstack/react-router' {
       path: '/diaries/$slug'
       fullPath: '/diaries/$slug'
       preLoaderRoute: typeof DiariesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/newsletter_/confirm': {
+      id: '/newsletter_/confirm'
+      path: '/newsletter/confirm'
+      fullPath: '/newsletter/confirm'
+      preLoaderRoute: typeof NewsletterConfirmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/newsletter_/unsubscribe': {
+      id: '/newsletter_/unsubscribe'
+      path: '/newsletter/unsubscribe'
+      fullPath: '/newsletter/unsubscribe'
+      preLoaderRoute: typeof NewsletterUnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/stories_/$slug': {
@@ -797,12 +857,15 @@ const rootRouteChildren: RootRouteChildren = {
   CollectionRoute: CollectionRoute,
   DiariesRoute: DiariesRoute,
   GalleryRoute: GalleryRoute,
+  NewsletterRoute: NewsletterRoute,
   SettingsRoute: SettingsRoute,
   ShopRoute: ShopRoute,
   ShowRoute: ShowRoute,
   StoriesRoute: StoriesRoute,
   CollectionDearTodayRoute: CollectionDearTodayRoute,
   DiariesSlugRoute: DiariesSlugRoute,
+  NewsletterConfirmRoute: NewsletterConfirmRoute,
+  NewsletterUnsubscribeRoute: NewsletterUnsubscribeRoute,
   StoriesSlugRoute: StoriesSlugRoute,
   CollectionDearTodaySlugRoute: CollectionDearTodaySlugRoute,
   CollectionSeriesSlugRoute: CollectionSeriesSlugRoute,
