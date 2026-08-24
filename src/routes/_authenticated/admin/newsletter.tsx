@@ -116,8 +116,9 @@ function NewsletterAdmin() {
           confirmed · {unconfirmedCount} unconfirmed · {unsubscribedCount} unsubscribed.
         </p>
         <p className="mt-1 text-xs text-white/35">
-          Confirmation emails aren't sent yet — signups are recorded but land as "unconfirmed" until
-          that's wired up.
+          Confirmation emails send automatically via Resend on signup. Set RESEND_API_KEY (and
+          optionally RESEND_FROM_EMAIL for your own verified sending domain) as an environment
+          variable — never commit it.
         </p>
       </div>
 
