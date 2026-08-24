@@ -12,6 +12,31 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       about_content: {
@@ -434,7 +459,7 @@ export type Database = {
           email: string
           id?: string
           source?: string | null
-          unsubscribe_token?: string
+          unsubscribe_token: string
           unsubscribed_at?: string | null
           updated_at?: string
         }
@@ -817,9 +842,7 @@ export type Database = {
     }
     Functions: {
       confirm_newsletter_subscriber: {
-        Args: {
-          p_token: string
-        }
+        Args: { p_token: string }
         Returns: boolean
       }
       has_any_role: {
@@ -837,9 +860,7 @@ export type Database = {
         Returns: boolean
       }
       unsubscribe_newsletter_subscriber: {
-        Args: {
-          p_token: string
-        }
+        Args: { p_token: string }
         Returns: boolean
       }
     }
@@ -976,6 +997,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       app_role: ["admin", "editor", "moderator", "guest_author", "reader"],
