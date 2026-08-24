@@ -7,6 +7,7 @@ import { ReadingProgress } from "@/components/site/ReadingProgress";
 import { Markdown, readingTimeMinutes } from "@/lib/markdown";
 import { BookmarkButton } from "@/components/site/BookmarkButton";
 import { StudioEditLink } from "@/components/site/StudioEditLink";
+import { TaxonomyBreadcrumb } from "@/components/site/TaxonomyBreadcrumb";
 import { CommentsSection } from "@/components/site/CommentsSection";
 
 export const Route = createFileRoute("/diaries_/$slug")({
@@ -72,6 +73,7 @@ function EntryPage() {
           {e.location && <><span>·</span><span>{e.location}</span></>}
           {mins > 0 && <><span>·</span><span>{mins} min read</span></>}
         </div>
+        <TaxonomyBreadcrumb ref={e} />
         {(e.chapter_number != null || e.chapter_title || e.part_number != null || e.part_title) && (
           <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">
             {e.chapter_number != null && <>Chapter {e.chapter_number}{e.part_number != null ? `.${e.part_number}` : ""}</>}

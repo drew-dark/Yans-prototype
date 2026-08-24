@@ -8,6 +8,7 @@ import { Markdown, readingTimeMinutes } from "@/lib/markdown";
 import { BookmarkButton } from "@/components/site/BookmarkButton";
 import { StudioEditLink } from "@/components/site/StudioEditLink";
 import { CommentsSection } from "@/components/site/CommentsSection";
+import { TaxonomyBreadcrumb } from "@/components/site/TaxonomyBreadcrumb";
 
 export const Route = createFileRoute("/stories_/$slug")({
   head: ({ loaderData }) => {
@@ -69,6 +70,7 @@ function StoryPage() {
           {s.published_at && <span>·</span>}
           <span>{mins} min read</span>
         </div>
+        <TaxonomyBreadcrumb ref={s} />
         {(s.chapter_number != null || s.chapter_title || s.part_number != null || s.part_title) && (
           <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">
             {s.chapter_number != null && <>Chapter {s.chapter_number}{s.part_number != null ? `.${s.part_number}` : ""}</>}

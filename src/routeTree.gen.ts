@@ -43,6 +43,7 @@ import { Route as AuthenticatedAdminStoriesRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminTaxonomyRouteImport } from './routes/_authenticated/admin/taxonomy'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated/admin/users'
 import { Route as CollectionDearTodaySlugRouteImport } from './routes/collection_.dear-today_.$slug'
+import { Route as CollectionSeriesSlugRouteImport } from './routes/collection_.series.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -224,6 +225,11 @@ const CollectionDearTodaySlugRoute = CollectionDearTodaySlugRouteImport.update({
   path: '/collection/dear-today/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CollectionSeriesSlugRoute = CollectionSeriesSlugRouteImport.update({
+  id: '/collection_/series/$slug',
+  path: '/collection/series/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -257,6 +263,7 @@ export interface FileRoutesByFullPath {
   '/admin/taxonomy': typeof AuthenticatedAdminTaxonomyRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/collection/dear-today/$slug': typeof CollectionDearTodaySlugRoute
+  '/collection/series/$slug': typeof CollectionSeriesSlugRoute
   '/account/': typeof AuthenticatedAccountIndexRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
 }
@@ -290,6 +297,7 @@ export interface FileRoutesByTo {
   '/admin/taxonomy': typeof AuthenticatedAdminTaxonomyRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/collection/dear-today/$slug': typeof CollectionDearTodaySlugRoute
+  '/collection/series/$slug': typeof CollectionSeriesSlugRoute
   '/account': typeof AuthenticatedAccountIndexRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
 }
@@ -327,6 +335,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/taxonomy': typeof AuthenticatedAdminTaxonomyRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/collection_/dear-today_/$slug': typeof CollectionDearTodaySlugRoute
+  '/collection_/series/$slug': typeof CollectionSeriesSlugRoute
   '/_authenticated/account/': typeof AuthenticatedAccountIndexRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
 }
@@ -364,6 +373,7 @@ export interface FileRouteTypes {
     | '/admin/taxonomy'
     | '/admin/users'
     | '/collection/dear-today/$slug'
+    | '/collection/series/$slug'
     | '/account/'
     | '/admin/'
   fileRoutesByTo: FileRoutesByTo
@@ -397,6 +407,7 @@ export interface FileRouteTypes {
     | '/admin/taxonomy'
     | '/admin/users'
     | '/collection/dear-today/$slug'
+    | '/collection/series/$slug'
     | '/account'
     | '/admin'
   id:
@@ -433,6 +444,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/taxonomy'
     | '/_authenticated/admin/users'
     | '/collection_/dear-today_/$slug'
+    | '/collection_/series/$slug'
     | '/_authenticated/account/'
     | '/_authenticated/admin/'
   fileRoutesById: FileRoutesById
@@ -453,6 +465,7 @@ export interface RootRouteChildren {
   DiariesSlugRoute: typeof DiariesSlugRoute
   StoriesSlugRoute: typeof StoriesSlugRoute
   CollectionDearTodaySlugRoute: typeof CollectionDearTodaySlugRoute
+  CollectionSeriesSlugRoute: typeof CollectionSeriesSlugRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -695,6 +708,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CollectionDearTodaySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/collection_/series/$slug': {
+      id: '/collection_/series/$slug'
+      path: '/collection/series/$slug'
+      fullPath: '/collection/series/$slug'
+      preLoaderRoute: typeof CollectionSeriesSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -785,6 +805,7 @@ const rootRouteChildren: RootRouteChildren = {
   DiariesSlugRoute: DiariesSlugRoute,
   StoriesSlugRoute: StoriesSlugRoute,
   CollectionDearTodaySlugRoute: CollectionDearTodaySlugRoute,
+  CollectionSeriesSlugRoute: CollectionSeriesSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
