@@ -577,6 +577,7 @@ export type Database = {
           created_at: string
           id: string
           ingest_url: string
+          mux_live_stream_id: string | null
           rotated_at: string
           show_id: string
           stream_key: string
@@ -586,6 +587,7 @@ export type Database = {
           created_at?: string
           id?: string
           ingest_url?: string
+          mux_live_stream_id?: string | null
           rotated_at?: string
           show_id: string
           stream_key?: string
@@ -595,6 +597,7 @@ export type Database = {
           created_at?: string
           id?: string
           ingest_url?: string
+          mux_live_stream_id?: string | null
           rotated_at?: string
           show_id?: string
           stream_key?: string
@@ -612,6 +615,8 @@ export type Database = {
       }
       shows: {
         Row: {
+          broadcast_kind: string
+          broadcast_source_url: string | null
           cover_url: string | null
           created_at: string
           description: string | null
@@ -629,6 +634,8 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          broadcast_kind?: string
+          broadcast_source_url?: string | null
           cover_url?: string | null
           created_at?: string
           description?: string | null
@@ -646,6 +653,8 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          broadcast_kind?: string
+          broadcast_source_url?: string | null
           cover_url?: string | null
           created_at?: string
           description?: string | null

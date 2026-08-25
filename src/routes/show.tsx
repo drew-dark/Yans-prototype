@@ -3,8 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
 import { LivePlayer } from "@/components/site/LivePlayer";
+import { BroadcastPlayer } from "@/components/site/BroadcastPlayer";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { useState } from "react";
+import type { BroadcastKind } from "@/lib/broadcast";
 
 export const Route = createFileRoute("/show")({
   head: () => ({
@@ -38,6 +40,8 @@ type Show = {
   status: string;
   scheduled_at: string | null;
   started_at: string | null;
+  broadcast_kind: BroadcastKind;
+  broadcast_source_url: string | null;
 };
 
 function fmt(dt: string | null) {
@@ -58,7 +62,7 @@ function ShowPage() {
       const { data, error } = await supabase
         .from("shows")
         .select(
-          "id, title, slug, description, cover_url, playback_url, recording_url, status, scheduled_at, started_at",
+          "id, title, slug, description, cover_url, playback_url, recording_url, status, scheduled_at, started_at, broadcast_kind, broadcast_source_url",
         )
         .eq("published", true)
         .order("scheduled_at", { ascending: false, nullsFirst: false });
@@ -68,7 +72,11 @@ function ShowPage() {
   });
 
   const shows = data ?? [];
-  const live = shows.find((s) => s.status === "live" && s.playback_url);
+  const live = shows.find(
+    (s) =>
+      s.status === "live" &&
+      (s.broadcast_kind !== "hosted" ? s.broadcast_source_url : s.playback_url),
+  );
   const upcoming = shows
     .filter((s) => s.status === "offline" && s.scheduled_at)
     .sort((a, b) => (a.scheduled_at! < b.scheduled_at! ? -1 : 1))[0];
@@ -93,14 +101,18 @@ function ShowPage() {
           <div className="aspect-video w-full animate-pulse border border-white/10 bg-white/5" />
         ) : live ? (
           <div className="border border-white/10">
-            <LivePlayer src={live.playback_url!} poster={live.cover_url ?? undefined} live />
+            <BroadcastPlayer
+              kind={live.broadcast_kind}
+              sourceUrl={live.broadcast_source_url}
+              playbackUrl={live.playback_url}
+              poster={live.cover_url ?? undefined}
+              live
+            />
             <div className="p-4 md:p-6">
               <h2 className="font-display text-2xl uppercase tracking-tight md:text-4xl">
                 {live.title}
               </h2>
-              {live.description && (
-                <p className="mt-2 text-sm text-white/60">{live.description}</p>
-              )}
+              {live.description && <p className="mt-2 text-sm text-white/60">{live.description}</p>}
             </div>
           </div>
         ) : (
