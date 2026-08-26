@@ -25,5 +25,36 @@
     "toggleLabel": "言語",
     "en": "EN",
     "ja": "JA"
+  },
+  "common": {
+    "video": "動画",
+    "playVideo": "動画を再生",
+    "openImage": "画像を開く",
+    "untitled": "無題",
+    "loading": "読み込み中…"
+  },
+  "collection": {
+    "volumeLabel": "ボリューム 01",
+    "intro": "静かな場所から集めた断片たち — ポートレート、放送、詩、文化、そしてその間のステージ。タップして拡大表示。",
+    "selectedFrame": "選択中のフレーム",
+    "seriesLabel": "シリーズ 01",
+    "viewFullGallery": "ギャラリー全体を見る →"
+  },
+  "gallery": {
+    "title": "ギャラリー",
+    "intro": "二つの故郷の間で集めたスナップショット。タップして拡大表示。",
+    "empty": "まだ公開された写真はありません。"
+  },
+  "shop": {
+    "waresLabel": "商品",
+    "intro": "本、プリント、ジン。少部数生産。購入リンクは新しいタブで開きます。",
+    "empty": "現在、棚に商品はありません。",
+    "soldOut": "売り切れ",
+    "buy": "購入する →",
+    "comingSoon": "近日公開"
+  },
+  "about": {
+    "colophon": "奥付",
+    "elsewhere": "その他"
   }
 }

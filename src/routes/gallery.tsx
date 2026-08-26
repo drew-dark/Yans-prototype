@@ -9,8 +9,15 @@ import { useMediaViewer } from "@/components/site/MediaViewer";
 import { getEmbedThumbnail, isPlayable } from "@/lib/media";
 import { BookmarkButton } from "@/components/site/BookmarkButton";
 import { CommentsSection } from "@/components/site/CommentsSection";
-import { isRangeOutOfBounds, pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
+import {
+  isRangeOutOfBounds,
+  pageRangeBounds,
+  totalPagesFor,
+  useScrollTopOnPageChange,
+  validatePageSearch,
+} from "@/lib/pagination";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const PAGE_SIZE = 12;
 
@@ -19,7 +26,10 @@ export const Route = createFileRoute("/gallery")({
   head: () => ({
     meta: [
       { title: "Gallery — The Last Mukwasu" },
-      { name: "description", content: "Photographs from Lusaka to Tokyo — quiet corners, faces, and light." },
+      {
+        name: "description",
+        content: "Photographs from Lusaka to Tokyo — quiet corners, faces, and light.",
+      },
       { property: "og:title", content: "Gallery — The Last Mukwasu" },
       { property: "og:description", content: "Photographs from Lusaka to Tokyo." },
     ],
@@ -45,6 +55,7 @@ const galleryQuery = (page: number) => ({
 });
 
 function GalleryPage() {
+  const { t } = useTranslation();
   const { page } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const qc = useQueryClient();
@@ -77,11 +88,13 @@ function GalleryPage() {
     <PageShell>
       <section className="mx-auto max-w-6xl px-5 py-10 md:px-12 md:py-16">
         <div className="mb-12 max-w-2xl">
-          <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">Volume 01</p>
-          <h1 className="font-display text-5xl uppercase leading-none tracking-tight sm:text-6xl md:text-8xl">Gallery</h1>
-          <p className="mt-6 text-sm text-white/50 md:text-base">
-            Snapshots collected between two homes. Click any frame to see it fuller.
+          <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
+            {t("collection.volumeLabel")}
           </p>
+          <h1 className="font-display text-5xl uppercase leading-none tracking-tight sm:text-6xl md:text-8xl">
+            {t("gallery.title")}
+          </h1>
+          <p className="mt-6 text-sm text-white/50 md:text-base">{t("gallery.intro")}</p>
         </div>
 
         {isLoading ? (
@@ -91,7 +104,7 @@ function GalleryPage() {
             itemClassName="aspect-square"
           />
         ) : photos.length === 0 ? (
-          <p className="text-white/40">No photographs published yet.</p>
+          <p className="text-white/40">{t("gallery.empty")}</p>
         ) : (
           <>
             <div
@@ -108,11 +121,18 @@ function GalleryPage() {
                       open(
                         isVideo
                           ? { kind: "video", src: p.image_url, caption: p.caption ?? undefined }
-                          : { kind: "image", src: p.image_url, alt: p.caption ?? "", caption: p.caption ?? undefined },
+                          : {
+                              kind: "image",
+                              src: p.image_url,
+                              alt: p.caption ?? "",
+                              caption: p.caption ?? undefined,
+                            },
                       );
                     }}
                     className={`group relative overflow-hidden border border-white/10 bg-neutral-900 ${i % 5 === 0 ? "row-span-2 aspect-[3/4]" : "aspect-square"}`}
-                    aria-label={p.caption ?? (isVideo ? "Play video" : "Open image")}
+                    aria-label={
+                      p.caption ?? (isVideo ? t("common.playVideo") : t("common.openImage"))
+                    }
                   >
                     {isVideo ? (
                       embedThumb ? (
@@ -141,12 +161,14 @@ function GalleryPage() {
                     )}
                     {p.caption && (
                       <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-3 opacity-0 transition-opacity group-hover:opacity-100 motion-reduce:transition-none">
-                        <p className="font-mono text-[10px] uppercase tracking-widest text-white">{p.caption}</p>
+                        <p className="font-mono text-[10px] uppercase tracking-widest text-white">
+                          {p.caption}
+                        </p>
                       </div>
                     )}
                     {isVideo && (
                       <span className="pointer-events-none absolute right-2 top-2 rounded bg-black/70 px-2 py-0.5 font-mono text-[9px] uppercase tracking-widest text-white/80">
-                        ▶ Video
+                        ▶ {t("common.video")}
                       </span>
                     )}
                   </button>
@@ -165,13 +187,23 @@ function GalleryPage() {
               <div className="mt-16 border-t border-white/10 pt-8">
                 <div className="flex flex-wrap items-center gap-4">
                   {isPlayable(selected.image_url) ? (
-                    <span className="flex h-16 w-16 items-center justify-center border border-white/10 bg-black/60 font-mono text-[10px] uppercase tracking-widest text-white/60">▶</span>
+                    <span className="flex h-16 w-16 items-center justify-center border border-white/10 bg-black/60 font-mono text-[10px] uppercase tracking-widest text-white/60">
+                      ▶
+                    </span>
                   ) : (
-                    <img src={selected.image_url} alt="" className="h-16 w-16 border border-white/10 object-cover" />
+                    <img
+                      src={selected.image_url}
+                      alt=""
+                      className="h-16 w-16 border border-white/10 object-cover"
+                    />
                   )}
                   <div className="flex-1 min-w-[12rem]">
-                    <p className="font-mono text-[10px] uppercase tracking-widest text-white/40">Selected frame</p>
-                    <p className="text-sm text-white/80">{selected.caption ?? "Untitled"}</p>
+                    <p className="font-mono text-[10px] uppercase tracking-widest text-white/40">
+                      {t("collection.selectedFrame")}
+                    </p>
+                    <p className="text-sm text-white/80">
+                      {selected.caption ?? t("common.untitled")}
+                    </p>
                   </div>
                   <BookmarkButton contentType="gallery" contentId={selected.id} />
                 </div>
