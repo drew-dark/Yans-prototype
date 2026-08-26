@@ -25,5 +25,36 @@
     "toggleLabel": "Language",
     "en": "EN",
     "ja": "JA"
+  },
+  "common": {
+    "video": "Video",
+    "playVideo": "Play video",
+    "openImage": "Open image",
+    "untitled": "Untitled",
+    "loading": "Loading…"
+  },
+  "collection": {
+    "volumeLabel": "Volume 01",
+    "intro": "Frames pulled from the quiet places — portrait, broadcast, verse, culture, and the stages in between. Tap any card to open it fuller.",
+    "selectedFrame": "Selected frame",
+    "seriesLabel": "Series 01",
+    "viewFullGallery": "View full gallery →"
+  },
+  "gallery": {
+    "title": "Gallery",
+    "intro": "Snapshots collected between two homes. Click any frame to see it fuller.",
+    "empty": "No photographs published yet."
+  },
+  "shop": {
+    "waresLabel": "Wares",
+    "intro": "Books, prints, zines. Small runs. Purchase links open in a new tab.",
+    "empty": "Nothing on the shelf right now.",
+    "soldOut": "Sold out",
+    "buy": "Buy →",
+    "comingSoon": "Coming soon"
+  },
+  "about": {
+    "colophon": "Colophon",
+    "elsewhere": "Elsewhere"
   }
 }

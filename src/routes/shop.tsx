@@ -5,8 +5,15 @@ import { PageShell } from "@/components/site/SiteChrome";
 import { Paginator } from "@/components/site/Paginator";
 import { GridSkeleton } from "@/components/site/GridSkeleton";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
-import { isRangeOutOfBounds, pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
+import {
+  isRangeOutOfBounds,
+  pageRangeBounds,
+  totalPagesFor,
+  useScrollTopOnPageChange,
+  validatePageSearch,
+} from "@/lib/pagination";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 const PAGE_SIZE = 9;
 
@@ -17,16 +24,25 @@ export const Route = createFileRoute("/shop")({
       { title: "Shop — The Last Mukwasu" },
       { name: "description", content: "Books, prints, and small things from The Last Mukwasu." },
       { property: "og:title", content: "Shop — The Last Mukwasu" },
-      { property: "og:description", content: "Books, prints, and small things from The Last Mukwasu." },
+      {
+        property: "og:description",
+        content: "Books, prints, and small things from The Last Mukwasu.",
+      },
     ],
   }),
   component: ShopPage,
 });
 
 type Product = {
-  id: string; slug: string; title: string; description: string | null;
-  image_url: string | null; price_cents: number; currency: string;
-  stock: number | null; buy_url: string | null;
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  image_url: string | null;
+  price_cents: number;
+  currency: string;
+  stock: number | null;
+  buy_url: string | null;
 };
 
 function formatPrice(cents: number, currency: string) {
@@ -43,7 +59,9 @@ const shopQuery = (page: number) => ({
     const { from, to } = pageRangeBounds(page, PAGE_SIZE);
     const { data, error, count } = await supabase
       .from("shop_products")
-      .select("id, slug, title, description, image_url, price_cents, currency, stock, buy_url", { count: "exact" })
+      .select("id, slug, title, description, image_url, price_cents, currency, stock, buy_url", {
+        count: "exact",
+      })
       .eq("published", true)
       .order("sort_order")
       .range(from, to);
@@ -53,6 +71,7 @@ const shopQuery = (page: number) => ({
 });
 
 function ShopPage() {
+  const { t } = useTranslation();
   const { page } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const qc = useQueryClient();
@@ -82,48 +101,75 @@ function ShopPage() {
     <PageShell>
       <section className="mx-auto max-w-6xl px-5 py-10 md:px-12 md:py-16">
         <div className="mb-16 max-w-2xl">
-          <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">Wares</p>
-          <h1 className="font-display text-5xl uppercase leading-none tracking-tight sm:text-6xl md:text-8xl">Shop</h1>
-          <p className="mt-6 text-sm text-white/50 md:text-base">
-            Books, prints, zines. Small runs. Purchase links open in a new tab.
+          <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
+            {t("shop.waresLabel")}
           </p>
+          <h1 className="font-display text-5xl uppercase leading-none tracking-tight sm:text-6xl md:text-8xl">
+            {t("nav.shop")}
+          </h1>
+          <p className="mt-6 text-sm text-white/50 md:text-base">{t("shop.intro")}</p>
         </div>
 
         {isLoading ? (
-          <GridSkeleton count={PAGE_SIZE} className="grid gap-8 md:grid-cols-2 lg:grid-cols-3" itemClassName="h-80" />
+          <GridSkeleton
+            count={PAGE_SIZE}
+            className="grid gap-8 md:grid-cols-2 lg:grid-cols-3"
+            itemClassName="h-80"
+          />
         ) : items.length === 0 ? (
-          <p className="text-white/40">Nothing on the shelf right now.</p>
+          <p className="text-white/40">{t("shop.empty")}</p>
         ) : (
           <>
             <div
               className={`grid gap-8 transition-opacity duration-200 motion-reduce:transition-none md:grid-cols-2 lg:grid-cols-3 ${isFetching ? "opacity-50" : "opacity-100"}`}
             >
               {items.map((p) => (
-                <div key={p.id} className="flex flex-col overflow-hidden border border-white/10 bg-neutral-900/40 transition-colors duration-300 hover:border-kraft/40">
+                <div
+                  key={p.id}
+                  className="flex flex-col overflow-hidden border border-white/10 bg-neutral-900/40 transition-colors duration-300 hover:border-kraft/40"
+                >
                   {p.image_url && (
                     <div className="aspect-square overflow-hidden bg-neutral-900">
-                      <img src={p.image_url} alt={p.title} loading="lazy" className="h-full w-full object-cover" />
+                      <img
+                        src={p.image_url}
+                        alt={p.title}
+                        loading="lazy"
+                        className="h-full w-full object-cover"
+                      />
                     </div>
                   )}
                   <div className="flex flex-1 flex-col p-5">
-                    <h2 className="font-display text-2xl uppercase leading-tight tracking-tight">{p.title}</h2>
-                    <p className="mt-1 font-mono text-xs uppercase tracking-widest text-white/50">{formatPrice(p.price_cents, p.currency)}</p>
-                    {p.description && <p className="mt-3 text-sm text-white/60 line-clamp-4">{p.description}</p>}
+                    <h2 className="font-display text-2xl uppercase leading-tight tracking-tight">
+                      {p.title}
+                    </h2>
+                    <p className="mt-1 font-mono text-xs uppercase tracking-widest text-white/50">
+                      {formatPrice(p.price_cents, p.currency)}
+                    </p>
+                    {p.description && (
+                      <p className="mt-3 text-sm text-white/60 line-clamp-4">{p.description}</p>
+                    )}
                     <div className="mt-auto pt-4">
                       {p.stock !== null && p.stock <= 0 ? (
-                        <span className="inline-block bg-white/5 px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-white/40">Sold out</span>
+                        <span className="inline-block bg-white/5 px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-white/40">
+                          {t("shop.soldOut")}
+                        </span>
                       ) : p.buy_url ? (
                         <a
                           href={p.buy_url}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-block bg-kraft px-5 py-2 font-mono text-[11px] font-bold uppercase tracking-widest text-ink-dark hover:bg-kraft-dark"
-                          style={{ clipPath: "polygon(0% 5%, 5% 0%, 95% 2%, 100% 8%, 98% 92%, 100% 100%, 5% 98%, 0% 90%)" }}
+                          style={{
+                            clipPath:
+                              "polygon(0% 5%, 5% 0%, 95% 2%, 100% 8%, 98% 92%, 100% 100%, 5% 98%, 0% 90%)",
+                          }}
                         >
-                          Buy →
+                          {t("shop.buy")}
                         </a>
                       ) : (
-                        <span className="inline-block font-mono text-[10px] uppercase tracking-widest text-white/40">Coming soon</span>
+                        <span className="inline-block font-mono text-[10px] uppercase tracking-widest text-white/40">
+                          {t("shop.comingSoon")}
+                        </span>
                       )}
                     </div>
                   </div>
