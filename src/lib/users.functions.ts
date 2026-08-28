@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -21,13 +21,25 @@ export const adminListUsers = createServerFn({ method: "GET" })
   .handler(async ({ context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: usersData, error: usersErr } = await supabaseAdmin.auth.admin.listUsers({
-      page: 1,
-      perPage: 200,
-    });
-    if (usersErr) throw new Error(usersErr.message);
-    const users = usersData.users;
-    const ids = users.map((u) => u.id);
+
+    // listUsers() is paginated server-side — a single call silently caps at
+    // whatever perPage is set to, with no error if more users exist beyond
+    // it. Loop until a page comes back short of a full page, so this scales
+    // past whatever the current user count happens to be.
+    const PER_PAGE = 200;
+    const MAX_PAGES = 50; // 10,000 users — a sane upper bound, not a real limit
+    const usersAccumulator: User[] = [];
+    for (let page = 1; page <= MAX_PAGES; page++) {
+      const { data: usersData, error: usersErr } = await supabaseAdmin.auth.admin.listUsers({
+        page,
+        perPage: PER_PAGE,
+      });
+      if (usersErr) throw new Error(usersErr.message);
+      usersAccumulator.push(...usersData.users);
+      if (usersData.users.length < PER_PAGE) break;
+    }
+
+    const ids = usersAccumulator.map((u) => u.id);
     const [{ data: roles }, { data: profs }] = await Promise.all([
       supabaseAdmin.from("user_roles").select("user_id, role").in("user_id", ids),
       supabaseAdmin.from("profiles").select("user_id, display_name, avatar_url").in("user_id", ids),
@@ -42,7 +54,7 @@ export const adminListUsers = createServerFn({ method: "GET" })
     for (const p of ((profs ?? []) as unknown as Array<{ user_id: string; display_name: string | null; avatar_url: string | null }>)) {
       profMap.set(p.user_id, { display_name: p.display_name, avatar_url: p.avatar_url });
     }
-    return users.map((u) => ({
+    return usersAccumulator.map((u) => ({
       id: u.id,
       email: u.email ?? null,
       created_at: u.created_at,
