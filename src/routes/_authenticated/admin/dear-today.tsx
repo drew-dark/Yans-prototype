@@ -42,7 +42,15 @@ const empty = {
 };
 
 function slugify(s: string) {
-  return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+  const base = s
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+  // A title written entirely in a non-Latin script (e.g. Japanese) strips
+  // down to nothing here — fall back to a random slug rather than saving
+  // an empty one, which breaks the entry's URL and read page.
+  return base || `entry-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 function DearTodayAdmin() {
