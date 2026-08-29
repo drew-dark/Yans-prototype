@@ -5,6 +5,7 @@
     "gallery": "ギャラリー",
     "diaries": "外人日記",
     "stories": "物語",
+    "footprints": "フットプリント",
     "show": "ショー",
     "shop": "ショップ",
     "about": "概要",
@@ -56,5 +57,12 @@
   "about": {
     "colophon": "奥付",
     "elsewhere": "その他"
+  },
+  "footprints": {
+    "eyebrow": "アーカイブ",
+    "title": "フットプリント",
+    "intro": "報道出演、クリエイターとしての動画、その他のプロジェクトなど、これまでの仕事を一箇所に。",
+    "empty": "まだ公開された項目はありません。",
+    "viewLink": "オリジナルを見る"
   }
 }
