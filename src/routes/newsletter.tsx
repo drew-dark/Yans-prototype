@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { PageShell } from "@/components/site/SiteChrome";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/newsletter")({
   head: () => ({
@@ -17,17 +18,15 @@ export const Route = createFileRoute("/newsletter")({
 });
 
 function NewsletterPage() {
+  const { t } = useTranslation();
   return (
     <PageShell>
       <div className="mx-auto max-w-2xl px-5 py-16 md:px-12 md:py-24">
-        <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-kraft">Mailing list</p>
+        <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-kraft">{t("newsletterPage.eyebrow")}</p>
         <h1 className="mt-3 font-display text-4xl uppercase leading-tight tracking-tight sm:text-5xl md:text-6xl">
-          Letters from the Lounge
+          {t("newsletterPage.title")}
         </h1>
-        <p className="mt-5 max-w-lg text-white/60">
-          Occasional dispatches when there's something worth sending — new poems, diary entries,
-          Dear Today notes, and shop drops. No noise, no schedule to keep.
-        </p>
+        <p className="mt-5 max-w-lg text-white/60">{t("newsletterPage.intro")}</p>
         <div className="mt-10">
           <NewsletterForm source="newsletter_page" />
         </div>
