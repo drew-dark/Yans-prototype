@@ -41,6 +41,12 @@ export function getEmbedUrl(url: string): string | null {
       const id = u.pathname.split("/").filter(Boolean).pop();
       return id ? `https://www.loom.com/embed/${id}` : null;
     }
+    if (host.endsWith("drive.google.com")) {
+      // Accepts /file/d/<id>/view, /open?id=<id>, and /uc?id=<id> forms.
+      const fileMatch = u.pathname.match(/\/file\/d\/([^/]+)/);
+      const id = fileMatch ? fileMatch[1] : u.searchParams.get("id");
+      return id ? `https://drive.google.com/file/d/${id}/preview` : null;
+    }
     return null;
   } catch {
     return null;
@@ -87,6 +93,16 @@ export function getEmbedThumbnail(url: string): string | null {
   const yt = embed.match(/youtube(?:-nocookie)?\.com\/embed\/([^/?#]+)/);
   if (yt) return `https://i.ytimg.com/vi/${yt[1]}/hqdefault.jpg`;
   return null;
+}
+
+/** True for links that need Google Drive's own sharing permissions to load. */
+export function isGoogleDriveUrl(url: string): boolean {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, "");
+    return host.endsWith("drive.google.com");
+  } catch {
+    return false;
+  }
 }
 
 export function mimeTypeFor(url: string): string | undefined {
