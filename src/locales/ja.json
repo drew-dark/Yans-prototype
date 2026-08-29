@@ -5,6 +5,7 @@
     "gallery": "ギャラリー",
     "diaries": "外人日記",
     "stories": "物語",
+    "footprints": "フットプリント",
     "show": "ショー",
     "shop": "ショップ",
     "about": "概要",
@@ -56,5 +57,64 @@
   "about": {
     "colophon": "奥付",
     "elsewhere": "その他"
+  },
+  "footprints": {
+    "eyebrow": "アーカイブ",
+    "title": "フットプリント",
+    "intro": "報道出演、クリエイターとしての動画、その他のプロジェクトなど、これまでの仕事を一箇所に。",
+    "empty": "まだ公開された項目はありません。",
+    "viewLink": "オリジナルを見る"
+  },
+  "diaries": {
+    "eyebrow": "フィールドノート",
+    "titleLine1": "外人",
+    "titleLine2": "日記",
+    "intro": "ルサカと東京の間で綴られた記録。半分はジャーナリズム、半分は言い訳。",
+    "empty": "まだ記事はありません。",
+    "readEntry": "記事を読む"
+  },
+  "stories": {
+    "eyebrow": "長編",
+    "title": "物語",
+    "intro": "エッセイとルポルタージュ。日記より遅く、詩より鋭く。",
+    "empty": "まだ公開された物語はありません。",
+    "read": "読む"
+  },
+  "newsletterPage": {
+    "eyebrow": "メーリングリスト",
+    "title": "Letters from the Lounge",
+    "intro": "送る価値のあるものがあるときだけ届く便り — 新しい詩、日記、Dear Today のノート、ショップの新着など。ノイズなし、決まった頻度もなし。"
+  },
+  "show": {
+    "onAir": "オンエア",
+    "title": "ショー",
+    "intro": "ライブ配信、対談、朗読 — そして過去のすべてのエピソード。",
+    "offAir": "オフエア",
+    "nextBroadcast": "次回配信: {{title}} — {{when}}",
+    "noneRunning": "現在配信中の番組はありません。またのぞいてみてください。",
+    "pastEpisodes": "過去のエピソード",
+    "noEpisodes": "まだアーカイブされたエピソードはありません。",
+    "replay": "リプレイ",
+    "noRecording": "録画なし",
+    "archive": "アーカイブ",
+    "playAria": "{{title}} を再生",
+    "closePlayer": "プレイヤーを閉じる",
+    "close": "閉じる"
+  },
+  "settings": {
+    "preferences": "設定",
+    "title": "設定",
+    "appearance": "外観",
+    "appearanceDesc": "配色テーマはすべてのページに適用されます — 読書ページ、アカウント、スタジオ。この端末に記憶されます。",
+    "account": "アカウント",
+    "signedInAs": "ログイン中:",
+    "profile": "プロフィール",
+    "bookmarks": "ブックマーク",
+    "comments": "コメント",
+    "studio": "スタジオ",
+    "signIn": "ログイン",
+    "signInPrompt": "してお気に入りの保存、コメント、プロフィール管理を行えます。",
+    "motion": "モーション",
+    "motionDesc": "The Last Mukwasu は端末の「モーション削減」設定に自動的に従います — デバイスのアクセシビリティ設定で有効にすると、ホバー時の演出やズームが最小限になります。"
   }
 }

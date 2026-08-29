@@ -7,6 +7,7 @@ import { GridSkeleton } from "@/components/site/GridSkeleton";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { isRangeOutOfBounds, pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 const PAGE_SIZE = 6;
 
@@ -41,6 +42,7 @@ const diariesQuery = (page: number) => ({
 });
 
 function DiariesPage() {
+  const { t } = useTranslation();
   const { page } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const qc = useQueryClient();
@@ -70,17 +72,17 @@ function DiariesPage() {
     <PageShell>
       <section className="mx-auto max-w-4xl px-5 py-10 md:px-12 md:py-16">
         <div className="mb-16 max-w-2xl">
-          <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">Field Notebook</p>
-          <h1 className="font-display text-5xl uppercase leading-none tracking-tight sm:text-6xl md:text-8xl">Gaijin<br />Diaries</h1>
+          <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">{t("diaries.eyebrow")}</p>
+          <h1 className="font-display text-5xl uppercase leading-none tracking-tight sm:text-6xl md:text-8xl">{t("diaries.titleLine1")}<br />{t("diaries.titleLine2")}</h1>
           <p className="mt-6 text-sm text-white/50 md:text-base">
-            Entries kept between Lusaka and Tokyo. Half journalism, half apology.
+            {t("diaries.intro")}
           </p>
         </div>
 
         {isLoading ? (
           <GridSkeleton count={3} className="space-y-12" itemClassName="h-44" />
         ) : entries.length === 0 ? (
-          <p className="text-white/40">No entries yet.</p>
+          <p className="text-white/40">{t("diaries.empty")}</p>
         ) : (
           <>
             <div
@@ -109,7 +111,7 @@ function DiariesPage() {
                       {e.body && (
                         <p className="mt-3 line-clamp-3 text-sm text-white/50">{e.body.slice(0, 240)}…</p>
                       )}
-                      <span className="mt-4 inline-block font-mono text-[10px] uppercase tracking-widest text-white/60">Read entry →</span>
+                      <span className="mt-4 inline-block font-mono text-[10px] uppercase tracking-widest text-white/60">{t("diaries.readEntry")} →</span>
                     </div>
                   </Link>
                 </article>

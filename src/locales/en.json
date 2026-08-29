@@ -5,6 +5,7 @@
     "gallery": "Gallery",
     "diaries": "Gaijin Diaries",
     "stories": "Stories",
+    "footprints": "Footprints",
     "show": "Show",
     "shop": "Shop",
     "about": "About",
@@ -56,5 +57,64 @@
   "about": {
     "colophon": "Colophon",
     "elsewhere": "Elsewhere"
+  },
+  "footprints": {
+    "eyebrow": "Archive",
+    "title": "Footprints",
+    "intro": "Past work — news appearances, creator videos, and other projects, gathered in one place.",
+    "empty": "Nothing published yet.",
+    "viewLink": "View original"
+  },
+  "diaries": {
+    "eyebrow": "Field Notebook",
+    "titleLine1": "Gaijin",
+    "titleLine2": "Diaries",
+    "intro": "Entries kept between Lusaka and Tokyo. Half journalism, half apology.",
+    "empty": "No entries yet.",
+    "readEntry": "Read entry"
+  },
+  "stories": {
+    "eyebrow": "The Longer Form",
+    "title": "Stories",
+    "intro": "Essays and reported pieces. Slower than a diary, sharper than a poem.",
+    "empty": "No stories published yet.",
+    "read": "Read"
+  },
+  "newsletterPage": {
+    "eyebrow": "Mailing list",
+    "title": "Letters from the Lounge",
+    "intro": "Occasional dispatches when there's something worth sending — new poems, diary entries, Dear Today notes, and shop drops. No noise, no schedule to keep."
+  },
+  "show": {
+    "onAir": "On air",
+    "title": "The Show",
+    "intro": "Live broadcasts, conversations and readings — plus every past episode.",
+    "offAir": "Off air",
+    "nextBroadcast": "Next broadcast: {{title}} — {{when}}",
+    "noneRunning": "No broadcast running right now. Check back soon.",
+    "pastEpisodes": "Past episodes",
+    "noEpisodes": "No episodes archived yet.",
+    "replay": "Replay",
+    "noRecording": "No recording",
+    "archive": "Archive",
+    "playAria": "Play {{title}}",
+    "closePlayer": "Close player",
+    "close": "Close"
+  },
+  "settings": {
+    "preferences": "Preferences",
+    "title": "Settings",
+    "appearance": "Appearance",
+    "appearanceDesc": "Your colour theme applies everywhere — reading pages, your account and the studio. It is remembered on this device.",
+    "account": "Account",
+    "signedInAs": "Signed in as",
+    "profile": "Profile",
+    "bookmarks": "Bookmarks",
+    "comments": "Comments",
+    "studio": "Studio",
+    "signIn": "Sign in",
+    "signInPrompt": "to bookmark favourites, comment and manage your profile.",
+    "motion": "Motion",
+    "motionDesc": "The Last Mukwasu follows your system “reduce motion” setting automatically — hover reveals and zooms are minimised when it is switched on in your device accessibility settings."
   }
 }

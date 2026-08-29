@@ -6,6 +6,7 @@ import { LivePlayer } from "@/components/site/LivePlayer";
 import { BroadcastPlayer } from "@/components/site/BroadcastPlayer";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import type { BroadcastKind } from "@/lib/broadcast";
 
 export const Route = createFileRoute("/show")({
@@ -53,6 +54,7 @@ function fmt(dt: string | null) {
 }
 
 function ShowPage() {
+  const { t } = useTranslation();
   const [replay, setReplay] = useState<Show | null>(null);
 
   const { data, isLoading } = useQuery({
@@ -87,13 +89,13 @@ function ShowPage() {
       <section className="mx-auto max-w-6xl px-5 py-10 md:px-12 md:py-16">
         <div className="mb-10 max-w-2xl">
           <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
-            On air
+            {t("show.onAir")}
           </p>
           <h1 className="font-display text-5xl uppercase leading-none tracking-tight sm:text-6xl md:text-8xl">
-            The Show
+            {t("show.title")}
           </h1>
           <p className="mt-6 text-sm text-white/50 md:text-base">
-            Live broadcasts, conversations and readings — plus every past episode.
+            {t("show.intro")}
           </p>
         </div>
 
@@ -118,22 +120,22 @@ function ShowPage() {
         ) : (
           <div className="flex flex-col items-center gap-3 border border-white/10 bg-black/40 px-6 py-16 text-center">
             <p className="font-mono text-[10px] uppercase tracking-[0.4em] text-white/40">
-              Off air
+              {t("show.offAir")}
             </p>
             <p className="text-sm text-white/60">
               {upcoming
-                ? `Next broadcast: ${upcoming.title} — ${fmt(upcoming.scheduled_at)}`
-                : "No broadcast running right now. Check back soon."}
+                ? t("show.nextBroadcast", { title: upcoming.title, when: fmt(upcoming.scheduled_at) })
+                : t("show.noneRunning")}
             </p>
           </div>
         )}
 
         <div className="mt-16">
           <h2 className="mb-6 font-display text-3xl uppercase tracking-tight md:text-5xl">
-            Past episodes
+            {t("show.pastEpisodes")}
           </h2>
           {past.length === 0 ? (
-            <p className="text-white/40">No episodes archived yet.</p>
+            <p className="text-white/40">{t("show.noEpisodes")}</p>
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {past.map((s) => (
@@ -143,7 +145,7 @@ function ShowPage() {
                     onClick={() => setReplay(s)}
                     disabled={!s.recording_url}
                     className="group block w-full overflow-hidden disabled:cursor-not-allowed"
-                    aria-label={`Play ${s.title}`}
+                    aria-label={t("show.playAria", { title: s.title })}
                   >
                     {s.cover_url ? (
                       <img
@@ -154,13 +156,13 @@ function ShowPage() {
                       />
                     ) : (
                       <div className="flex aspect-video w-full items-center justify-center bg-white/5 font-mono text-[10px] uppercase tracking-widest text-white/40">
-                        {s.recording_url ? "▶ Replay" : "No recording"}
+                        {s.recording_url ? `▶ ${t("show.replay")}` : t("show.noRecording")}
                       </div>
                     )}
                   </button>
                   <div className="p-4">
                     <p className="font-mono text-[10px] uppercase tracking-widest text-white/40">
-                      {fmt(s.started_at ?? s.scheduled_at) ?? "Archive"}
+                      {fmt(s.started_at ?? s.scheduled_at) ?? t("show.archive")}
                     </p>
                     <h3 className="mt-1 font-display text-xl uppercase tracking-tight">
                       {s.title}
@@ -192,10 +194,10 @@ function ShowPage() {
             <button
               type="button"
               onClick={() => setReplay(null)}
-              aria-label="Close player"
+              aria-label={t("show.closePlayer")}
               className="absolute right-6 top-6 font-mono text-xs uppercase tracking-widest text-white/60 hover:text-white"
             >
-              Close ✕
+              {t("show.close")} ✕
             </button>
           </div>
         )}
