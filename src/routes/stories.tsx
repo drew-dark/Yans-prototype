@@ -7,6 +7,7 @@ import { GridSkeleton } from "@/components/site/GridSkeleton";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { isRangeOutOfBounds, pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 const PAGE_SIZE = 6;
 
@@ -41,6 +42,7 @@ const storiesQuery = (page: number) => ({
 });
 
 function StoriesPage() {
+  const { t } = useTranslation();
   const { page } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const qc = useQueryClient();
@@ -70,17 +72,17 @@ function StoriesPage() {
     <PageShell>
       <section className="mx-auto max-w-6xl px-5 py-10 md:px-12 md:py-16">
         <div className="mb-16 max-w-2xl">
-          <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">The Longer Form</p>
-          <h1 className="font-display text-5xl uppercase leading-none tracking-tight sm:text-6xl md:text-8xl">Stories</h1>
+          <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">{t("stories.eyebrow")}</p>
+          <h1 className="font-display text-5xl uppercase leading-none tracking-tight sm:text-6xl md:text-8xl">{t("stories.title")}</h1>
           <p className="mt-6 text-sm text-white/50 md:text-base">
-            Essays and reported pieces. Slower than a diary, sharper than a poem.
+            {t("stories.intro")}
           </p>
         </div>
 
         {isLoading ? (
           <GridSkeleton count={PAGE_SIZE} className="grid gap-8 md:grid-cols-2" itemClassName="h-72" />
         ) : items.length === 0 ? (
-          <p className="text-white/40">No stories published yet.</p>
+          <p className="text-white/40">{t("stories.empty")}</p>
         ) : (
           <>
             <div
@@ -106,7 +108,7 @@ function StoriesPage() {
                     )}
                     <h2 className="mt-2 font-display text-3xl uppercase leading-tight tracking-tight group-hover:text-white/70">{s.title}</h2>
                     {s.excerpt && <p className="mt-3 text-sm text-white/50 line-clamp-3">{s.excerpt}</p>}
-                    <span className="mt-4 inline-block font-mono text-[10px] uppercase tracking-widest text-white/60">Read →</span>
+                    <span className="mt-4 inline-block font-mono text-[10px] uppercase tracking-widest text-white/60">{t("stories.read")} →</span>
                   </div>
                 </Link>
               ))}
