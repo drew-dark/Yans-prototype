@@ -112,7 +112,7 @@ export function AuthAffordance({ className = "flex" }: { className?: string }) {
     return (
       <Link
         to="/auth"
-        className={`border border-white/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-white/60 hover:border-white hover:text-white ${className}`}
+        className={`surface-button px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-white/60 hover:text-white ${className}`}
       >
         {t("nav.signIn")}
       </Link>
@@ -122,7 +122,7 @@ export function AuthAffordance({ className = "flex" }: { className?: string }) {
     <div className={`items-center gap-2 ${className}`}>
       <Link
         to="/account"
-        className="border border-white/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-white/70 hover:border-white hover:text-white"
+        className="surface-button px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-white/70 hover:text-white"
         title={email}
       >
         ◇ {t("nav.account")}
@@ -130,7 +130,7 @@ export function AuthAffordance({ className = "flex" }: { className?: string }) {
       {staff && (
         <Link
           to="/admin"
-          className="border border-white/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-white/70 hover:border-white hover:text-white"
+          className="surface-button px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-white/70 hover:text-white"
           title="Studio access for staff"
         >
           ◆ {t("nav.studio")}
@@ -191,7 +191,7 @@ export function SiteHeader() {
                   <DropdownMenuContent
                     align="start"
                     sideOffset={14}
-                    className="min-w-[200px] rounded-none border-l-2 border-kraft bg-neutral-950/95 p-0 text-white/70 shadow-2xl backdrop-blur-sm"
+                    className="surface-panel min-w-[200px] border-l-2 border-kraft p-0 text-white/70"
                   >
                     <DropdownMenuItem asChild className="rounded-none px-4 py-3 focus:bg-kraft/10 focus:text-white">
                       <Link
@@ -243,7 +243,7 @@ export function SiteHeader() {
           to="/settings"
           aria-label={t("nav.settingsLabel")}
           title={t("nav.settingsTitle")}
-          className="hidden h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/60 transition-colors hover:border-white hover:text-white md:inline-flex md:h-7 md:w-7"
+          className="surface-button hidden h-9 w-9 items-center justify-center rounded-full text-white/60 hover:text-white md:inline-flex md:h-7 md:w-7"
         >
           <Settings className="h-4 w-4 md:h-3.5 md:w-3.5" aria-hidden="true" />
         </Link>
@@ -267,13 +267,13 @@ function MobileMenu() {
     <Sheet>
       <SheetTrigger
         aria-label={t("nav.menuLabel")}
-        className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/60 transition-colors hover:border-white hover:text-white md:hidden"
+        className="surface-button inline-flex h-9 w-9 items-center justify-center rounded-full text-white/60 hover:text-white md:hidden"
       >
         <Menu className="h-4 w-4" aria-hidden="true" />
       </SheetTrigger>
       <SheetContent
         side="right"
-        className="flex w-[85vw] max-w-sm flex-col gap-0 border-white/10 bg-neutral-950 p-0 text-white sm:max-w-sm"
+        className="surface-panel flex w-[85vw] max-w-sm flex-col gap-0 border-white/10 p-0 text-white sm:max-w-sm"
         style={{
           backgroundImage:
             "radial-gradient(circle at 100% 0%, var(--site-glow-b) 0%, transparent 55%)",
@@ -346,7 +346,7 @@ function MobileMenu() {
             <SheetClose asChild>
               <Link
                 to="/settings"
-                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/60 hover:border-white hover:text-white"
+                className="surface-button inline-flex h-9 w-9 items-center justify-center rounded-full text-white/60 hover:text-white"
               >
                 <Settings className="h-4 w-4" aria-hidden="true" />
               </Link>

@@ -5,6 +5,10 @@ export const THEMES = [
   { id: "ember", label: "Ember", swatch: "#e0703c", blurb: "Burnt orange, late-night radio." },
   { id: "newsprint", label: "Newsprint", swatch: "#cfd6dd", blurb: "Cool grey, broadsheet clarity." },
   { id: "moss", label: "Moss", swatch: "#69c39a", blurb: "Quiet green, garden hours." },
+  { id: "sakura", label: "Sakura", swatch: "#f2a6c1", blurb: "Cherry blossom pink — frosted glass surfaces." },
+  { id: "ai", label: "Ai", swatch: "#7c98d6", blurb: "Ai-zome indigo — frosted glass surfaces." },
+  { id: "matcha", label: "Matcha", swatch: "#9cbf6f", blurb: "Tea green — soft inflated clay surfaces." },
+  { id: "sumi", label: "Sumi", swatch: "#b7abae", blurb: "Sumi ink charcoal — soft inflated clay surfaces." },
 ] as const;
 
 export type ThemeId = (typeof THEMES)[number]["id"];

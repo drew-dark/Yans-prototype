@@ -87,7 +87,7 @@ function FootprintsPage() {
               return (
                 <article
                   key={item.id}
-                  className="group flex flex-col overflow-hidden border border-white/10 bg-neutral-900"
+                  className="group surface-card flex flex-col overflow-hidden"
                 >
                   {(thumb || item.media_url) && (
                     <button

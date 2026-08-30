@@ -91,7 +91,7 @@ export function ContentCard({
     </>
   );
 
-  const sharedClass = `group flex flex-col overflow-hidden border border-white/10 bg-neutral-900/40 text-left transition-colors duration-300 hover:border-kraft/40 ${className}`;
+  const sharedClass = `group surface-card flex flex-col overflow-hidden text-left ${className}`;
 
   if (to) {
     return (

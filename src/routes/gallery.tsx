@@ -130,7 +130,7 @@ function GalleryPage() {
                             },
                       );
                     }}
-                    className={`group relative overflow-hidden border border-white/10 bg-neutral-900 ${i % 5 === 0 ? "row-span-2 aspect-[3/4]" : "aspect-square"}`}
+                    className={`group surface-card relative overflow-hidden ${i % 5 === 0 ? "row-span-2 aspect-[3/4]" : "aspect-square"}`}
                     aria-label={
                       p.caption ?? (isVideo ? t("common.playVideo") : t("common.openImage"))
                     }
