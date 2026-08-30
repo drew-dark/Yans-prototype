@@ -3,11 +3,24 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageToggle } from "@/components/site/LanguageProvider";
-import { Settings } from "lucide-react";
+import { Settings, Menu, ChevronDown } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export const navLinks = [
   { to: "/collection", labelKey: "nav.collection" },
-  { to: "/collection/dear-today", labelKey: "nav.dearToday" },
   { to: "/gallery", labelKey: "nav.gallery" },
   { to: "/diaries", labelKey: "nav.diaries" },
   { to: "/stories", labelKey: "nav.stories" },
@@ -16,6 +29,11 @@ export const navLinks = [
   { to: "/shop", labelKey: "nav.shop" },
   { to: "/about", labelKey: "nav.about" },
 ] as const;
+
+/** "Dear Today" lives under Collection (/collection/dear-today) — shown as
+ * a sub-item in the desktop dropdown and mobile drawer instead of taking
+ * its own slot in the main nav. */
+const collectionSubLinks = [{ to: "/collection/dear-today", labelKey: "nav.dearToday" }] as const;
 
 const STAFF_ROLES = ["admin", "editor", "moderator", "guest_author"] as const;
 
@@ -85,7 +103,7 @@ function useIsStaff() {
  * the system distinguishes only after authenticating); signed-in readers
  * see "Account"; signed-in staff see both "Account" and "Studio".
  */
-export function AuthAffordance({ className = "" }: { className?: string }) {
+export function AuthAffordance({ className = "flex" }: { className?: string }) {
   const { t } = useTranslation();
   const email = useSessionEmail();
   const staff = useIsStaff();
@@ -101,7 +119,7 @@ export function AuthAffordance({ className = "" }: { className?: string }) {
     );
   }
   return (
-    <div className={`flex items-center gap-2 ${className}`}>
+    <div className={`items-center gap-2 ${className}`}>
       <Link
         to="/account"
         className="border border-white/20 px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-white/70 hover:border-white hover:text-white"
@@ -156,6 +174,40 @@ export function SiteHeader() {
       <div className="flex shrink-0 items-center gap-3 md:gap-6 md:pt-2">
         <nav className="hidden items-center gap-6 text-[11px] font-bold uppercase tracking-[0.3em] text-white/60 md:flex">
           {navLinks.map((l) => {
+            if (l.to === "/collection") {
+              const active = pathname.startsWith("/collection");
+              return (
+                <DropdownMenu key={l.to}>
+                  <DropdownMenuTrigger
+                    className={`flex items-center gap-1 outline-none transition-colors hover:text-white ${active ? "text-white" : ""}`}
+                  >
+                    {t(l.labelKey)}
+                    <ChevronDown className="h-3 w-3" aria-hidden="true" />
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    align="start"
+                    className="border-white/10 bg-neutral-950 text-white/70"
+                  >
+                    <DropdownMenuItem asChild className="focus:bg-white/10 focus:text-white">
+                      <Link to="/collection" className="cursor-pointer text-xs uppercase tracking-widest">
+                        {t(l.labelKey)}
+                      </Link>
+                    </DropdownMenuItem>
+                    {collectionSubLinks.map((sub) => (
+                      <DropdownMenuItem
+                        key={sub.to}
+                        asChild
+                        className="focus:bg-white/10 focus:text-white"
+                      >
+                        <Link to={sub.to} className="cursor-pointer text-xs uppercase tracking-widest">
+                          {t(sub.labelKey)}
+                        </Link>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              );
+            }
             const active = pathname === l.to || pathname.startsWith(l.to + "/");
             return (
               <Link
@@ -173,43 +225,98 @@ export function SiteHeader() {
           to="/settings"
           aria-label={t("nav.settingsLabel")}
           title={t("nav.settingsTitle")}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/60 transition-colors hover:border-white hover:text-white md:h-7 md:w-7"
+          className="hidden h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/60 transition-colors hover:border-white hover:text-white md:inline-flex md:h-7 md:w-7"
         >
           <Settings className="h-4 w-4 md:h-3.5 md:w-3.5" aria-hidden="true" />
         </Link>
 
-        <AuthAffordance />
+        <AuthAffordance className="hidden items-center gap-2 md:flex" />
+
+        <MobileMenu />
       </div>
     </header>
   );
 }
 
-export function MobileNav() {
+/** Hamburger-triggered slide-out drawer, replacing the old horizontal
+ * scrolling pill strip on mobile — every section is visible at a glance
+ * without scrolling, and Dear Today nests under Collection. */
+function MobileMenu() {
   const { t } = useTranslation();
   const pathname = useRouterState({ select: (r) => r.location.pathname });
+
   return (
-    <nav
-      aria-label={t("nav.sectionsAriaLabel")}
-      className="relative flex items-center gap-1 overflow-x-auto border-b border-white/10 px-3 py-1.5 [scrollbar-width:none] md:hidden [&::-webkit-scrollbar]:hidden"
-    >
-      {navLinks.map((l) => {
-        const active = pathname === l.to || pathname.startsWith(l.to + "/");
-        return (
-          <Link
-            key={l.to}
-            to={l.to}
-            className={`whitespace-nowrap px-3 py-2 font-mono text-[10px] uppercase tracking-widest transition-colors ${
-              active
-                ? "border-b-2 border-kraft text-white"
-                : "border-b-2 border-transparent text-white/45"
-            }`}
-          >
-            {t(l.labelKey)}
-          </Link>
-        );
-      })}
-      <LanguageToggle className="ml-2 shrink-0" />
-    </nav>
+    <Sheet>
+      <SheetTrigger
+        aria-label={t("nav.menuLabel")}
+        className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/60 transition-colors hover:border-white hover:text-white md:hidden"
+      >
+        <Menu className="h-4 w-4" aria-hidden="true" />
+      </SheetTrigger>
+      <SheetContent
+        side="right"
+        className="flex w-[85vw] max-w-sm flex-col border-white/10 bg-neutral-950 text-white sm:max-w-sm"
+      >
+        <SheetHeader>
+          <SheetTitle className="font-display text-xl uppercase tracking-tight text-white">
+            {t("nav.menuLabel")}
+          </SheetTitle>
+        </SheetHeader>
+
+        <nav className="mt-4 flex flex-1 flex-col gap-1 overflow-y-auto">
+          {navLinks.map((l) => {
+            const active = pathname === l.to || pathname.startsWith(l.to + "/");
+            return (
+              <div key={l.to}>
+                <SheetClose asChild>
+                  <Link
+                    to={l.to}
+                    className={`block border-b border-white/5 py-3 font-mono text-xs uppercase tracking-widest ${
+                      active ? "text-white" : "text-white/60"
+                    }`}
+                  >
+                    {t(l.labelKey)}
+                  </Link>
+                </SheetClose>
+                {l.to === "/collection" &&
+                  collectionSubLinks.map((sub) => {
+                    const subActive = pathname === sub.to;
+                    return (
+                      <SheetClose key={sub.to} asChild>
+                        <Link
+                          to={sub.to}
+                          className={`block border-b border-white/5 py-2.5 pl-4 font-mono text-[11px] uppercase tracking-widest ${
+                            subActive ? "text-white" : "text-white/40"
+                          }`}
+                        >
+                          ↳ {t(sub.labelKey)}
+                        </Link>
+                      </SheetClose>
+                    );
+                  })}
+              </div>
+            );
+          })}
+        </nav>
+
+        <div className="mt-4 flex flex-col gap-3 border-t border-white/10 pt-4">
+          <div className="flex items-center justify-between">
+            <LanguageToggle />
+            <SheetClose asChild>
+              <Link
+                to="/settings"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/20 text-white/60 hover:border-white hover:text-white"
+              >
+                <Settings className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            </SheetClose>
+          </div>
+          <SheetClose asChild>
+            <AuthAffordance className="flex items-center gap-2" />
+          </SheetClose>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 }
 
@@ -217,7 +324,6 @@ export function SiteNavBar() {
   return (
     <div className="sticky top-0 z-40 bg-[color:var(--site-bg)]/90 backdrop-blur-md">
       <SiteHeader />
-      <MobileNav />
     </div>
   );
 }
