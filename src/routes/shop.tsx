@@ -5,6 +5,7 @@ import { PageShell } from "@/components/site/SiteChrome";
 import { Paginator } from "@/components/site/Paginator";
 import { GridSkeleton } from "@/components/site/GridSkeleton";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
+import { ContentCard } from "@/components/site/ContentCard";
 import {
   isRangeOutOfBounds,
   pageRangeBounds,
@@ -124,56 +125,38 @@ function ShopPage() {
               className={`grid gap-8 transition-opacity duration-200 motion-reduce:transition-none md:grid-cols-2 lg:grid-cols-3 ${isFetching ? "opacity-50" : "opacity-100"}`}
             >
               {items.map((p) => (
-                <div
+                <ContentCard
                   key={p.id}
-                  className="flex flex-col overflow-hidden border border-white/10 bg-neutral-900/40 transition-colors duration-300 hover:border-kraft/40"
-                >
-                  {p.image_url && (
-                    <div className="aspect-square overflow-hidden bg-neutral-900">
-                      <img
-                        src={p.image_url}
-                        alt={p.title}
-                        loading="lazy"
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                  )}
-                  <div className="flex flex-1 flex-col p-5">
-                    <h2 className="font-display text-2xl uppercase leading-tight tracking-tight">
-                      {p.title}
-                    </h2>
-                    <p className="mt-1 font-mono text-xs uppercase tracking-widest text-white/50">
-                      {formatPrice(p.price_cents, p.currency)}
-                    </p>
-                    {p.description && (
-                      <p className="mt-3 text-sm text-white/60 line-clamp-4">{p.description}</p>
-                    )}
-                    <div className="mt-auto pt-4">
-                      {p.stock !== null && p.stock <= 0 ? (
-                        <span className="inline-block bg-white/5 px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-white/40">
-                          {t("shop.soldOut")}
-                        </span>
-                      ) : p.buy_url ? (
-                        <a
-                          href={p.buy_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-block bg-kraft px-5 py-2 font-mono text-[11px] font-bold uppercase tracking-widest text-ink-dark hover:bg-kraft-dark"
-                          style={{
-                            clipPath:
-                              "polygon(0% 5%, 5% 0%, 95% 2%, 100% 8%, 98% 92%, 100% 100%, 5% 98%, 0% 90%)",
-                          }}
-                        >
-                          {t("shop.buy")}
-                        </a>
-                      ) : (
-                        <span className="inline-block font-mono text-[10px] uppercase tracking-widest text-white/40">
-                          {t("shop.comingSoon")}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                  image={p.image_url}
+                  aspect="square"
+                  title={p.title}
+                  eyebrow={formatPrice(p.price_cents, p.currency)}
+                  excerpt={p.description}
+                  footer={
+                    p.stock !== null && p.stock <= 0 ? (
+                      <span className="inline-block bg-white/5 px-4 py-2 font-mono text-[10px] uppercase tracking-widest text-white/40">
+                        {t("shop.soldOut")}
+                      </span>
+                    ) : p.buy_url ? (
+                      <a
+                        href={p.buy_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-block bg-kraft px-5 py-2 font-mono text-[11px] font-bold uppercase tracking-widest text-ink-dark hover:bg-kraft-dark"
+                        style={{
+                          clipPath:
+                            "polygon(0% 5%, 5% 0%, 95% 2%, 100% 8%, 98% 92%, 100% 100%, 5% 98%, 0% 90%)",
+                        }}
+                      >
+                        {t("shop.buy")}
+                      </a>
+                    ) : (
+                      <span className="inline-block font-mono text-[10px] uppercase tracking-widest text-white/40">
+                        {t("shop.comingSoon")}
+                      </span>
+                    )
+                  }
+                />
               ))}
             </div>
             <Paginator

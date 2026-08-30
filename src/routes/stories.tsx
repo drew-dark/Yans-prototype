@@ -1,10 +1,12 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
 import { Paginator } from "@/components/site/Paginator";
 import { GridSkeleton } from "@/components/site/GridSkeleton";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
+import { ContentCard } from "@/components/site/ContentCard";
+import { ReactionSummary } from "@/components/site/Reactions";
 import { isRangeOutOfBounds, pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -89,28 +91,31 @@ function StoriesPage() {
               className={`grid gap-8 transition-opacity duration-200 motion-reduce:transition-none md:grid-cols-2 ${isFetching ? "opacity-50" : "opacity-100"}`}
             >
               {items.map((s) => (
-                <Link
+                <ContentCard
                   key={s.id}
-                  to="/stories/$slug"
-                  params={{ slug: s.slug }}
-                  className="group block overflow-hidden border border-white/10 bg-neutral-900/40 transition-colors duration-300 hover:border-kraft/40"
-                >
-                  {s.cover_image_url && (
-                    <div className="aspect-[16/10] overflow-hidden">
-                      <img src={s.cover_image_url} alt="" loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100" />
-                    </div>
-                  )}
-                  <div className="p-6">
-                    {s.published_at && (
-                      <p className="font-mono text-[9px] uppercase tracking-widest text-white/40">
-                        {new Date(s.published_at).toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" })}
-                      </p>
-                    )}
-                    <h2 className="mt-2 font-display text-3xl uppercase leading-tight tracking-tight group-hover:text-white/70">{s.title}</h2>
-                    {s.excerpt && <p className="mt-3 text-sm text-white/50 line-clamp-3">{s.excerpt}</p>}
-                    <span className="mt-4 inline-block font-mono text-[10px] uppercase tracking-widest text-white/60">{t("stories.read")} →</span>
-                  </div>
-                </Link>
+                  to={{ to: "/stories/$slug", params: { slug: s.slug } }}
+                  image={s.cover_image_url}
+                  aspect="video"
+                  eyebrow={
+                    s.published_at
+                      ? new Date(s.published_at).toLocaleDateString(undefined, {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        })
+                      : undefined
+                  }
+                  title={s.title}
+                  excerpt={s.excerpt}
+                  footer={
+                    <>
+                      <span className="font-mono text-[10px] uppercase tracking-widest text-white/60">
+                        {t("stories.read")} →
+                      </span>
+                      <ReactionSummary contentType="story" contentId={s.id} />
+                    </>
+                  }
+                />
               ))}
             </div>
             <Paginator
