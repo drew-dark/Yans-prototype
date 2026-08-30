@@ -6,6 +6,7 @@ import { useMediaViewer } from "@/components/site/MediaViewer";
 import { ReadingProgress } from "@/components/site/ReadingProgress";
 import { Markdown, readingTimeMinutes } from "@/lib/markdown";
 import { BookmarkButton } from "@/components/site/BookmarkButton";
+import { ReactionBar } from "@/components/site/Reactions";
 import { StudioEditLink } from "@/components/site/StudioEditLink";
 import { CommentsSection } from "@/components/site/CommentsSection";
 import { TaxonomyBreadcrumb } from "@/components/site/TaxonomyBreadcrumb";
@@ -103,6 +104,7 @@ function StoryPage() {
         )}
         <div className="mt-10 flex flex-wrap items-center gap-3">
           <BookmarkButton contentType="story" contentId={s.id} />
+          <ReactionBar contentType="story" contentId={s.id} />
           <StudioEditLink to="/admin/stories" label="Edit story" />
         </div>
         <CommentsSection contentType="story" contentId={s.id} />

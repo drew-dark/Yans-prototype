@@ -531,6 +531,33 @@ export type Database = {
         }
         Relationships: []
       }
+      reactions: {
+        Row: {
+          content_id: string
+          content_type: Database["public"]["Enums"]["content_kind"]
+          created_at: string
+          emoji: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          content_id: string
+          content_type: Database["public"]["Enums"]["content_kind"]
+          created_at?: string
+          emoji: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          content_id?: string
+          content_type?: Database["public"]["Enums"]["content_kind"]
+          created_at?: string
+          emoji?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       seasons: {
         Row: {
           cover_url: string | null
@@ -911,6 +938,7 @@ export type Database = {
         | "collection_item"
         | "gallery"
         | "dear_today"
+        | "footprint"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1045,6 +1073,7 @@ export const Constants = {
         "collection_item",
         "gallery",
         "dear_today",
+        "footprint",
       ],
     },
   },
