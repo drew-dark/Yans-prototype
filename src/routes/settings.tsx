@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { PageShell } from "@/components/site/SiteChrome";
 import { ThemePicker } from "@/components/site/ThemeProvider";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/settings")({
 });
 
 function SettingsPage() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState<string | null>(null);
   const [staff, setStaff] = useState(false);
 
@@ -47,55 +49,54 @@ function SettingsPage() {
   return (
     <PageShell>
       <main className="mx-auto max-w-3xl px-5 py-10 md:px-12 md:py-16">
-        <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-kraft">Preferences</p>
-        <h1 className="mt-2 font-display text-4xl uppercase tracking-tight md:text-6xl">Settings</h1>
+        <p className="font-mono text-[10px] uppercase tracking-[0.35em] text-kraft">{t("settings.preferences")}</p>
+        <h1 className="mt-2 font-display text-4xl uppercase tracking-tight md:text-6xl">{t("settings.title")}</h1>
         <div className="mt-4 h-px w-24 rule-kraft" />
 
         <section className="mt-10" aria-labelledby="appearance">
           <h2 id="appearance" className="font-display text-2xl uppercase tracking-tight">
-            Appearance
+            {t("settings.appearance")}
           </h2>
           <p className="mt-1 text-sm text-white/50">
-            Your colour theme applies everywhere — reading pages, your account and the studio. It is
-            remembered on this device.
+            {t("settings.appearanceDesc")}
           </p>
           <ThemePicker className="mt-5" />
         </section>
 
         <section className="mt-12" aria-labelledby="account">
           <h2 id="account" className="font-display text-2xl uppercase tracking-tight">
-            Account
+            {t("settings.account")}
           </h2>
           {email ? (
             <div className="mt-3 space-y-3">
               <p className="text-sm text-white/60">
-                Signed in as <span className="font-mono text-white/80">{email}</span>
+                {t("settings.signedInAs")} <span className="font-mono text-white/80">{email}</span>
               </p>
               <div className="flex flex-wrap gap-2 font-mono text-[10px] uppercase tracking-widest">
                 <Link
                   to="/account"
                   className="border border-white/20 px-3 py-2 text-white/70 hover:border-white hover:text-white"
                 >
-                  Profile
+                  {t("settings.profile")}
                 </Link>
                 <Link
                   to="/account/bookmarks"
                   className="border border-white/20 px-3 py-2 text-white/70 hover:border-white hover:text-white"
                 >
-                  Bookmarks
+                  {t("settings.bookmarks")}
                 </Link>
                 <Link
                   to="/account/comments"
                   className="border border-white/20 px-3 py-2 text-white/70 hover:border-white hover:text-white"
                 >
-                  Comments
+                  {t("settings.comments")}
                 </Link>
                 {staff && (
                   <Link
                     to="/admin"
                     className="border border-kraft px-3 py-2 text-kraft hover:bg-kraft hover:text-ink-dark"
                   >
-                    ◆ Studio
+                    ◆ {t("settings.studio")}
                   </Link>
                 )}
               </div>
@@ -103,20 +104,19 @@ function SettingsPage() {
           ) : (
             <p className="mt-3 text-sm text-white/50">
               <Link to="/auth" className="underline hover:text-white">
-                Sign in
+                {t("settings.signIn")}
               </Link>{" "}
-              to bookmark favourites, comment and manage your profile.
+              {t("settings.signInPrompt")}
             </p>
           )}
         </section>
 
         <section className="mt-12" aria-labelledby="motion">
           <h2 id="motion" className="font-display text-2xl uppercase tracking-tight">
-            Motion
+            {t("settings.motion")}
           </h2>
           <p className="mt-1 text-sm text-white/50">
-            The Last Mukwasu follows your system “reduce motion” setting automatically — hover reveals and
-            zooms are minimised when it is switched on in your device accessibility settings.
+            {t("settings.motionDesc")}
           </p>
         </section>
       </main>
