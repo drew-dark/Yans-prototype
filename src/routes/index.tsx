@@ -7,17 +7,26 @@ import { useMediaViewer } from "@/components/site/MediaViewer";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { navLinks, AuthAffordance } from "@/components/site/SiteChrome";
 import { LanguageToggle } from "@/components/site/LanguageProvider";
+import { ContentCard } from "@/components/site/ContentCard";
+import { ReactionSummary } from "@/components/site/Reactions";
+import { HeroCarousel } from "@/components/site/HeroCarousel";
 import portraitImg from "@/assets/muyan-portrait.jpg";
 import broadcastImg from "@/assets/muyan-broadcast.jpg";
 import foodImg from "@/assets/muyan-food.jpg";
 import verseImg from "@/assets/muyan-verse.jpg";
 import stageImg from "@/assets/muyan-stage.jpg";
 
-const heroOffsets = ["mt-0", "mt-12", "-mt-8", "mt-20", "-mt-16"];
-
 // Swapped: hero now uses the images previously in the Muyan collection strip;
 // Muyan collection uses the images previously in the hero.
-const fallbackHero = [portraitImg, broadcastImg, foodImg, verseImg, stageImg];
+const fallbackHero = [
+  portraitImg,
+  broadcastImg,
+  foodImg,
+  verseImg,
+  stageImg,
+  portraitImg,
+  stageImg,
+];
 
 const fallbackTiles = [
   { id: "1", image_url: foodImg, label: "Culture" },
@@ -240,20 +249,8 @@ function Index() {
           Poet · Author · Journalist · Broadcaster
         </p>
 
-        <div className="group relative mt-8 flex h-[34vh] w-full max-w-6xl items-center justify-center gap-1.5 md:mt-14 md:h-[50vh] md:gap-4">
-          {heroImages.map((src, i) => (
-            <div
-              key={i}
-              className={`h-full flex-1 -skew-x-6 transform overflow-hidden md:-skew-x-12 ${heroOffsets[i % heroOffsets.length]} ${i > 2 ? "hidden sm:block" : ""}`}
-            >
-              <img
-                src={src}
-                alt=""
-                loading="lazy"
-                className={`h-full w-full skew-x-6 scale-125 transform object-cover md:skew-x-12 md:scale-150 ${imageTransitionClass} ${hoverImageClass}`}
-              />
-            </div>
-          ))}
+        <div className="group relative mt-8 h-[34vh] w-full max-w-6xl overflow-hidden border border-white/10 md:mt-14 md:h-[50vh]">
+          <HeroCarousel images={heroImages} className="h-full" />
         </div>
 
         <p className="mt-8 max-w-xl text-balance text-center text-sm font-light leading-relaxed text-white/60 md:mt-12 md:text-lg">
@@ -354,33 +351,20 @@ function Index() {
           )}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {latestStories.map((s) => (
-              <Link
+              <ContentCard
                 key={s.id}
-                to="/stories/$slug"
-                params={{ slug: s.slug }}
-                className="group flex flex-col overflow-hidden border border-white/10 bg-neutral-900/40 transition-colors duration-300 hover:border-kraft/40 transition-colors hover:border-white/40"
-              >
-                {s.cover_image_url && (
-                  <div className="aspect-[16/10] overflow-hidden">
-                    <img
-                      src={s.cover_image_url}
-                      alt=""
-                      loading="lazy"
-                      className={`h-full w-full object-cover ${imageTransitionClass} group-hover:scale-105`}
-                    />
-                  </div>
-                )}
-                <div className="p-4">
-                  {s.chapter_number != null && (
-                    <p className="mb-1 font-mono text-[10px] uppercase tracking-widest text-white/40">
-                      Chapter {s.chapter_number}
-                      {s.chapter_title ? ` — ${s.chapter_title}` : ""}
-                    </p>
-                  )}
-                  <h4 className="font-display text-xl uppercase leading-tight">{s.title}</h4>
-                  {s.excerpt && <p className="mt-2 line-clamp-2 text-sm text-white/60">{s.excerpt}</p>}
-                </div>
-              </Link>
+                to={{ to: "/stories/$slug", params: { slug: s.slug } }}
+                image={s.cover_image_url}
+                aspect="video"
+                eyebrow={
+                  s.chapter_number != null
+                    ? `Chapter ${s.chapter_number}${s.chapter_title ? ` — ${s.chapter_title}` : ""}`
+                    : undefined
+                }
+                title={s.title}
+                excerpt={s.excerpt}
+                footer={<ReactionSummary contentType="story" contentId={s.id} />}
+              />
             ))}
           </div>
         </section>
@@ -409,28 +393,14 @@ function Index() {
           )}
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
             {latestShop.map((p) => (
-              <Link
+              <ContentCard
                 key={p.id}
-                to="/shop"
-                className="group flex flex-col overflow-hidden border border-white/10 bg-neutral-900/40 transition-colors duration-300 hover:border-kraft/40 transition-colors hover:border-white/40"
-              >
-                {p.image_url && (
-                  <div className="aspect-[3/4] overflow-hidden">
-                    <img
-                      src={p.image_url}
-                      alt=""
-                      loading="lazy"
-                      className={`h-full w-full object-cover ${imageTransitionClass} group-hover:scale-105`}
-                    />
-                  </div>
-                )}
-                <div className="p-3">
-                  <h4 className="line-clamp-2 font-display text-sm uppercase leading-tight">{p.title}</h4>
-                  {p.description && (
-                    <p className="mt-1 line-clamp-2 text-xs text-white/50">{p.description}</p>
-                  )}
-                </div>
-              </Link>
+                to={{ to: "/shop" }}
+                image={p.image_url}
+                aspect="portrait"
+                title={p.title}
+                excerpt={p.description}
+              />
             ))}
           </div>
         </section>
@@ -462,34 +432,20 @@ function Index() {
           )}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {latestDear.map((d) => (
-              <Link
+              <ContentCard
                 key={d.id}
-                to="/collection/dear-today/$slug"
-                params={{ slug: d.slug }}
-                className="group flex flex-col overflow-hidden border border-white/10 bg-neutral-900/40 transition-colors duration-300 hover:border-kraft/40 transition-colors hover:border-white/40"
-              >
-                {d.cover_url && (
-                  <div className="aspect-[16/10] overflow-hidden">
-                    <img
-                      src={d.cover_url}
-                      alt=""
-                      loading="lazy"
-                      className={`h-full w-full object-cover ${imageTransitionClass} group-hover:scale-105`}
-                    />
-                  </div>
-                )}
-                <div className="p-4">
-                  <p className="mb-1 font-mono text-[10px] uppercase tracking-widest text-white/40">
-                    {new Date(d.entry_date).toLocaleDateString(undefined, {
-                      day: "numeric",
-                      month: "long",
-                      year: "numeric",
-                    })}
-                  </p>
-                  <h4 className="font-display text-xl uppercase leading-tight">{d.title}</h4>
-                  {d.excerpt && <p className="mt-2 line-clamp-2 text-sm text-white/60">{d.excerpt}</p>}
-                </div>
-              </Link>
+                to={{ to: "/collection/dear-today/$slug", params: { slug: d.slug } }}
+                image={d.cover_url}
+                aspect="video"
+                eyebrow={new Date(d.entry_date).toLocaleDateString(undefined, {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+                title={d.title}
+                excerpt={d.excerpt}
+                footer={<ReactionSummary contentType="dear_today" contentId={d.id} />}
+              />
             ))}
           </div>
         </section>
