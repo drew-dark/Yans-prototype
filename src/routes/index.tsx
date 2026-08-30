@@ -5,8 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { useMediaViewer } from "@/components/site/MediaViewer";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
-import { navLinks, AuthAffordance } from "@/components/site/SiteChrome";
-import { LanguageToggle } from "@/components/site/LanguageProvider";
+import { SiteNavBar } from "@/components/site/SiteChrome";
 import { ContentCard } from "@/components/site/ContentCard";
 import { ReactionSummary } from "@/components/site/Reactions";
 import { HeroCarousel } from "@/components/site/HeroCarousel";
@@ -146,7 +145,6 @@ function Index() {
     },
   });
 
-  const headline = about?.headline || "THE LAST MUKWASU";
   const tagline =
     about?.tagline ||
     "These are words carved from quiet places — am just a Zambian poet and journalist writing the things we rarely say out loud.";
@@ -170,72 +168,7 @@ function Index() {
         <div className="absolute -bottom-40 -right-20 h-[600px] w-[600px] rounded-full bg-white opacity-5 blur-[120px]" />
       </div>
 
-      {/* Mobile top bar: name tag + section nav */}
-      <div className="sticky top-0 z-50 bg-[#0a0a0a]/90 backdrop-blur-md md:hidden">
-        <div className="flex items-center justify-between gap-3 px-4 py-3">
-          <div
-            className="-rotate-1 transform bg-kraft px-3 py-1.5 shadow-xl"
-            style={{
-              clipPath:
-                "polygon(0% 5%, 5% 0%, 95% 2%, 100% 8%, 98% 92%, 100% 100%, 5% 98%, 0% 90%)",
-            }}
-          >
-            <h1 className="font-mono text-[11px] font-bold leading-none tracking-tight text-ink-dark">
-              {headline.toUpperCase()}
-            </h1>
-            <p className="mt-1 font-mono text-[8px] uppercase tracking-widest text-ink-dark/80">
-              Poet · Journalist · Broadcaster
-            </p>
-          </div>
-          <div className="flex shrink-0 items-center gap-2">
-            <LanguageToggle />
-            <AuthAffordance />
-          </div>
-        </div>
-        <nav
-          aria-label="Sections"
-          className="flex items-center gap-1 overflow-x-auto border-b border-white/10 px-3 pb-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-        >
-          {navLinks.map((link) => (
-            <Link
-              key={link.to}
-              to={link.to}
-              className="whitespace-nowrap px-3 py-2 font-mono text-[10px] uppercase tracking-widest text-white/50"
-            >
-              {t(link.labelKey)}
-            </Link>
-          ))}
-        </nav>
-      </div>
-
-      <div className="absolute left-8 top-8 z-50 hidden md:block">
-        <div
-          className="-rotate-1 transform bg-kraft px-6 py-3 shadow-xl"
-          style={{
-            clipPath:
-              "polygon(0% 5%, 5% 0%, 95% 2%, 100% 8%, 98% 92%, 100% 100%, 5% 98%, 0% 90%)",
-          }}
-        >
-          <h1 className="font-mono text-lg font-bold leading-none tracking-tight text-ink-dark">
-            {headline.toUpperCase()}
-          </h1>
-          <div className="my-1 h-px bg-ink-dark/20" />
-          <p className="font-mono text-[10px] uppercase tracking-widest text-ink-dark">
-            Poet · Author · Journalist · Broadcaster
-          </p>
-        </div>
-      </div>
-
-      <nav className="absolute right-12 top-12 z-40 hidden items-center space-x-8 text-[11px] font-bold uppercase tracking-[0.3em] text-white/70 md:flex">
-        {navLinks.map((link) => (
-          <Link key={link.to} to={link.to} className="transition-colors hover:text-white">
-            {t(link.labelKey)}
-          </Link>
-        ))}
-
-        <LanguageToggle className="ml-2" />
-        <AuthAffordance />
-      </nav>
+      <SiteNavBar />
 
       <section className="relative flex flex-col items-center justify-center px-4 py-12 md:min-h-screen md:py-20">
         <div
