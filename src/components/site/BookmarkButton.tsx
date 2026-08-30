@@ -9,7 +9,8 @@ export type ContentKind =
   | "diary"
   | "collection_item"
   | "gallery"
-  | "dear_today";
+  | "dear_today"
+  | "footprint";
 
 export function BookmarkButton({
   contentType,

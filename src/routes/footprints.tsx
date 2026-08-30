@@ -7,6 +7,8 @@ import { GridSkeleton } from "@/components/site/GridSkeleton";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { useMediaViewer } from "@/components/site/MediaViewer";
 import { getEmbedThumbnail, isPlayable } from "@/lib/media";
+import { BookmarkButton } from "@/components/site/BookmarkButton";
+import { ReactionBar } from "@/components/site/Reactions";
 
 export const Route = createFileRoute("/footprints")({
   head: () => ({
@@ -136,11 +138,15 @@ function FootprintsPage() {
                         href={item.external_url}
                         target="_blank"
                         rel="noreferrer"
-                        className="mt-auto pt-2 text-xs uppercase tracking-widest text-kraft hover:text-white"
+                        className="text-xs uppercase tracking-widest text-kraft hover:text-white"
                       >
                         {t("footprints.viewLink")} →
                       </a>
                     )}
+                    <div className="mt-auto flex flex-wrap items-center gap-2 pt-3">
+                      <BookmarkButton contentType="footprint" contentId={item.id} />
+                      <ReactionBar contentType="footprint" contentId={item.id} />
+                    </div>
                   </div>
                 </article>
               );

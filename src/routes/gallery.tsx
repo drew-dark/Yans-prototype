@@ -8,6 +8,7 @@ import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { useMediaViewer } from "@/components/site/MediaViewer";
 import { getEmbedThumbnail, isPlayable } from "@/lib/media";
 import { BookmarkButton } from "@/components/site/BookmarkButton";
+import { ReactionBar } from "@/components/site/Reactions";
 import { CommentsSection } from "@/components/site/CommentsSection";
 import {
   isRangeOutOfBounds,
@@ -206,6 +207,7 @@ function GalleryPage() {
                     </p>
                   </div>
                   <BookmarkButton contentType="gallery" contentId={selected.id} />
+                  <ReactionBar contentType="gallery" contentId={selected.id} />
                 </div>
                 <CommentsSection contentType="gallery" contentId={selected.id} />
               </div>
