@@ -5,6 +5,7 @@
     "gallery": "Gallery",
     "diaries": "Gaijin Diaries",
     "stories": "Stories",
+    "footprints": "Footprints",
     "show": "Show",
     "shop": "Shop",
     "about": "About",
@@ -56,5 +57,12 @@
   "about": {
     "colophon": "Colophon",
     "elsewhere": "Elsewhere"
+  },
+  "footprints": {
+    "eyebrow": "Archive",
+    "title": "Footprints",
+    "intro": "Past work — news appearances, creator videos, and other projects, gathered in one place.",
+    "empty": "Nothing published yet.",
+    "viewLink": "View original"
   }
 }

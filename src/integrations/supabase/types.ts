@@ -348,6 +348,57 @@ export type Database = {
           },
         ]
       }
+      footprints: {
+        Row: {
+          category: string
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          external_url: string | null
+          id: string
+          media_url: string | null
+          occurred_on: string | null
+          published: boolean
+          role_or_outlet: string | null
+          sort_order: number
+          tags: string[]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          external_url?: string | null
+          id?: string
+          media_url?: string | null
+          occurred_on?: string | null
+          published?: boolean
+          role_or_outlet?: string | null
+          sort_order?: number
+          tags?: string[]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          external_url?: string | null
+          id?: string
+          media_url?: string | null
+          occurred_on?: string | null
+          published?: boolean
+          role_or_outlet?: string | null
+          sort_order?: number
+          tags?: string[]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       gallery_photos: {
         Row: {
           caption: string | null

@@ -11,6 +11,7 @@ export const navLinks = [
   { to: "/gallery", labelKey: "nav.gallery" },
   { to: "/diaries", labelKey: "nav.diaries" },
   { to: "/stories", labelKey: "nav.stories" },
+  { to: "/footprints", labelKey: "nav.footprints" },
   { to: "/show", labelKey: "nav.show" },
   { to: "/shop", labelKey: "nav.shop" },
   { to: "/about", labelKey: "nav.about" },
@@ -238,6 +239,9 @@ export function SiteFooter() {
         <div className="grid w-full grid-cols-3 gap-x-4 gap-y-3 text-[10px] uppercase tracking-widest text-white/40 sm:w-auto sm:flex sm:gap-4">
           <Link to="/stories" className="py-1 hover:text-white">
             {t("nav.stories")}
+          </Link>
+          <Link to="/footprints" className="py-1 hover:text-white">
+            {t("nav.footprints")}
           </Link>
           <Link to="/diaries" className="py-1 hover:text-white">
             {t("nav.diaries")}
