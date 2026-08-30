@@ -172,34 +172,48 @@ export function SiteHeader() {
         </div>
       </Link>
       <div className="flex shrink-0 items-center gap-3 md:gap-6 md:pt-2">
-        <nav className="hidden items-center gap-6 text-[11px] font-bold uppercase tracking-[0.3em] text-white/60 md:flex">
+        <nav className="hidden items-center gap-7 text-[11px] font-bold uppercase tracking-[0.3em] text-white/60 md:flex">
           {navLinks.map((l) => {
             if (l.to === "/collection") {
               const active = pathname.startsWith("/collection");
               return (
                 <DropdownMenu key={l.to}>
                   <DropdownMenuTrigger
-                    className={`flex items-center gap-1 outline-none transition-colors hover:text-white ${active ? "text-white" : ""}`}
+                    className={`group relative flex items-center gap-1 py-1 outline-none transition-colors hover:text-white ${active ? "text-white" : ""}`}
                   >
                     {t(l.labelKey)}
-                    <ChevronDown className="h-3 w-3" aria-hidden="true" />
+                    <ChevronDown className="h-3 w-3 transition-transform duration-300 group-data-[state=open]:rotate-180" aria-hidden="true" />
+                    <span
+                      className={`absolute -bottom-1 left-0 h-[2px] bg-kraft transition-all duration-300 ${active ? "w-full" : "w-0 group-hover:w-full"}`}
+                      aria-hidden="true"
+                    />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent
                     align="start"
-                    className="border-white/10 bg-neutral-950 text-white/70"
+                    sideOffset={14}
+                    className="min-w-[200px] rounded-none border-l-2 border-kraft bg-neutral-950/95 p-0 text-white/70 shadow-2xl backdrop-blur-sm"
                   >
-                    <DropdownMenuItem asChild className="focus:bg-white/10 focus:text-white">
-                      <Link to="/collection" className="cursor-pointer text-xs uppercase tracking-widest">
+                    <DropdownMenuItem asChild className="rounded-none px-4 py-3 focus:bg-kraft/10 focus:text-white">
+                      <Link
+                        to="/collection"
+                        className="flex cursor-pointer items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em]"
+                      >
+                        <span className="text-kraft">01</span>
                         {t(l.labelKey)}
                       </Link>
                     </DropdownMenuItem>
-                    {collectionSubLinks.map((sub) => (
+                    <div className="mx-4 h-px rule-kraft opacity-40" />
+                    {collectionSubLinks.map((sub, i) => (
                       <DropdownMenuItem
                         key={sub.to}
                         asChild
-                        className="focus:bg-white/10 focus:text-white"
+                        className="rounded-none px-4 py-3 focus:bg-kraft/10 focus:text-white"
                       >
-                        <Link to={sub.to} className="cursor-pointer text-xs uppercase tracking-widest">
+                        <Link
+                          to={sub.to}
+                          className="flex cursor-pointer items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em]"
+                        >
+                          <span className="text-kraft">{String(i + 2).padStart(2, "0")}</span>
                           {t(sub.labelKey)}
                         </Link>
                       </DropdownMenuItem>
@@ -213,9 +227,13 @@ export function SiteHeader() {
               <Link
                 key={l.to}
                 to={l.to}
-                className={`transition-colors hover:text-white ${active ? "text-white" : ""}`}
+                className={`group relative py-1 transition-colors hover:text-white ${active ? "text-white" : ""}`}
               >
                 {t(l.labelKey)}
+                <span
+                  className={`absolute -bottom-1 left-0 h-[2px] bg-kraft transition-all duration-300 ${active ? "w-full" : "w-0 group-hover:w-full"}`}
+                  aria-hidden="true"
+                />
               </Link>
             );
           })}
@@ -255,26 +273,48 @@ function MobileMenu() {
       </SheetTrigger>
       <SheetContent
         side="right"
-        className="flex w-[85vw] max-w-sm flex-col border-white/10 bg-neutral-950 text-white sm:max-w-sm"
+        className="flex w-[85vw] max-w-sm flex-col gap-0 border-white/10 bg-neutral-950 p-0 text-white sm:max-w-sm"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 100% 0%, var(--site-glow-b) 0%, transparent 55%)",
+        }}
       >
-        <SheetHeader>
-          <SheetTitle className="font-display text-xl uppercase tracking-tight text-white">
-            {t("nav.menuLabel")}
+        <SheetHeader className="border-b border-white/10 px-6 py-6 text-left">
+          <SheetTitle asChild>
+            <div
+              className="inline-block w-fit -rotate-1 transform bg-kraft px-4 py-2 shadow-xl"
+              style={{
+                clipPath:
+                  "polygon(0% 5%, 5% 0%, 95% 2%, 100% 8%, 98% 92%, 100% 100%, 5% 98%, 0% 90%)",
+              }}
+            >
+              <span className="block font-mono text-xs font-bold leading-none tracking-tight text-ink-dark">
+                THE LAST MUKWASU
+              </span>
+              <span className="mt-1 block font-mono text-[8px] uppercase tracking-widest text-ink-dark/80">
+                Yans Lounge
+              </span>
+            </div>
           </SheetTitle>
         </SheetHeader>
 
-        <nav className="mt-4 flex flex-1 flex-col gap-1 overflow-y-auto">
-          {navLinks.map((l) => {
+        <nav className="flex flex-1 flex-col overflow-y-auto px-6 py-2">
+          {navLinks.map((l, i) => {
             const active = pathname === l.to || pathname.startsWith(l.to + "/");
             return (
               <div key={l.to}>
                 <SheetClose asChild>
                   <Link
                     to={l.to}
-                    className={`block border-b border-white/5 py-3 font-mono text-xs uppercase tracking-widest ${
-                      active ? "text-white" : "text-white/60"
+                    className={`flex items-center gap-3 border-b border-white/5 py-3.5 pl-3 font-display text-xl uppercase leading-none tracking-tight transition-colors ${
+                      active
+                        ? "border-l-2 border-l-kraft bg-kraft/5 text-white"
+                        : "border-l-2 border-l-transparent text-white/60"
                     }`}
                   >
+                    <span className="font-mono text-[10px] tracking-widest text-kraft">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
                     {t(l.labelKey)}
                   </Link>
                 </SheetClose>
@@ -285,8 +325,8 @@ function MobileMenu() {
                       <SheetClose key={sub.to} asChild>
                         <Link
                           to={sub.to}
-                          className={`block border-b border-white/5 py-2.5 pl-4 font-mono text-[11px] uppercase tracking-widest ${
-                            subActive ? "text-white" : "text-white/40"
+                          className={`flex items-center gap-2 border-b border-white/5 py-2.5 pl-9 font-mono text-[11px] uppercase tracking-widest transition-colors ${
+                            subActive ? "text-kraft" : "text-white/35"
                           }`}
                         >
                           ↳ {t(sub.labelKey)}
@@ -299,7 +339,8 @@ function MobileMenu() {
           })}
         </nav>
 
-        <div className="mt-4 flex flex-col gap-3 border-t border-white/10 pt-4">
+        <div className="px-6 pb-6 pt-4">
+          <div className="mb-4 h-px rule-kraft opacity-50" />
           <div className="flex items-center justify-between">
             <LanguageToggle />
             <SheetClose asChild>
@@ -312,7 +353,7 @@ function MobileMenu() {
             </SheetClose>
           </div>
           <SheetClose asChild>
-            <AuthAffordance className="flex items-center gap-2" />
+            <AuthAffordance className="mt-3 flex items-center gap-2" />
           </SheetClose>
         </div>
       </SheetContent>
