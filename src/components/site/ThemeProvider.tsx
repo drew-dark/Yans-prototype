@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { Link } from "@tanstack/react-router";
 
 export const THEMES = [
   { id: "kraft", label: "Ink & Kraft", swatch: "#c5a880", blurb: "Warm paper accent on deep ink." },
@@ -11,6 +12,10 @@ export const THEMES = [
   { id: "sumi", label: "Sumi", swatch: "#b7abae", blurb: "Sumi ink charcoal — soft inflated clay surfaces." },
 ] as const;
 
+/** The curated set an admin can project as the site-wide default: the
+ * original base theme plus one glass and one clay option. */
+export const ADMIN_DEFAULT_THEME_IDS = ["kraft", "sakura", "matcha"] as const;
+
 export type ThemeId = (typeof THEMES)[number]["id"];
 
 export const THEME_STORAGE_KEY = "yans-theme";
@@ -20,8 +25,8 @@ export const themeInitScript = `(function(){try{var t=localStorage.getItem(${JSO
   THEME_STORAGE_KEY,
 )});var ok=${JSON.stringify(THEMES.map((t) => t.id))};if(t&&ok.indexOf(t)>-1){document.documentElement.dataset.theme=t;}}catch(e){}})();`;
 
-type Ctx = { theme: ThemeId; setTheme: (t: ThemeId) => void };
-const ThemeCtx = createContext<Ctx>({ theme: "kraft", setTheme: () => {} });
+type Ctx = { theme: ThemeId; setTheme: (t: ThemeId) => void; canPersonalize: boolean };
+const ThemeCtx = createContext<Ctx>({ theme: "kraft", setTheme: () => {}, canPersonalize: false });
 
 export function useTheme() {
   return useContext(ThemeCtx);
@@ -36,11 +41,64 @@ const THEME_CHANNEL = "yans-theme-sync";
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemeId>("kraft");
+  const [canPersonalize, setCanPersonalize] = useState(false);
 
-  // Adopt whatever was stored (survives login, logout, reloads and new tabs).
+  // Adopt whatever was cached locally first, so there's no flash while
+  // we go check the server for the authoritative value.
   useEffect(() => {
     const stored = window.localStorage.getItem(THEME_STORAGE_KEY);
     if (isTheme(stored)) setThemeState(stored);
+  }, []);
+
+  // Resolve the authoritative theme: a signed-in user's own saved
+  // choice (profiles.theme) takes priority; everyone else — including
+  // a signed-in user who hasn't picked one yet — gets the site-wide
+  // default an admin has set (site_settings.default_theme).
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData.user;
+
+      if (user) {
+        const { data: profile } = await supabase
+          .from("profiles")
+          .select("theme")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        if (cancelled) return;
+        setCanPersonalize(true);
+        if (profile?.theme && isTheme(profile.theme)) {
+          applyTheme(profile.theme);
+          return;
+        }
+      } else {
+        setCanPersonalize(false);
+      }
+
+      const { data: settings } = await supabase
+        .from("site_settings")
+        .select("default_theme")
+        .eq("id", "default")
+        .maybeSingle();
+      if (cancelled) return;
+      if (settings?.default_theme && isTheme(settings.default_theme)) {
+        applyTheme(settings.default_theme);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+
+    function applyTheme(t: ThemeId) {
+      setThemeState(t);
+      try {
+        window.localStorage.setItem(THEME_STORAGE_KEY, t);
+      } catch {
+        /* storage unavailable */
+      }
+    }
   }, []);
 
   // Keep other tabs / windows in sync, both ways.
@@ -48,14 +106,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const onStorage = (e: StorageEvent) => {
       if (e.key !== THEME_STORAGE_KEY) return;
       if (isTheme(e.newValue)) setThemeState(e.newValue);
-      else if (e.newValue === null) {
-        // Another tab cleared storage (e.g. a sign-out) — restore our choice.
-        try {
-          window.localStorage.setItem(THEME_STORAGE_KEY, theme);
-        } catch {
-          /* storage unavailable */
-        }
-      }
     };
     window.addEventListener("storage", onStorage);
 
@@ -71,24 +121,23 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       window.removeEventListener("storage", onStorage);
       channel?.close();
     };
-  }, [theme]);
+  }, []);
 
   useEffect(() => {
     document.documentElement.dataset["theme"] = theme;
-    // Re-assert storage in case an auth flow wiped it.
-    try {
-      if (window.localStorage.getItem(THEME_STORAGE_KEY) !== theme) {
-        window.localStorage.setItem(THEME_STORAGE_KEY, theme);
-      }
-    } catch {
-      /* storage unavailable */
-    }
   }, [theme]);
 
   const value = useMemo<Ctx>(
     () => ({
       theme,
+      canPersonalize,
       setTheme: (t) => {
+        // Personalizing your own theme requires an account — this
+        // mirrors bookmarks/comments/reactions, which are also
+        // account-gated. Anonymous visitors see the site-wide default
+        // an admin has chosen; ThemePicker hides the controls for them
+        // rather than relying on this being silently ignored.
+        if (!canPersonalize) return;
         setThemeState(t);
         try {
           window.localStorage.setItem(THEME_STORAGE_KEY, t);
@@ -104,9 +153,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         } catch {
           /* channel unavailable */
         }
+        (async () => {
+          const { supabase } = await import("@/integrations/supabase/client");
+          const { data } = await supabase.auth.getUser();
+          if (!data.user) return;
+          await supabase.from("profiles").upsert({ user_id: data.user.id, theme: t });
+        })();
       },
     }),
-    [theme],
+    [theme, canPersonalize],
   );
 
   return <ThemeCtx.Provider value={value}>{children}</ThemeCtx.Provider>;
@@ -141,9 +196,39 @@ export function ThemeSwitcher({ className = "" }: { className?: string }) {
   );
 }
 
-/** Full-size labelled theme cards, used on the Settings page. */
+/** Full-size labelled theme cards, used on the Settings page. Requires
+ * an account to interact with — anonymous visitors see the current
+ * (site-wide default) theme called out, read-only, with a sign-in
+ * prompt instead of the picker. */
 export function ThemePicker({ className = "" }: { className?: string }) {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, canPersonalize } = useTheme();
+
+  if (!canPersonalize) {
+    const current = THEMES.find((t) => t.id === theme);
+    return (
+      <div className={`surface-card flex items-center gap-3 p-4 ${className}`}>
+        {current && (
+          <span
+            aria-hidden="true"
+            className="h-9 w-9 shrink-0 rounded-full border border-white/25"
+            style={{ backgroundColor: current.swatch }}
+          />
+        )}
+        <span className="min-w-0">
+          <span className="block font-mono text-xs uppercase tracking-widest text-white">
+            {current?.label ?? "Site default"}
+          </span>
+          <span className="mt-1 block text-xs text-white/50">
+            <Link to="/auth" className="underline hover:text-white">
+              Sign in
+            </Link>{" "}
+            to choose your own theme — it'll only change what you see.
+          </span>
+        </span>
+      </div>
+    );
+  }
+
   return (
     <div
       role="radiogroup"
@@ -159,10 +244,8 @@ export function ThemePicker({ className = "" }: { className?: string }) {
             role="radio"
             aria-checked={active}
             onClick={() => setTheme(t.id)}
-            className={`flex items-center gap-3 rounded border p-4 text-left transition-colors ${
-              active
-                ? "border-kraft bg-white/[0.06]"
-                : "border-white/12 hover:border-white/35 hover:bg-white/[0.03]"
+            className={`surface-card flex items-center gap-3 p-4 text-left ${
+              active ? "border-kraft" : ""
             }`}
           >
             <span

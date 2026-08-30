@@ -510,6 +510,7 @@ export type Database = {
           bio: string | null
           created_at: string
           display_name: string | null
+          theme: string | null
           updated_at: string
           user_id: string
         }
@@ -518,6 +519,7 @@ export type Database = {
           bio?: string | null
           created_at?: string
           display_name?: string | null
+          theme?: string | null
           updated_at?: string
           user_id: string
         }
@@ -526,6 +528,7 @@ export type Database = {
           bio?: string | null
           created_at?: string
           display_name?: string | null
+          theme?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -601,6 +604,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      site_settings: {
+        Row: {
+          default_theme: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          default_theme?: string
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          default_theme?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       shop_products: {
         Row: {
