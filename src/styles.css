@@ -77,6 +77,20 @@
   --site-bg: #0a0a0a;
   --site-glow-a: rgba(255, 255, 255, 0.035);
   --site-glow-b: rgba(197, 168, 128, 0.05);
+  /* Surface vars: what cards, panels & utility buttons render with.
+     Base values here reproduce the original flat bordered look
+     exactly, so the default theme (and ember/newsprint/moss) are
+     visually unchanged. Only the Japan-inspired themes below
+     override these to produce glassmorphism or claymorphism. */
+  --surface-bg: rgba(23, 23, 23, 0.4);
+  --surface-border: 1px solid rgba(255, 255, 255, 0.1);
+  --surface-blur: none;
+  --surface-radius: 0px;
+  --surface-shadow: none;
+  --panel-bg: rgba(10, 10, 10, 0.95);
+  --panel-blur: none;
+  --panel-radius: 0px;
+  --panel-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
@@ -180,6 +194,132 @@
   --site-bg: #07100c;
   --site-glow-a: rgba(255, 255, 255, 0.03);
   --site-glow-b: rgba(105, 195, 154, 0.09);
+}
+
+/* ---- Japan-inspired themes, each paired with a morphism style ---- */
+
+/* Sakura (glass): cherry blossom pink, frosted glass surfaces */
+[data-theme="sakura"] {
+  --kraft: #f2a6c1;
+  --kraft-dark: #d67ea2;
+  --site-bg: #150e13;
+  --site-glow-a: rgba(255, 255, 255, 0.045);
+  --site-glow-b: rgba(242, 166, 193, 0.1);
+  --surface-bg: rgba(255, 255, 255, 0.1);
+  --surface-border: 1px solid rgba(255, 255, 255, 0.18);
+  --surface-blur: blur(14px);
+  --surface-radius: 16px;
+  --surface-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  --panel-bg: rgba(255, 255, 255, 0.1);
+  --panel-blur: blur(18px);
+  --panel-radius: 18px;
+  --panel-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+}
+
+/* Ai / indigo (glass): ai-zome dye blue, frosted glass surfaces */
+[data-theme="ai"] {
+  --kraft: #7c98d6;
+  --kraft-dark: #5470b0;
+  --site-bg: #070a12;
+  --site-glow-a: rgba(255, 255, 255, 0.035);
+  --site-glow-b: rgba(124, 152, 214, 0.1);
+  --surface-bg: rgba(255, 255, 255, 0.08);
+  --surface-border: 1px solid rgba(255, 255, 255, 0.16);
+  --surface-blur: blur(14px);
+  --surface-radius: 16px;
+  --surface-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --panel-bg: rgba(255, 255, 255, 0.08);
+  --panel-blur: blur(18px);
+  --panel-radius: 18px;
+  --panel-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
+}
+
+/* Matcha (clay): tea green, soft inflated claymorphism */
+[data-theme="matcha"] {
+  --kraft: #9cbf6f;
+  --kraft-dark: #7a9c52;
+  --site-bg: #12160f;
+  --site-glow-a: rgba(255, 255, 255, 0.03);
+  --site-glow-b: rgba(156, 191, 111, 0.08);
+  --surface-bg: #1a1f16;
+  --surface-border: 1px solid rgba(255, 255, 255, 0.04);
+  --surface-blur: none;
+  --surface-radius: 28px;
+  --surface-shadow:
+    8px 8px 18px rgba(0, 0, 0, 0.45), -6px -6px 14px rgba(255, 255, 255, 0.035);
+  --panel-bg: #1a1f16;
+  --panel-blur: none;
+  --panel-radius: 28px;
+  --panel-shadow:
+    10px 10px 22px rgba(0, 0, 0, 0.5), -8px -8px 16px rgba(255, 255, 255, 0.035);
+}
+
+/* Sumi (clay): ink charcoal, soft inflated claymorphism */
+[data-theme="sumi"] {
+  --kraft: #b7abae;
+  --kraft-dark: #8f8385;
+  --site-bg: #111013;
+  --site-glow-a: rgba(255, 255, 255, 0.03);
+  --site-glow-b: rgba(183, 171, 174, 0.07);
+  --surface-bg: #1c1a1d;
+  --surface-border: 1px solid rgba(255, 255, 255, 0.04);
+  --surface-blur: none;
+  --surface-radius: 28px;
+  --surface-shadow:
+    8px 8px 18px rgba(0, 0, 0, 0.5), -6px -6px 14px rgba(255, 255, 255, 0.03);
+  --panel-bg: #1c1a1d;
+  --panel-blur: none;
+  --panel-radius: 28px;
+  --panel-shadow:
+    10px 10px 22px rgba(0, 0, 0, 0.55), -8px -8px 16px rgba(255, 255, 255, 0.03);
+}
+
+@layer components {
+  /* Used by ContentCard and other content surfaces. Base theme values
+     above reproduce the pre-existing flat/bordered look exactly. */
+  .surface-card {
+    background: var(--surface-bg);
+    backdrop-filter: var(--surface-blur);
+    -webkit-backdrop-filter: var(--surface-blur);
+    border: var(--surface-border);
+    border-radius: var(--surface-radius);
+    box-shadow: var(--surface-shadow);
+    transition: border-color 300ms ease, box-shadow 300ms ease;
+  }
+  .surface-card:hover {
+    border-color: var(--kraft);
+  }
+
+  /* Nav dropdown panel + mobile drawer — deliberately more opaque than
+     .surface-card by default since a menu needs to stay legible over
+     whatever content sits behind it. */
+  .surface-panel {
+    background: var(--panel-bg);
+    backdrop-filter: var(--panel-blur);
+    -webkit-backdrop-filter: var(--panel-blur);
+    border-radius: var(--panel-radius);
+    box-shadow: var(--panel-shadow);
+  }
+
+  /* Utility buttons (settings, sign-in, pagination) — the flagship kraft
+     paper-cut CTAs (Buy, Enter the Collection) intentionally keep their
+     own clipped-corner look in every theme, so aren't using this. */
+  .surface-button {
+    background: var(--surface-bg);
+    backdrop-filter: var(--surface-blur);
+    -webkit-backdrop-filter: var(--surface-blur);
+    border: var(--surface-border);
+    border-radius: var(--surface-radius);
+    box-shadow: var(--surface-shadow);
+    transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+  }
+  .surface-button:hover {
+    border-color: var(--kraft);
+    transform: translateY(-1px);
+  }
+  .surface-button:active {
+    transform: translateY(0) scale(0.97);
+  }
 }
 
 @layer base {
