@@ -15,6 +15,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as CollectionRouteImport } from './routes/collection'
 import { Route as DiariesRouteImport } from './routes/diaries'
+import { Route as FootprintsRouteImport } from './routes/footprints'
 import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as NewsletterRouteImport } from './routes/newsletter'
 import { Route as SettingsRouteImport } from './routes/settings'
@@ -37,6 +38,7 @@ import { Route as AuthenticatedAdminCollectionRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminCommentsRouteImport } from './routes/_authenticated/admin/comments'
 import { Route as AuthenticatedAdminDearTodayRouteImport } from './routes/_authenticated/admin/dear-today'
 import { Route as AuthenticatedAdminDiaryRouteImport } from './routes/_authenticated/admin/diary'
+import { Route as AuthenticatedAdminFootprintsRouteImport } from './routes/_authenticated/admin/footprints'
 import { Route as AuthenticatedAdminGalleryRouteImport } from './routes/_authenticated/admin/gallery'
 import { Route as AuthenticatedAdminHeroRouteImport } from './routes/_authenticated/admin/hero'
 import { Route as AuthenticatedAdminNewsletterRouteImport } from './routes/_authenticated/admin/newsletter'
@@ -75,6 +77,11 @@ const CollectionRoute = CollectionRouteImport.update({
 const DiariesRoute = DiariesRouteImport.update({
   id: '/diaries',
   path: '/diaries',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FootprintsRoute = FootprintsRouteImport.update({
+  id: '/footprints',
+  path: '/footprints',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GalleryRoute = GalleryRouteImport.update({
@@ -194,6 +201,12 @@ const AuthenticatedAdminDiaryRoute = AuthenticatedAdminDiaryRouteImport.update({
   path: '/diary',
   getParentRoute: () => AuthenticatedAdminRouteRoute,
 } as any)
+const AuthenticatedAdminFootprintsRoute =
+  AuthenticatedAdminFootprintsRouteImport.update({
+    id: '/footprints',
+    path: '/footprints',
+    getParentRoute: () => AuthenticatedAdminRouteRoute,
+  } as any)
 const AuthenticatedAdminGalleryRoute =
   AuthenticatedAdminGalleryRouteImport.update({
     id: '/gallery',
@@ -255,6 +268,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/collection': typeof CollectionRoute
   '/diaries': typeof DiariesRoute
+  '/footprints': typeof FootprintsRoute
   '/gallery': typeof GalleryRoute
   '/newsletter': typeof NewsletterRoute
   '/settings': typeof SettingsRoute
@@ -275,6 +289,7 @@ export interface FileRoutesByFullPath {
   '/admin/comments': typeof AuthenticatedAdminCommentsRoute
   '/admin/dear-today': typeof AuthenticatedAdminDearTodayRoute
   '/admin/diary': typeof AuthenticatedAdminDiaryRoute
+  '/admin/footprints': typeof AuthenticatedAdminFootprintsRoute
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/admin/hero': typeof AuthenticatedAdminHeroRoute
   '/admin/newsletter': typeof AuthenticatedAdminNewsletterRoute
@@ -294,6 +309,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/collection': typeof CollectionRoute
   '/diaries': typeof DiariesRoute
+  '/footprints': typeof FootprintsRoute
   '/gallery': typeof GalleryRoute
   '/newsletter': typeof NewsletterRoute
   '/settings': typeof SettingsRoute
@@ -312,6 +328,7 @@ export interface FileRoutesByTo {
   '/admin/comments': typeof AuthenticatedAdminCommentsRoute
   '/admin/dear-today': typeof AuthenticatedAdminDearTodayRoute
   '/admin/diary': typeof AuthenticatedAdminDiaryRoute
+  '/admin/footprints': typeof AuthenticatedAdminFootprintsRoute
   '/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/admin/hero': typeof AuthenticatedAdminHeroRoute
   '/admin/newsletter': typeof AuthenticatedAdminNewsletterRoute
@@ -333,6 +350,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/collection': typeof CollectionRoute
   '/diaries': typeof DiariesRoute
+  '/footprints': typeof FootprintsRoute
   '/gallery': typeof GalleryRoute
   '/newsletter': typeof NewsletterRoute
   '/settings': typeof SettingsRoute
@@ -353,6 +371,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/comments': typeof AuthenticatedAdminCommentsRoute
   '/_authenticated/admin/dear-today': typeof AuthenticatedAdminDearTodayRoute
   '/_authenticated/admin/diary': typeof AuthenticatedAdminDiaryRoute
+  '/_authenticated/admin/footprints': typeof AuthenticatedAdminFootprintsRoute
   '/_authenticated/admin/gallery': typeof AuthenticatedAdminGalleryRoute
   '/_authenticated/admin/hero': typeof AuthenticatedAdminHeroRoute
   '/_authenticated/admin/newsletter': typeof AuthenticatedAdminNewsletterRoute
@@ -374,6 +393,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/collection'
     | '/diaries'
+    | '/footprints'
     | '/gallery'
     | '/newsletter'
     | '/settings'
@@ -394,6 +414,7 @@ export interface FileRouteTypes {
     | '/admin/comments'
     | '/admin/dear-today'
     | '/admin/diary'
+    | '/admin/footprints'
     | '/admin/gallery'
     | '/admin/hero'
     | '/admin/newsletter'
@@ -413,6 +434,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/collection'
     | '/diaries'
+    | '/footprints'
     | '/gallery'
     | '/newsletter'
     | '/settings'
@@ -431,6 +453,7 @@ export interface FileRouteTypes {
     | '/admin/comments'
     | '/admin/dear-today'
     | '/admin/diary'
+    | '/admin/footprints'
     | '/admin/gallery'
     | '/admin/hero'
     | '/admin/newsletter'
@@ -451,6 +474,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/collection'
     | '/diaries'
+    | '/footprints'
     | '/gallery'
     | '/newsletter'
     | '/settings'
@@ -471,6 +495,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/comments'
     | '/_authenticated/admin/dear-today'
     | '/_authenticated/admin/diary'
+    | '/_authenticated/admin/footprints'
     | '/_authenticated/admin/gallery'
     | '/_authenticated/admin/hero'
     | '/_authenticated/admin/newsletter'
@@ -492,6 +517,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRoute
   CollectionRoute: typeof CollectionRoute
   DiariesRoute: typeof DiariesRoute
+  FootprintsRoute: typeof FootprintsRoute
   GalleryRoute: typeof GalleryRoute
   NewsletterRoute: typeof NewsletterRoute
   SettingsRoute: typeof SettingsRoute
@@ -549,6 +575,13 @@ declare module '@tanstack/react-router' {
       path: '/diaries'
       fullPath: '/diaries'
       preLoaderRoute: typeof DiariesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/footprints': {
+      id: '/footprints'
+      path: '/footprints'
+      fullPath: '/footprints'
+      preLoaderRoute: typeof FootprintsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/gallery': {
@@ -705,6 +738,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminDiaryRouteImport
       parentRoute: typeof AuthenticatedAdminRouteRoute
     }
+    '/_authenticated/admin/footprints': {
+      id: '/_authenticated/admin/footprints'
+      path: '/footprints'
+      fullPath: '/admin/footprints'
+      preLoaderRoute: typeof AuthenticatedAdminFootprintsRouteImport
+      parentRoute: typeof AuthenticatedAdminRouteRoute
+    }
     '/_authenticated/admin/gallery': {
       id: '/_authenticated/admin/gallery'
       path: '/gallery'
@@ -802,6 +842,7 @@ interface AuthenticatedAdminRouteRouteChildren {
   AuthenticatedAdminCommentsRoute: typeof AuthenticatedAdminCommentsRoute
   AuthenticatedAdminDearTodayRoute: typeof AuthenticatedAdminDearTodayRoute
   AuthenticatedAdminDiaryRoute: typeof AuthenticatedAdminDiaryRoute
+  AuthenticatedAdminFootprintsRoute: typeof AuthenticatedAdminFootprintsRoute
   AuthenticatedAdminGalleryRoute: typeof AuthenticatedAdminGalleryRoute
   AuthenticatedAdminHeroRoute: typeof AuthenticatedAdminHeroRoute
   AuthenticatedAdminNewsletterRoute: typeof AuthenticatedAdminNewsletterRoute
@@ -820,6 +861,7 @@ const AuthenticatedAdminRouteRouteChildren: AuthenticatedAdminRouteRouteChildren
     AuthenticatedAdminCommentsRoute: AuthenticatedAdminCommentsRoute,
     AuthenticatedAdminDearTodayRoute: AuthenticatedAdminDearTodayRoute,
     AuthenticatedAdminDiaryRoute: AuthenticatedAdminDiaryRoute,
+    AuthenticatedAdminFootprintsRoute: AuthenticatedAdminFootprintsRoute,
     AuthenticatedAdminGalleryRoute: AuthenticatedAdminGalleryRoute,
     AuthenticatedAdminHeroRoute: AuthenticatedAdminHeroRoute,
     AuthenticatedAdminNewsletterRoute: AuthenticatedAdminNewsletterRoute,
@@ -856,6 +898,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRoute,
   CollectionRoute: CollectionRoute,
   DiariesRoute: DiariesRoute,
+  FootprintsRoute: FootprintsRoute,
   GalleryRoute: GalleryRoute,
   NewsletterRoute: NewsletterRoute,
   SettingsRoute: SettingsRoute,
