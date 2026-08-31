@@ -117,5 +117,46 @@
     "signInPrompt": "してお気に入りの保存、コメント、プロフィール管理を行えます。",
     "motion": "モーション",
     "motionDesc": "The Last Mukwasu は端末の「モーション削減」設定に自動的に従います — デバイスのアクセシビリティ設定で有効にすると、ホバー時の演出やズームが最小限になります。"
+  },
+  "newsletterForm": {
+    "eyebrow": "購読",
+    "title": "Letters from the Lounge",
+    "blurb": "たまに届く便り — 新しい詩、日記、ショップの新着情報。ノイズなし。",
+    "thanks": "ありがとうございます — あと一歩。確認メールをお送りしました。",
+    "emailLabel": "メールアドレス",
+    "sending": "送信中…",
+    "subscribe": "購読する →",
+    "footnote": "ワンクリックで解除できます。迷惑メールはありません。",
+    "alreadySubscribed": "すでに登録済みです。",
+    "savedEmailFailed": "登録は完了しましたが、確認メールの送信に失敗しました。届かない場合はご連絡ください。",
+    "success": "登録が完了しました。確認メールをご確認ください。",
+    "genericError": "登録できませんでした。もう一度お試しください。"
+  },
+  "comments": {
+    "title": "コメント",
+    "signInPrompt": "ログインして会話に参加しましょう。",
+    "signIn": "ログイン",
+    "toLeaveComment": "してコメントを投稿。",
+    "placeholder": "コメントを残す…",
+    "replyPlaceholder": "返信…",
+    "post": "投稿",
+    "posting": "投稿中…",
+    "reply": "返信",
+    "cancel": "キャンセル",
+    "restore": "復元",
+    "hide": "非表示",
+    "hidden": "非表示中",
+    "delete": "削除",
+    "deleteConfirm": "このコメントを削除しますか?",
+    "loading": "読み込み中…",
+    "empty": "まだコメントはありません。",
+    "reader": "読者"
+  },
+  "bookmark": {
+    "save": "ブックマーク",
+    "saved": "ブックマーク済み",
+    "signInToSave": "ログインしてブックマーク",
+    "removed": "ブックマークを解除しました",
+    "addedToast": "ブックマークに保存しました"
   }
 }
