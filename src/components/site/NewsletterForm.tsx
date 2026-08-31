@@ -4,6 +4,7 @@ import { subscribeToNewsletter } from "@/lib/newsletter.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const emailSchema = z
   .string()
@@ -19,12 +20,8 @@ interface Props {
   blurb?: string;
 }
 
-export function NewsletterForm({
-  source,
-  variant = "dark",
-  title = "Letters from the Lounge",
-  blurb = "Occasional dispatches — new poems, diaries, and shop drops. No noise.",
-}: Props) {
+export function NewsletterForm({ source, variant = "dark", title, blurb }: Props) {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success">("idle");
 
@@ -45,17 +42,15 @@ export function NewsletterForm({
       setStatus("success");
       setEmail("");
       if (result.status === "already_subscribed") {
-        toast.success("You're already on the list.");
+        toast.success(t("newsletterForm.alreadySubscribed"));
       } else if (result.status === "saved_email_failed") {
-        toast.success(
-          "You're on the list — but the confirmation email didn't send. Contact us if it doesn't turn up.",
-        );
+        toast.success(t("newsletterForm.savedEmailFailed"));
       } else {
-        toast.success("You're in. Check your inbox for a confirmation.");
+        toast.success(t("newsletterForm.success"));
       }
     } catch (err) {
       setStatus("idle");
-      toast.error(err instanceof Error ? err.message : "Couldn't subscribe. Try again.");
+      toast.error(err instanceof Error ? err.message : t("newsletterForm.genericError"));
     }
   }
 
@@ -70,16 +65,16 @@ export function NewsletterForm({
       }
     >
       <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.4em] text-white/40">
-        Subscribe
+        {t("newsletterForm.eyebrow")}
       </p>
       <h3 className="font-display text-3xl uppercase leading-tight tracking-tight md:text-4xl">
-        {title}
+        {title ?? t("newsletterForm.title")}
       </h3>
-      <p className="mt-3 max-w-md text-sm text-white/60">{blurb}</p>
+      <p className="mt-3 max-w-md text-sm text-white/60">{blurb ?? t("newsletterForm.blurb")}</p>
 
       {status === "success" ? (
         <p className="mt-6 border-l-2 border-kraft pl-4 font-mono text-xs uppercase tracking-widest text-white/70">
-          Thanks — one step left. We just sent a confirmation to your inbox.
+          {t("newsletterForm.thanks")}
         </p>
       ) : (
         <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-2 sm:flex-row">
@@ -90,7 +85,7 @@ export function NewsletterForm({
             onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             disabled={status === "loading"}
-            aria-label="Email address"
+            aria-label={t("newsletterForm.emailLabel")}
             className="flex-1 border-white/20 bg-black/40 text-white placeholder:text-white/30"
           />
           <Button
@@ -98,12 +93,12 @@ export function NewsletterForm({
             disabled={status === "loading"}
             className="bg-kraft font-mono text-[11px] font-bold uppercase tracking-widest text-ink-dark hover:bg-kraft-dark"
           >
-            {status === "loading" ? "Sending…" : "Subscribe →"}
+            {status === "loading" ? t("newsletterForm.sending") : t("newsletterForm.subscribe")}
           </Button>
         </form>
       )}
       <p className="mt-3 font-mono text-[9px] uppercase tracking-widest text-white/30">
-        One-click unsubscribe. No spam.
+        {t("newsletterForm.footnote")}
       </p>
     </div>
   );
