@@ -117,5 +117,46 @@
     "signInPrompt": "to bookmark favourites, comment and manage your profile.",
     "motion": "Motion",
     "motionDesc": "The Last Mukwasu follows your system “reduce motion” setting automatically — hover reveals and zooms are minimised when it is switched on in your device accessibility settings."
+  },
+  "newsletterForm": {
+    "eyebrow": "Subscribe",
+    "title": "Letters from the Lounge",
+    "blurb": "Occasional dispatches — new poems, diaries, and shop drops. No noise.",
+    "thanks": "Thanks — one step left. We just sent a confirmation to your inbox.",
+    "emailLabel": "Email address",
+    "sending": "Sending…",
+    "subscribe": "Subscribe →",
+    "footnote": "One-click unsubscribe. No spam.",
+    "alreadySubscribed": "You're already on the list.",
+    "savedEmailFailed": "You're on the list — but the confirmation email didn't send. Contact us if it doesn't turn up.",
+    "success": "You're in. Check your inbox for a confirmation.",
+    "genericError": "Couldn't subscribe. Try again."
+  },
+  "comments": {
+    "title": "Comments",
+    "signInPrompt": "Sign in to join the conversation.",
+    "signIn": "Sign in",
+    "toLeaveComment": "to leave a comment.",
+    "placeholder": "Leave a comment…",
+    "replyPlaceholder": "Reply…",
+    "post": "Post",
+    "posting": "Posting…",
+    "reply": "Reply",
+    "cancel": "Cancel",
+    "restore": "Restore",
+    "hide": "Hide",
+    "hidden": "Hidden",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this comment?",
+    "loading": "Loading…",
+    "empty": "No comments yet.",
+    "reader": "Reader"
+  },
+  "bookmark": {
+    "save": "Bookmark",
+    "saved": "Bookmarked",
+    "signInToSave": "Sign in to bookmark",
+    "removed": "Removed from bookmarks",
+    "addedToast": "Saved to bookmarks"
   }
 }

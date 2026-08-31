@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Bookmark, BookmarkCheck } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 
 export type ContentKind =
   | "story"
@@ -19,6 +20,7 @@ export function BookmarkButton({
   contentType: ContentKind;
   contentId: string;
 }) {
+  const { t } = useTranslation();
   const [userId, setUserId] = useState<string | null>(null);
   const [checking, setChecking] = useState(true);
   const [saved, setSaved] = useState(false);
@@ -64,14 +66,14 @@ export function BookmarkButton({
           .eq("content_id", contentId);
         if (error) throw error;
         setSaved(false);
-        toast.success("Removed from bookmarks");
+        toast.success(t("bookmark.removed"));
       } else {
         const { error } = await supabase
           .from("bookmarks")
           .insert({ user_id: userId, content_type: contentType, content_id: contentId });
         if (error) throw error;
         setSaved(true);
-        toast.success("Saved to bookmarks");
+        toast.success(t("bookmark.addedToast"));
       }
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Failed");
@@ -88,7 +90,7 @@ export function BookmarkButton({
         to="/auth"
         className="inline-flex items-center gap-2 border border-white/20 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-white/60 hover:border-white hover:text-white"
       >
-        <Bookmark className="h-3 w-3" /> Sign in to bookmark
+        <Bookmark className="h-3 w-3" /> {t("bookmark.signInToSave")}
       </Link>
     );
   }
@@ -105,7 +107,7 @@ export function BookmarkButton({
       }`}
     >
       {saved ? <BookmarkCheck className="h-3 w-3" /> : <Bookmark className="h-3 w-3" />}
-      {saved ? "Bookmarked" : "Bookmark"}
+      {saved ? t("bookmark.saved") : t("bookmark.save")}
     </button>
   );
 }

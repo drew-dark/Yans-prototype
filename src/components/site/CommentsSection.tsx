@@ -4,6 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import type { ContentKind } from "./BookmarkButton";
 
 type CommentRow = {
@@ -23,6 +24,7 @@ export function CommentsSection({
   contentType: ContentKind;
   contentId: string;
 }) {
+  const { t } = useTranslation();
   const [userId, setUserId] = useState<string | null>(null);
   const [roles, setRoles] = useState<string[]>([]);
   const [comments, setComments] = useState<CommentRow[]>([]);
@@ -107,7 +109,7 @@ export function CommentsSection({
   }
 
   async function del(id: string) {
-    if (!confirm("Delete this comment?")) return;
+    if (!confirm(t("comments.deleteConfirm"))) return;
     const { error } = await supabase.from("comments").delete().eq("id", id);
     if (error) return toast.error(error.message);
     await load();
@@ -128,14 +130,14 @@ export function CommentsSection({
 
   return (
     <section className="mt-16 border-t border-white/10 pt-10">
-      <h2 className="font-display text-2xl uppercase tracking-tight">Comments</h2>
+      <h2 className="font-display text-2xl uppercase tracking-tight">{t("comments.title")}</h2>
 
       {userId ? (
         <div className="mt-6 space-y-2">
           <Textarea
             value={body}
             onChange={(e) => setBody(e.target.value)}
-            placeholder="Leave a comment…"
+            placeholder={t("comments.placeholder")}
             className="min-h-[80px] bg-neutral-900 border-neutral-800"
             maxLength={4000}
           />
@@ -145,23 +147,23 @@ export function CommentsSection({
               disabled={posting || !body.trim()}
               onClick={() => post(null, body, () => setBody(""))}
             >
-              {posting ? "Posting…" : "Post"}
+              {posting ? t("comments.posting") : t("comments.post")}
             </Button>
           </div>
         </div>
       ) : (
         <p className="mt-6 text-sm text-white/50">
           <Link to="/auth" className="underline hover:text-white">
-            Sign in
+            {t("comments.signIn")}
           </Link>{" "}
-          to leave a comment.
+          {t("comments.toLeaveComment")}
         </p>
       )}
 
       <div className="mt-8 space-y-6">
-        {loading && <p className="text-sm text-white/40">Loading…</p>}
+        {loading && <p className="text-sm text-white/40">{t("comments.loading")}</p>}
         {!loading && roots.length === 0 && (
-          <p className="text-sm text-white/40">No comments yet.</p>
+          <p className="text-sm text-white/40">{t("comments.empty")}</p>
         )}
         {roots.map((c) => (
           <CommentItem
@@ -172,13 +174,14 @@ export function CommentsSection({
             onReply={() => setReplyTo(replyTo === c.id ? null : c.id)}
             onDelete={() => del(c.id)}
             onToggleHide={() => toggleHide(c)}
+            t={t}
           >
             {replyTo === c.id && userId && (
               <div className="mt-3 space-y-2">
                 <Textarea
                   value={replyBody}
                   onChange={(e) => setReplyBody(e.target.value)}
-                  placeholder="Reply…"
+                  placeholder={t("comments.replyPlaceholder")}
                   className="min-h-[60px] bg-neutral-900 border-neutral-800"
                   maxLength={4000}
                 />
@@ -188,14 +191,14 @@ export function CommentsSection({
                     className="h-11 flex-1 sm:h-9 sm:flex-none"
                     onClick={() => setReplyTo(null)}
                   >
-                    Cancel
+                    {t("comments.cancel")}
                   </Button>
                   <Button
                     className="h-11 flex-1 sm:h-9 sm:flex-none"
                     disabled={posting || !replyBody.trim()}
                     onClick={() => post(c.id, replyBody, () => setReplyBody(""))}
                   >
-                    Reply
+                    {t("comments.reply")}
                   </Button>
                 </div>
               </div>
@@ -210,6 +213,7 @@ export function CommentsSection({
                     isMod={isMod}
                     onDelete={() => del(r.id)}
                     onToggleHide={() => toggleHide(r)}
+                    t={t}
                   />
                 ))}
               </div>
@@ -229,6 +233,7 @@ function CommentItem({
   onDelete,
   onToggleHide,
   children,
+  t,
 }: {
   row: CommentRow;
   userId: string | null;
@@ -237,10 +242,11 @@ function CommentItem({
   onDelete: () => void;
   onToggleHide: () => void;
   children?: React.ReactNode;
+  t: (key: string) => string;
 }) {
   const hidden = row.status === "hidden";
   const canDelete = userId === row.user_id || isMod;
-  const name = row.profiles?.display_name || "Reader";
+  const name = row.profiles?.display_name || t("comments.reader");
   return (
     <div className={`rounded border border-white/10 bg-neutral-900/50 p-4 ${hidden ? "opacity-50" : ""}`}>
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
@@ -258,7 +264,7 @@ function CommentItem({
           </span>
           {hidden && (
             <span className="rounded bg-red-500/20 px-1.5 py-0.5 font-mono text-[9px] uppercase text-red-300">
-              Hidden
+              {t("comments.hidden")}
             </span>
           )}
         </div>
@@ -266,12 +272,12 @@ function CommentItem({
 
           {onReply && userId && (
             <button type="button" onClick={onReply} className="hover:bg-white/10 hover:text-white active:bg-white/20">
-              Reply
+              {t("comments.reply")}
             </button>
           )}
           {isMod && (
             <button type="button" onClick={onToggleHide} className="hover:bg-white/10 hover:text-white active:bg-white/20">
-              {hidden ? "Restore" : "Hide"}
+              {hidden ? t("comments.restore") : t("comments.hide")}
             </button>
           )}
           {canDelete && (
@@ -280,7 +286,7 @@ function CommentItem({
               onClick={onDelete}
               className="text-red-400 hover:bg-red-500/10 hover:text-red-300 active:bg-red-500/20"
             >
-              Delete
+              {t("comments.delete")}
             </button>
           )}
         </div>
