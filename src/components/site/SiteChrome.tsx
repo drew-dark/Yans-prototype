@@ -191,7 +191,7 @@ export function SiteHeader() {
                   <DropdownMenuContent
                     align="start"
                     sideOffset={14}
-                    className="surface-panel min-w-[200px] border-l-2 border-kraft p-0 text-white/70"
+                    className="surface-panel min-w-[200px] border-l-2 border-kraft bg-[var(--panel-bg)] p-0 text-white/70 rounded-[var(--panel-radius)] shadow-[var(--panel-shadow)]"
                   >
                     <DropdownMenuItem asChild className="rounded-none px-4 py-3 focus:bg-kraft/10 focus:text-white">
                       <Link
@@ -273,7 +273,7 @@ function MobileMenu() {
       </SheetTrigger>
       <SheetContent
         side="right"
-        className="surface-panel flex w-[85vw] max-w-sm flex-col gap-0 border-white/10 p-0 text-white sm:max-w-sm"
+        className="surface-panel flex w-[85vw] max-w-sm flex-col gap-0 border-white/10 bg-[var(--panel-bg)] p-0 text-white sm:max-w-sm rounded-[var(--panel-radius)] shadow-[var(--panel-shadow)]"
         style={{
           backgroundImage:
             "radial-gradient(circle at 100% 0%, var(--site-glow-b) 0%, transparent 55%)",
