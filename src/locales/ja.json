@@ -158,5 +158,36 @@
     "signInToSave": "ログインしてブックマーク",
     "removed": "ブックマークを解除しました",
     "addedToast": "ブックマークに保存しました"
+  },
+  "theme": {
+    "ariaLabel": "配色テーマ",
+    "active": "使用中",
+    "siteDefault": "サイトのデフォルト",
+    "signInToPersonalize": "して自分だけのテーマを選べます — 見た目が変わるのはご自身の画面だけです。",
+    "kraft": { "label": "インク＆クラフト", "blurb": "深い黒地に温かみのある紙の色。" },
+    "ember": { "label": "熾火", "blurb": "深夜ラジオを思わせる、燃えるようなオレンジ。" },
+    "newsprint": { "label": "新聞紙", "blurb": "新聞紙のような、澄んだ灰色。" },
+    "moss": { "label": "苔", "blurb": "静かな緑、庭のひととき。" },
+    "indigo": { "label": "藍", "blurb": "藍甕と夜行列車を思わせる、深い青。" },
+    "plum": { "label": "梅", "blurb": "霜の残る朝に咲く、早咲きの梅色。" },
+    "marigold": { "label": "金盞花", "blurb": "夕暮れの市場のような、温かい金色。" },
+    "sakura": { "label": "桜", "blurb": "桜色の淡いピンク — 曇りガラスのような質感。" },
+    "ai": { "label": "藍染", "blurb": "藍染の青 — 曇りガラスのような質感。" },
+    "matcha": { "label": "抹茶", "blurb": "抹茶色の緑 — 柔らかく膨らんだ質感。" },
+    "sumi": { "label": "墨", "blurb": "墨色の炭 — 柔らかく膨らんだ質感。" }
+  },
+  "auth": {
+    "studioSignIn": "スタジオへのログイン",
+    "createAccount": "アカウントを作成",
+    "staffOnlyBlurb": "スタッフアカウントは招待制、またはSupabase上で直接発行されます — このページはログイン専用です。",
+    "signupBlurb": "読者専用のスペースで、お気に入りの保存、コメント、プロフィール管理ができます。",
+    "signinBlurb": "読者はここからログインしてブックマークやコメントを利用できます。スタッフはスタジオへ進みます。",
+    "email": "メールアドレス",
+    "password": "パスワード",
+    "signUp": "登録する",
+    "needAccount": "アカウントをお持ちでない方はこちら",
+    "haveAccount": "アカウントをお持ちの方はこちら",
+    "checkEmail": "確認メールをお送りしました。メールをご確認ください。",
+    "somethingWrong": "エラーが発生しました"
   }
 }

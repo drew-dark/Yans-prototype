@@ -158,5 +158,36 @@
     "signInToSave": "Sign in to bookmark",
     "removed": "Removed from bookmarks",
     "addedToast": "Saved to bookmarks"
+  },
+  "theme": {
+    "ariaLabel": "Colour theme",
+    "active": "Active",
+    "siteDefault": "Site default",
+    "signInToPersonalize": "to choose your own theme — it'll only change what you see.",
+    "kraft": { "label": "Ink & Kraft", "blurb": "Warm paper accent on deep ink." },
+    "ember": { "label": "Ember", "blurb": "Burnt orange, late-night radio." },
+    "newsprint": { "label": "Newsprint", "blurb": "Cool grey, broadsheet clarity." },
+    "moss": { "label": "Moss", "blurb": "Quiet green, garden hours." },
+    "indigo": { "label": "Indigo", "blurb": "Deep blue, dye vats and night trains." },
+    "plum": { "label": "Plum", "blurb": "Dusty rose, early bloom before frost." },
+    "marigold": { "label": "Marigold", "blurb": "Golden warmth, market stalls at dusk." },
+    "sakura": { "label": "Sakura", "blurb": "Cherry blossom pink — frosted glass surfaces." },
+    "ai": { "label": "Ai", "blurb": "Ai-zome indigo — frosted glass surfaces." },
+    "matcha": { "label": "Matcha", "blurb": "Tea green — soft inflated clay surfaces." },
+    "sumi": { "label": "Sumi", "blurb": "Sumi ink charcoal — soft inflated clay surfaces." }
+  },
+  "auth": {
+    "studioSignIn": "Studio sign-in",
+    "createAccount": "Create account",
+    "staffOnlyBlurb": "Staff accounts are provisioned by appointment or directly in Supabase — this page is sign-in only.",
+    "signupBlurb": "Readers get their own space to bookmark, comment, and manage a profile.",
+    "signinBlurb": "Readers sign in for bookmarks and comments. Staff continue to the studio.",
+    "email": "Email",
+    "password": "Password",
+    "signUp": "Sign up",
+    "needAccount": "Need an account? Sign up",
+    "haveAccount": "Have an account? Sign in",
+    "checkEmail": "Check your email to confirm your account.",
+    "somethingWrong": "Something went wrong"
   }
 }

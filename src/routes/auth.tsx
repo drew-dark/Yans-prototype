@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -28,6 +29,7 @@ async function routeAfterSignIn(userId: string): Promise<"/admin" | "/account"> 
 }
 
 function AuthPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { mode: lockedMode } = Route.useSearch();
   const staffOnly = lockedMode === "signin";
@@ -60,7 +62,7 @@ function AuthPage() {
         if (data.session) {
           navigate({ to: "/account" });
         } else {
-          toast.success("Check your email to confirm your account.");
+          toast.success(t("auth.checkEmail"));
         }
       } else {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
@@ -69,7 +71,7 @@ function AuthPage() {
         navigate({ to });
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong");
+      toast.error(err instanceof Error ? err.message : t("auth.somethingWrong"));
     } finally {
       setLoading(false);
     }
@@ -83,27 +85,31 @@ function AuthPage() {
             ← The Last Mukwasu
           </Link>
           <h1 className="mt-4 font-display text-3xl uppercase tracking-tight">
-            {staffOnly ? "Studio sign-in" : mode === "signin" ? "Sign in" : "Create account"}
+            {staffOnly
+              ? t("auth.studioSignIn")
+              : mode === "signin"
+                ? t("nav.signIn")
+                : t("auth.createAccount")}
           </h1>
           <p className="mt-2 text-xs text-white/50">
             {staffOnly
-              ? "Staff accounts are provisioned by appointment or directly in Supabase — this page is sign-in only."
+              ? t("auth.staffOnlyBlurb")
               : mode === "signup"
-                ? "Readers get their own space to bookmark, comment, and manage a profile."
-                : "Readers sign in for bookmarks and comments. Staff continue to the studio."}
+                ? t("auth.signupBlurb")
+                : t("auth.signinBlurb")}
           </p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{t("auth.email")}</Label>
             <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="bg-neutral-900 border-neutral-800" />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password">{t("auth.password")}</Label>
             <Input id="password" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} className="bg-neutral-900 border-neutral-800" />
           </div>
           <Button type="submit" disabled={loading} className="w-full">
-            {loading ? "…" : mode === "signin" ? "Sign in" : "Sign up"}
+            {loading ? "…" : mode === "signin" ? t("nav.signIn") : t("auth.signUp")}
           </Button>
         </form>
         {!staffOnly && (
@@ -112,7 +118,7 @@ function AuthPage() {
             onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
             className="text-xs text-white/50 hover:text-white"
           >
-            {mode === "signin" ? "Need an account? Sign up" : "Have an account? Sign in"}
+            {mode === "signin" ? t("auth.needAccount") : t("auth.haveAccount")}
           </button>
         )}
       </div>
