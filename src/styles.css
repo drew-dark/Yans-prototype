@@ -290,15 +290,18 @@
     border-color: var(--kraft);
   }
 
-  /* Nav dropdown panel + mobile drawer — deliberately more opaque than
-     .surface-card by default since a menu needs to stay legible over
-     whatever content sits behind it. */
+  /* Nav dropdown panel + mobile drawer. Only backdrop-filter lives here —
+     the underlying shadcn Sheet/DropdownMenu components already ship
+     their own bg-popover/bg-background/rounded-md/shadow-lg utility
+     classes, and those are Tailwind utilities that tailwind-merge (via
+     the shared cn() helper) will only correctly override with ANOTHER
+     recognized Tailwind utility class — not a plain CSS class like this
+     one, which tailwind-merge doesn't know conflicts with them. Background,
+     radius and shadow are applied at each call site as bg-[var(...)],
+     rounded-[var(...)] and shadow-[var(...)] instead, for that reason. */
   .surface-panel {
-    background: var(--panel-bg);
     backdrop-filter: var(--panel-blur);
     -webkit-backdrop-filter: var(--panel-blur);
-    border-radius: var(--panel-radius);
-    box-shadow: var(--panel-shadow);
   }
 
   /* Utility buttons (settings, sign-in, pagination) — the flagship kraft
