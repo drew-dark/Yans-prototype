@@ -1,11 +1,15 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 
 export const THEMES = [
   { id: "kraft", label: "Ink & Kraft", swatch: "#c5a880", blurb: "Warm paper accent on deep ink." },
   { id: "ember", label: "Ember", swatch: "#e0703c", blurb: "Burnt orange, late-night radio." },
   { id: "newsprint", label: "Newsprint", swatch: "#cfd6dd", blurb: "Cool grey, broadsheet clarity." },
   { id: "moss", label: "Moss", swatch: "#69c39a", blurb: "Quiet green, garden hours." },
+  { id: "indigo", label: "Indigo", swatch: "#5b7fdb", blurb: "Deep blue, dye vats and night trains." },
+  { id: "plum", label: "Plum", swatch: "#c77dab", blurb: "Dusty rose, early bloom before frost." },
+  { id: "marigold", label: "Marigold", swatch: "#d4a72c", blurb: "Golden warmth, market stalls at dusk." },
   { id: "sakura", label: "Sakura", swatch: "#f2a6c1", blurb: "Cherry blossom pink — frosted glass surfaces." },
   { id: "ai", label: "Ai", swatch: "#7c98d6", blurb: "Ai-zome indigo — frosted glass surfaces." },
   { id: "matcha", label: "Matcha", swatch: "#9cbf6f", blurb: "Tea green — soft inflated clay surfaces." },
@@ -170,26 +174,27 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 /** Compact swatch row for switching the site accent/theme. */
 export function ThemeSwitcher({ className = "" }: { className?: string }) {
+  const { t } = useTranslation();
   const { theme, setTheme } = useTheme();
   return (
     <div
       role="radiogroup"
-      aria-label="Colour theme"
+      aria-label={t("theme.ariaLabel")}
       className={`flex items-center gap-1.5 ${className}`}
     >
-      {THEMES.map((t) => (
+      {THEMES.map((th) => (
         <button
-          key={t.id}
+          key={th.id}
           type="button"
           role="radio"
-          aria-checked={theme === t.id}
-          aria-label={t.label}
-          title={t.label}
-          onClick={() => setTheme(t.id)}
+          aria-checked={theme === th.id}
+          aria-label={t(`theme.${th.id}.label`)}
+          title={t(`theme.${th.id}.label`)}
+          onClick={() => setTheme(th.id)}
           className={`h-5 w-5 rounded-full border transition-transform hover:scale-110 motion-reduce:hover:scale-100 md:h-3.5 md:w-3.5 ${
-            theme === t.id ? "border-white ring-1 ring-white/60" : "border-white/25"
+            theme === th.id ? "border-white ring-1 ring-white/60" : "border-white/25"
           }`}
-          style={{ backgroundColor: t.swatch }}
+          style={{ backgroundColor: th.swatch }}
         />
       ))}
     </div>
@@ -201,10 +206,11 @@ export function ThemeSwitcher({ className = "" }: { className?: string }) {
  * (site-wide default) theme called out, read-only, with a sign-in
  * prompt instead of the picker. */
 export function ThemePicker({ className = "" }: { className?: string }) {
+  const { t } = useTranslation();
   const { theme, setTheme, canPersonalize } = useTheme();
 
   if (!canPersonalize) {
-    const current = THEMES.find((t) => t.id === theme);
+    const current = THEMES.find((th) => th.id === theme);
     return (
       <div className={`surface-card flex items-center gap-3 p-4 ${className}`}>
         {current && (
@@ -216,13 +222,13 @@ export function ThemePicker({ className = "" }: { className?: string }) {
         )}
         <span className="min-w-0">
           <span className="block font-mono text-xs uppercase tracking-widest text-white">
-            {current?.label ?? "Site default"}
+            {current ? t(`theme.${current.id}.label`) : t("theme.siteDefault")}
           </span>
           <span className="mt-1 block text-xs text-white/50">
             <Link to="/auth" className="underline hover:text-white">
-              Sign in
+              {t("nav.signIn")}
             </Link>{" "}
-            to choose your own theme — it'll only change what you see.
+            {t("theme.signInToPersonalize")}
           </span>
         </span>
       </div>
@@ -232,18 +238,18 @@ export function ThemePicker({ className = "" }: { className?: string }) {
   return (
     <div
       role="radiogroup"
-      aria-label="Colour theme"
+      aria-label={t("theme.ariaLabel")}
       className={`grid gap-3 sm:grid-cols-2 ${className}`}
     >
-      {THEMES.map((t) => {
-        const active = theme === t.id;
+      {THEMES.map((th) => {
+        const active = theme === th.id;
         return (
           <button
-            key={t.id}
+            key={th.id}
             type="button"
             role="radio"
             aria-checked={active}
-            onClick={() => setTheme(t.id)}
+            onClick={() => setTheme(th.id)}
             className={`surface-card flex items-center gap-3 p-4 text-left ${
               active ? "border-kraft" : ""
             }`}
@@ -251,17 +257,19 @@ export function ThemePicker({ className = "" }: { className?: string }) {
             <span
               aria-hidden="true"
               className="h-9 w-9 shrink-0 rounded-full border border-white/25"
-              style={{ backgroundColor: t.swatch }}
+              style={{ backgroundColor: th.swatch }}
             />
             <span className="min-w-0">
               <span className="block font-mono text-xs uppercase tracking-widest text-white">
-                {t.label}
+                {t(`theme.${th.id}.label`)}
               </span>
-              <span className="mt-1 block text-xs text-white/50">{t.blurb}</span>
+              <span className="mt-1 block text-xs text-white/50">
+                {t(`theme.${th.id}.blurb`)}
+              </span>
             </span>
             {active && (
               <span className="ml-auto shrink-0 font-mono text-[10px] uppercase tracking-widest text-kraft">
-                Active
+                {t("theme.active")}
               </span>
             )}
           </button>
