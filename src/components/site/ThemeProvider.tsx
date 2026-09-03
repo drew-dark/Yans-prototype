@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { supabase } from "@/integrations/supabase/client";
 
 export const THEMES = [
   { id: "kraft", label: "Ink & Kraft", swatch: "#c5a880", blurb: "Warm paper accent on deep ink." },
@@ -57,7 +58,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const { supabase } = await import("@/integrations/supabase/client");
       const { data: userData } = await supabase.auth.getUser();
       const user = userData.user;
 
@@ -154,7 +154,6 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
           /* channel unavailable */
         }
         (async () => {
-          const { supabase } = await import("@/integrations/supabase/client");
           const { data } = await supabase.auth.getUser();
           if (!data.user) return;
           await supabase.from("profiles").upsert({ user_id: data.user.id, theme: t });
