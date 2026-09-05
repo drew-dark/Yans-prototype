@@ -11,7 +11,8 @@ export type ContentKind =
   | "collection_item"
   | "gallery"
   | "dear_today"
-  | "footprint";
+  | "footprint"
+  | "collection_entry";
 
 export function BookmarkButton({
   contentType,

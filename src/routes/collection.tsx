@@ -1,237 +1,115 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
-import { Paginator } from "@/components/site/Paginator";
 import { GridSkeleton } from "@/components/site/GridSkeleton";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
-import { useMediaViewer, mediaItemFor } from "@/components/site/MediaViewer";
-import { getEmbedThumbnail, isPlayable } from "@/lib/media";
-import { BookmarkButton } from "@/components/site/BookmarkButton";
-import { CommentsSection } from "@/components/site/CommentsSection";
-import {
-  isRangeOutOfBounds,
-  pageRangeBounds,
-  totalPagesFor,
-  useScrollTopOnPageChange,
-  validatePageSearch,
-} from "@/lib/pagination";
-import portraitImg from "@/assets/muyan-portrait.jpg";
-import broadcastImg from "@/assets/muyan-broadcast.jpg";
-import foodImg from "@/assets/muyan-food.jpg";
-import verseImg from "@/assets/muyan-verse.jpg";
-import stageImg from "@/assets/muyan-stage.jpg";
-
-const PAGE_SIZE = 8;
 
 export const Route = createFileRoute("/collection")({
-  validateSearch: validatePageSearch,
   head: () => ({
     meta: [
-      { title: "The Last Mukwasu — Poetry & Stories" },
+      { title: "Collections — The Last Mukwasu" },
       {
         name: "description",
-        content:
-          "The Last Mukwasu — a curated set of frames tracing verse, broadcast, portrait, and stage across Lusaka and Tokyo.",
+        content: "A library of collections — pick one to step inside.",
       },
-      { property: "og:title", content: "The Last Mukwasu — Poetry & Stories" },
-      {
-        property: "og:description",
-        content: "A curated set of frames — verse, broadcast, portrait, and stage.",
-      },
-      { property: "og:type", content: "website" },
     ],
   }),
-  component: CollectionPage,
+  component: CollectionLibraryPage,
 });
 
-type Tile = { id: string; image_url: string; label: string };
+type Collection = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  cover_url: string | null;
+};
 
-const fallbackTiles: Tile[] = [
-  { id: "1", image_url: portraitImg, label: "Portrait" },
-  { id: "2", image_url: broadcastImg, label: "Broadcast" },
-  { id: "3", image_url: foodImg, label: "Culture" },
-  { id: "4", image_url: verseImg, label: "Verse" },
-  { id: "5", image_url: stageImg, label: "Stage" },
-  { id: "6", image_url: portraitImg, label: "Studio" },
-  { id: "7", image_url: broadcastImg, label: "Field" },
-  { id: "8", image_url: foodImg, label: "Table" },
-];
+function linkFor(slug: string) {
+  // Dear Today keeps its own dedicated pages rather than the generic
+  // Collection Home template — see /collection/dear-today.
+  return slug === "dear-today" ? "/collection/dear-today" : `/collection/${slug}`;
+}
 
-const collectionQuery = (page: number) => ({
-  queryKey: ["public", "collection_items", page] as const,
-  queryFn: async () => {
-    const { from, to } = pageRangeBounds(page, PAGE_SIZE);
-    const { data, error, count } = await supabase
-      .from("collection_items")
-      .select("id, image_url, label", { count: "exact" })
-      .eq("published", true)
-      .order("sort_order")
-      .range(from, to);
-    if (error && !isRangeOutOfBounds(error)) throw error;
-    return { items: (data ?? []) as Tile[], total: count ?? 0 };
-  },
-});
-
-function CollectionPage() {
+function CollectionLibraryPage() {
   const { t } = useTranslation();
-  const { page } = Route.useSearch();
-  const navigate = useNavigate({ from: Route.fullPath });
-  const qc = useQueryClient();
-  const setPage = (p: number) => navigate({ search: { page: p } });
-
-  const { data, isLoading, isFetching } = useQuery({
-    ...collectionQuery(page),
-    placeholderData: keepPreviousData,
-  });
-
-  // Only point people at the full gallery once it actually has something —
-  // linking to an empty page reads as a broken link, not an invitation.
-  const { data: galleryHasPhotos } = useQuery({
-    queryKey: ["public", "gallery_photos", "any-published"],
+  const { data: collections = [], isLoading } = useQuery({
+    queryKey: ["public", "collections"],
     queryFn: async () => {
-      const { count, error } = await supabase
-        .from("gallery_photos")
-        .select("id", { count: "exact", head: true })
-        .eq("published", true);
+      const { data, error } = await supabase
+        .from("collections")
+        .select("id, slug, title, description, cover_url")
+        .order("sort_order");
       if (error) throw error;
-      return (count ?? 0) > 0;
+      return data as Collection[];
     },
-    staleTime: 5 * 60 * 1000,
   });
-
-  const usingFallback = !!data && data.total === 0;
-  const tiles = usingFallback ? fallbackTiles : (data?.items ?? []);
-  const total = usingFallback ? 0 : (data?.total ?? 0);
-  const totalPages = totalPagesFor(total, PAGE_SIZE);
-
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-  const selected = tiles.find((tile) => tile.id === selectedId && UUID_RE.test(tile.id)) ?? null;
-
-  const { open } = useMediaViewer();
-
-  useScrollTopOnPageChange(page);
-
-  useEffect(() => {
-    if (page < totalPages) qc.prefetchQuery(collectionQuery(page + 1));
-  }, [page, totalPages, qc]);
-
-  useEffect(() => {
-    if (data && page > totalPages) setPage(totalPages);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, page, totalPages]);
 
   return (
     <PageShell>
       <section className="mx-auto max-w-6xl px-5 py-10 md:px-12 md:py-16">
         <div className="mb-12 max-w-2xl">
           <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
-            {t("collection.volumeLabel")}
+            {t("collectionsLibrary.eyebrow")}
           </p>
           <h1 className="font-display text-5xl uppercase leading-none tracking-tight sm:text-6xl md:text-8xl">
-            The Last Mukwasu
+            {t("collectionsLibrary.title")}
           </h1>
-          <p className="mt-6 text-sm text-white/50 md:text-base">{t("collection.intro")}</p>
+          <p className="mt-6 text-sm text-white/50 md:text-base">
+            {t("collectionsLibrary.intro")}
+          </p>
         </div>
 
         {isLoading ? (
           <GridSkeleton
-            count={PAGE_SIZE}
-            className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4"
-            itemClassName="aspect-[3/4]"
+            count={4}
+            className="grid grid-cols-1 gap-6 md:grid-cols-2"
+            itemClassName="aspect-[16/9]"
           />
+        ) : collections.length === 0 ? (
+          <p className="text-white/40">{t("collectionsLibrary.empty")}</p>
         ) : (
-          <>
-            <div
-              className={`grid grid-cols-2 gap-4 transition-opacity duration-200 motion-reduce:transition-none md:grid-cols-3 lg:grid-cols-4 ${isFetching ? "opacity-50" : "opacity-100"}`}
-            >
-              {tiles.map((tile) => (
-                <button
-                  key={tile.id}
-                  type="button"
-                  onClick={() => {
-                    setSelectedId(tile.id);
-                    open(mediaItemFor(tile.image_url, tile.label));
-                  }}
-                  className="group relative aspect-[3/4] overflow-hidden border border-white/10 bg-neutral-900 text-left"
-                  aria-label={tile.label}
-                >
-                  {isPlayable(tile.image_url) && !getEmbedThumbnail(tile.image_url) ? (
-                    <video
-                      src={tile.image_url}
-                      muted
-                      playsInline
-                      preload="metadata"
-                      className="h-full w-full object-cover"
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {collections.map((c) => (
+              <Link
+                key={c.id}
+                to={linkFor(c.slug)}
+                className="group surface-card flex flex-col overflow-hidden text-left"
+              >
+                <div className="aspect-[16/9] overflow-hidden bg-neutral-900">
+                  {c.cover_url ? (
+                    <img
+                      src={c.cover_url}
+                      alt=""
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                     />
                   ) : (
-                    <img
-                      src={getEmbedThumbnail(tile.image_url) ?? tile.image_url}
-                      alt={tile.label}
-                      loading="lazy"
-                      className="h-full w-full object-cover"
-                    />
+                    <div className="flex h-full w-full items-center justify-center text-white/20">
+                      <span className="font-display text-4xl uppercase">{c.title[0]}</span>
+                    </div>
                   )}
-                  {isPlayable(tile.image_url) && (
-                    <span className="pointer-events-none absolute right-2 top-2 rounded bg-black/70 px-2 py-0.5 font-mono text-[9px] uppercase tracking-widest text-white/80">
-                      ▶ {t("common.video")}
-                    </span>
+                </div>
+                <div className="flex flex-1 flex-col gap-2 p-5">
+                  <h2 className="font-display text-2xl uppercase leading-tight tracking-tight">
+                    {c.title}
+                  </h2>
+                  {c.description && (
+                    <p className="line-clamp-2 text-sm text-white/60">{c.description}</p>
                   )}
-                  <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent p-3">
-                    <p className="font-mono text-[10px] uppercase tracking-widest text-white">
-                      {tile.label}
-                    </p>
-                  </div>
-                </button>
-              ))}
-            </div>
-            {!usingFallback && (
-              <Paginator
-                page={page}
-                totalPages={totalPages}
-                onPageChange={setPage}
-                total={total}
-                pageSize={PAGE_SIZE}
-                currentCount={tiles.length}
-              />
-            )}
-          </>
-        )}
-
-        {selected && (
-          <div className="mt-16 border-t border-white/10 pt-8">
-            <div className="flex flex-wrap items-center gap-4">
-              <img
-                src={selected.image_url}
-                alt=""
-                className="h-16 w-16 border border-white/10 object-cover"
-              />
-              <div className="flex-1 min-w-[12rem]">
-                <p className="font-mono text-[10px] uppercase tracking-widest text-white/40">
-                  {t("collection.selectedFrame")}
-                </p>
-                <p className="text-sm text-white/80">{selected.label}</p>
-              </div>
-              <BookmarkButton contentType="collection_item" contentId={selected.id} />
-            </div>
-            <CommentsSection contentType="collection_item" contentId={selected.id} />
+                  <span className="mt-auto pt-3 font-mono text-[10px] uppercase tracking-widest text-kraft group-hover:text-white">
+                    {t("collectionsLibrary.enter")} →
+                  </span>
+                </div>
+              </Link>
+            ))}
           </div>
         )}
 
-        <div className="mt-16 flex items-center justify-between border-t border-white/10 pt-6 font-mono text-[10px] uppercase tracking-widest text-white/40">
-          <span>The Last Mukwasu · {t("collection.seriesLabel")}</span>
-          {galleryHasPhotos && (
-            <Link to="/gallery" className="hover:text-white">
-              {t("collection.viewFullGallery")}
-            </Link>
-          )}
-        </div>
-
         <div className="mt-20">
-          <NewsletterForm source="collection" />
+          <NewsletterForm source="collection-library" />
         </div>
       </section>
     </PageShell>

@@ -77,6 +77,94 @@ export type Database = {
         }
         Relationships: []
       }
+      collection_entries: {
+        Row: {
+          body: string | null
+          collection_id: string
+          cover_url: string | null
+          created_at: string
+          entry_date: string
+          id: string
+          published: boolean
+          slug: string
+          sort_order: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          body?: string | null
+          collection_id: string
+          cover_url?: string | null
+          created_at?: string
+          entry_date?: string
+          id?: string
+          published?: boolean
+          slug: string
+          sort_order?: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          body?: string | null
+          collection_id?: string
+          cover_url?: string | null
+          created_at?: string
+          entry_date?: string
+          id?: string
+          published?: boolean
+          slug?: string
+          sort_order?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collection_entries_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      collection_entry_media: {
+        Row: {
+          caption: string | null
+          created_at: string
+          entry_id: string
+          id: string
+          kind: string
+          sort_order: number
+          url: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          entry_id: string
+          id?: string
+          kind: string
+          sort_order?: number
+          url: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          entry_id?: string
+          id?: string
+          kind?: string
+          sort_order?: number
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collection_entry_media_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "collection_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       collection_items: {
         Row: {
           created_at: string
@@ -960,6 +1048,7 @@ export type Database = {
         | "gallery"
         | "dear_today"
         | "footprint"
+        | "collection_entry"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1095,6 +1184,7 @@ export const Constants = {
         "gallery",
         "dear_today",
         "footprint",
+        "collection_entry",
       ],
     },
   },

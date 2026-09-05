@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
@@ -19,6 +19,9 @@ import {
 } from "@/lib/pagination";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import portraitImg from "@/assets/muyan-portrait.jpg";
+import broadcastImg from "@/assets/muyan-broadcast.jpg";
+import foodImg from "@/assets/muyan-food.jpg";
 
 const PAGE_SIZE = 12;
 
@@ -39,6 +42,27 @@ export const Route = createFileRoute("/gallery")({
 });
 
 type Photo = { id: string; image_url: string; caption: string | null; tags: string[] };
+type Tile = { id: string; image_url: string; label: string };
+
+const fallbackTiles: Tile[] = [
+  { id: "1", image_url: portraitImg, label: "Portrait" },
+  { id: "2", image_url: broadcastImg, label: "Broadcast" },
+  { id: "3", image_url: foodImg, label: "Culture" },
+];
+
+const muyanTilesQuery = {
+  queryKey: ["public", "collection_items", "gallery-preview"] as const,
+  queryFn: async () => {
+    const { data, error } = await supabase
+      .from("collection_items")
+      .select("id, image_url, label")
+      .eq("published", true)
+      .order("sort_order")
+      .limit(8);
+    if (error) throw error;
+    return (data ?? []) as Tile[];
+  },
+};
 
 const galleryQuery = (page: number) => ({
   queryKey: ["public", "gallery", page] as const,
@@ -74,6 +98,8 @@ function GalleryPage() {
   const totalPages = totalPagesFor(total, PAGE_SIZE);
   const { open } = useMediaViewer();
 
+  const { data: muyanTiles = fallbackTiles } = useQuery(muyanTilesQuery);
+
   useScrollTopOnPageChange(page);
 
   useEffect(() => {
@@ -97,6 +123,42 @@ function GalleryPage() {
           </h1>
           <p className="mt-6 text-sm text-white/50 md:text-base">{t("gallery.intro")}</p>
         </div>
+
+        {muyanTiles.length > 0 && (
+          <div className="mb-14">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="font-display text-xl uppercase tracking-tight text-white/80">
+                {t("gallery.muyanTitle")}
+              </h2>
+              <Link
+                to="/collection/muyan"
+                className="font-mono text-[10px] uppercase tracking-widest text-kraft hover:text-white"
+              >
+                {t("gallery.muyanViewAll")} →
+              </Link>
+            </div>
+            <div className="grid grid-cols-3 gap-2 md:grid-cols-4 lg:grid-cols-8">
+              {muyanTiles.map((tile) => (
+                <button
+                  key={tile.id}
+                  type="button"
+                  onClick={() => open({ kind: "image", src: tile.image_url, alt: tile.label })}
+                  className="group surface-card relative aspect-square overflow-hidden"
+                >
+                  <img
+                    src={tile.image_url}
+                    alt={tile.label}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                  />
+                  <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-1.5 font-mono text-[9px] uppercase tracking-widest text-white/80">
+                    {tile.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {isLoading ? (
           <GridSkeleton
