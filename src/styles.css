@@ -196,6 +196,30 @@
   --site-glow-b: rgba(105, 195, 154, 0.09);
 }
 
+[data-theme="indigo"] {
+  --kraft: #5b7fdb;
+  --kraft-dark: #3f5cb0;
+  --site-bg: #08090f;
+  --site-glow-a: rgba(255, 255, 255, 0.03);
+  --site-glow-b: rgba(91, 127, 219, 0.09);
+}
+
+[data-theme="plum"] {
+  --kraft: #c77dab;
+  --kraft-dark: #a15884;
+  --site-bg: #0f0a0d;
+  --site-glow-a: rgba(255, 255, 255, 0.03);
+  --site-glow-b: rgba(199, 125, 171, 0.09);
+}
+
+[data-theme="marigold"] {
+  --kraft: #d4a72c;
+  --kraft-dark: #ab8420;
+  --site-bg: #0d0a05;
+  --site-glow-a: rgba(255, 255, 255, 0.03);
+  --site-glow-b: rgba(212, 167, 44, 0.09);
+}
+
 /* ---- Japan-inspired themes, each paired with a morphism style ---- */
 
 /* Sakura (glass): cherry blossom pink, frosted glass surfaces */
