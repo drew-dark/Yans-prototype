@@ -1,11 +1,32 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { z } from "zod";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import type { Database } from "@/integrations/supabase/types";
 
 const subscribeSchema = z.object({
   email: z.string().trim().min(3).max(320).email(),
   source: z.string().max(100).optional(),
 });
+
+const sendIssueSchema = z.object({
+  subject: z.string().trim().min(1).max(200),
+  bodyHtml: z.string().trim().min(1).max(200_000),
+});
+
+// Same bar as reading/managing the subscriber list itself (see the
+// newsletter_subscribers and newsletter_issues RLS policies) — sending a
+// broadcast reaches the whole list, so it stays admin-only rather than
+// opening up to editor/moderator too.
+async function assertNewsletterAdmin(supabase: SupabaseClient<Database>, userId: string) {
+  const { data, error } = await supabase.rpc("has_role", {
+    _user_id: userId,
+    _role: "admin",
+  });
+  if (error) throw new Error(error.message);
+  if (!data) throw new Error("Forbidden");
+}
 
 function confirmationEmailHtml(confirmUrl: string): string {
   return `
@@ -70,4 +91,109 @@ export const subscribeToNewsletter = createServerFn({ method: "POST" })
     }
 
     return { status: "confirmation_sent" as const };
+  });
+
+function issueEmailHtml(subject: string, bodyHtml: string, unsubscribeUrl: string): string {
+  return `
+    <div style="font-family: Georgia, serif; max-width: 480px; margin: 0 auto; padding: 24px; color: #1a1a1a;">
+      <p style="font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: #8a7358;">The Last Mukwasu</p>
+      <h1 style="font-size: 22px; margin: 12px 0;">${subject}</h1>
+      <div style="font-size: 15px; line-height: 1.6;">${bodyHtml}</div>
+      <p style="font-size: 11px; color: #999; margin-top: 40px; border-top: 1px solid #eee; padding-top: 16px;">
+        You're receiving this because you subscribed to The Last Mukwasu.
+        <a href="${unsubscribeUrl}" style="color: #8a7358;">Unsubscribe</a>
+      </p>
+    </div>
+  `;
+}
+
+function chunk<T>(items: T[], size: number): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size));
+  return out;
+}
+
+/**
+ * Composes and sends a newsletter issue to every confirmed, still-subscribed
+ * reader, each with their own unsubscribe link, then records the outcome in
+ * newsletter_issues. Admin-only (see assertNewsletterAdmin). Runs server-side
+ * so RESEND_API_KEY never reaches the browser bundle and the recipient list
+ * is only ever read with the service role, never sent to the client.
+ */
+export const sendNewsletterIssue = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { subject: string; bodyHtml: string }) => sendIssueSchema.parse(input))
+  .handler(async ({ data, context }) => {
+    await assertNewsletterAdmin(context.supabase, context.userId);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { sendEmailBatch } = await import("@/lib/resend.server");
+
+    const { data: subscribers, error: subsErr } = await supabaseAdmin
+      .from("newsletter_subscribers")
+      .select("email, unsubscribe_token")
+      .eq("confirmed", true)
+      .is("unsubscribed_at", null);
+    if (subsErr) throw new Error(subsErr.message);
+
+    const { data: issue, error: issueErr } = await supabaseAdmin
+      .from("newsletter_issues")
+      .insert({
+        subject: data.subject,
+        body_html: data.bodyHtml,
+        status: "sending",
+        recipient_count: subscribers?.length ?? 0,
+        created_by: context.userId,
+      })
+      .select("id")
+      .single();
+    if (issueErr) throw new Error(issueErr.message);
+
+    if (!subscribers || subscribers.length === 0) {
+      await supabaseAdmin
+        .from("newsletter_issues")
+        .update({ status: "sent", sent_at: new Date().toISOString() })
+        .eq("id", issue.id);
+      return { recipientCount: 0, sentCount: 0, failedCount: 0 };
+    }
+
+    const request = getRequest();
+    const origin = request ? new URL(request.url).origin : "";
+
+    let sentCount = 0;
+    let failedCount = 0;
+    let lastError: string | undefined;
+
+    for (const batch of chunk(subscribers, 100)) {
+      const items = batch.map((s) => ({
+        to: s.email,
+        subject: data.subject,
+        html: issueEmailHtml(
+          data.subject,
+          data.bodyHtml,
+          `${origin}/newsletter/unsubscribe?token=${s.unsubscribe_token}`,
+        ),
+      }));
+      try {
+        await sendEmailBatch(items);
+        sentCount += items.length;
+      } catch (err) {
+        failedCount += items.length;
+        lastError = err instanceof Error ? err.message : String(err);
+        console.error("[newsletter] batch send failed:", lastError);
+      }
+    }
+
+    const status = failedCount === 0 ? "sent" : sentCount === 0 ? "failed" : "partial_failure";
+    await supabaseAdmin
+      .from("newsletter_issues")
+      .update({
+        status,
+        sent_count: sentCount,
+        failed_count: failedCount,
+        error: lastError,
+        sent_at: new Date().toISOString(),
+      })
+      .eq("id", issue.id);
+
+    return { recipientCount: subscribers.length, sentCount, failedCount };
   });
