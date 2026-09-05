@@ -45,7 +45,9 @@
   "gallery": {
     "title": "Gallery",
     "intro": "Snapshots collected between two homes. Click any frame to see it fuller.",
-    "empty": "No photographs published yet."
+    "empty": "No photographs published yet.",
+    "muyanTitle": "Muyan Collection",
+    "muyanViewAll": "View collection"
   },
   "shop": {
     "waresLabel": "Wares",
@@ -189,5 +191,24 @@
     "haveAccount": "Have an account? Sign in",
     "checkEmail": "Check your email to confirm your account.",
     "somethingWrong": "Something went wrong"
+  },
+  "collectionsLibrary": {
+    "eyebrow": "Library",
+    "title": "Collections",
+    "intro": "A library of collections — pick one to step inside.",
+    "empty": "No collections published yet.",
+    "enter": "Enter"
+  },
+  "collectionHome": {
+    "backToLibrary": "Collections",
+    "eyebrow": "Collection",
+    "empty": "Nothing published in this collection yet.",
+    "readNow": "Read now"
+  },
+  "collectionEntry": {
+    "viewPdf": "View PDF",
+    "viewAttachment": "View attachment",
+    "editEntry": "Edit entry",
+    "backToCollection": "Back to"
   }
 }

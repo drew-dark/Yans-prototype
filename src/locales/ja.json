@@ -45,7 +45,9 @@
   "gallery": {
     "title": "ギャラリー",
     "intro": "二つの故郷の間で集めたスナップショット。タップして拡大表示。",
-    "empty": "まだ公開された写真はありません。"
+    "empty": "まだ公開された写真はありません。",
+    "muyanTitle": "ムヤン・コレクション",
+    "muyanViewAll": "コレクションを見る"
   },
   "shop": {
     "waresLabel": "商品",
@@ -189,5 +191,24 @@
     "haveAccount": "アカウントをお持ちの方はこちら",
     "checkEmail": "確認メールをお送りしました。メールをご確認ください。",
     "somethingWrong": "エラーが発生しました"
+  },
+  "collectionsLibrary": {
+    "eyebrow": "ライブラリ",
+    "title": "コレクション",
+    "intro": "コレクションのライブラリ — お好きなものを選んでお入りください。",
+    "empty": "まだ公開されたコレクションはありません。",
+    "enter": "入る"
+  },
+  "collectionHome": {
+    "backToLibrary": "コレクション",
+    "eyebrow": "コレクション",
+    "empty": "このコレクションにはまだ何も公開されていません。",
+    "readNow": "今すぐ読む"
+  },
+  "collectionEntry": {
+    "viewPdf": "PDFを見る",
+    "viewAttachment": "添付ファイルを見る",
+    "editEntry": "エントリーを編集",
+    "backToCollection": "戻る:"
   }
 }
