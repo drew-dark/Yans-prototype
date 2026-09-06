@@ -163,6 +163,7 @@
   },
   "theme": {
     "ariaLabel": "配色テーマ",
+    "checking": "アカウントを確認中…",
     "active": "使用中",
     "siteDefault": "サイトのデフォルト",
     "signInToPersonalize": "して自分だけのテーマを選べます — 見た目が変わるのはご自身の画面だけです。",

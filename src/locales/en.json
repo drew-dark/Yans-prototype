@@ -163,6 +163,7 @@
   },
   "theme": {
     "ariaLabel": "Colour theme",
+    "checking": "Checking your account…",
     "active": "Active",
     "siteDefault": "Site default",
     "signInToPersonalize": "to choose your own theme — it'll only change what you see.",
