@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { I18nextProvider } from "react-i18next";
+import { I18nextProvider, useTranslation } from "react-i18next";
 import {
   DEFAULT_LANGUAGE,
   SUPPORTED_LANGUAGES,
@@ -119,10 +119,11 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 /** Compact EN / JA toggle, for the site header. */
 export function LanguageToggle({ className = "" }: { className?: string }) {
   const { language, setLanguage } = useLanguage();
+  const { t } = useTranslation();
   return (
     <div
       role="radiogroup"
-      aria-label="Language"
+      aria-label={t("language.toggleLabel")}
       className={`inline-flex items-center overflow-hidden rounded-full border border-white/20 font-mono text-[10px] uppercase tracking-widest ${className}`}
     >
       {SUPPORTED_LANGUAGES.map((l) => (

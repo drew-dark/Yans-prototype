@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { useCollections, useVolumes, useSeasons, type TaxonomyRef } from "@/lib/taxonomy";
 
 /**
@@ -8,6 +9,7 @@ import { useCollections, useVolumes, useSeasons, type TaxonomyRef } from "@/lib/
  * browse page listing everything published in that collection.
  */
 export function TaxonomyBreadcrumb({ ref }: { ref: TaxonomyRef }) {
+  const { t } = useTranslation();
   const { data: collections = [] } = useCollections();
   const { data: volumes = [] } = useVolumes(ref.collection_id);
   const { data: seasons = [] } = useSeasons(ref.volume_id);
@@ -21,7 +23,7 @@ export function TaxonomyBreadcrumb({ ref }: { ref: TaxonomyRef }) {
 
   return (
     <nav
-      aria-label="Series"
+      aria-label={t("taxonomy.seriesAria")}
       className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[10px] uppercase tracking-widest text-white/40"
     >
       <Link

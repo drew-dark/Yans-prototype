@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { LivePlayer } from "@/components/site/LivePlayer";
 import { resolveBroadcast, type BroadcastKind } from "@/lib/broadcast";
 
@@ -15,6 +16,7 @@ export function BroadcastPlayer({
   poster?: string;
   live?: boolean;
 }) {
+  const { t } = useTranslation();
   // Twitch embeds require `parent` to match the real hostname the page is
   // served from — only known once mounted in a browser.
   const [hostname, setHostname] = useState("");
@@ -25,7 +27,7 @@ export function BroadcastPlayer({
   if (!resolved) {
     return (
       <div className="flex aspect-video w-full items-center justify-center bg-white/5 font-mono text-[10px] uppercase tracking-widest text-white/40">
-        Stream source not configured
+        {t("broadcast.notConfigured")}
       </div>
     );
   }
@@ -47,11 +49,11 @@ export function BroadcastPlayer({
           className="absolute inset-0 h-full w-full"
           allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
           allowFullScreen
-          title="Live broadcast"
+          title={t("broadcast.iframeTitle")}
         />
         {live && (
           <span className="pointer-events-none absolute left-2 top-2 rounded bg-red-600/90 px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest text-white">
-            ● Live
+            ● {t("broadcast.live")}
           </span>
         )}
       </div>
@@ -69,16 +71,18 @@ export function BroadcastPlayer({
     >
       {live && (
         <span className="rounded bg-red-600/90 px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest text-white">
-          ● Live
+          ● {t("broadcast.live")}
         </span>
       )}
       <p className="font-mono text-[10px] uppercase tracking-[0.3em] text-white/40">
-        Broadcasting on
+        {t("broadcast.broadcastingOn")}
       </p>
       <p className="font-display text-2xl uppercase tracking-tight text-white group-hover:text-kraft">
         {resolved.hostLabel}
       </p>
-      <p className="font-mono text-[10px] uppercase tracking-widest text-white/50">Watch there →</p>
+      <p className="font-mono text-[10px] uppercase tracking-widest text-white/50">
+        {t("broadcast.watchThere")}
+      </p>
     </a>
   );
 }

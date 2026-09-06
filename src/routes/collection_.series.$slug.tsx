@@ -1,8 +1,26 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
 import type { Collection, Season, Volume } from "@/lib/taxonomy";
+
+function SeriesNotFound() {
+  const { t } = useTranslation();
+  return (
+    <PageShell>
+      <div className="mx-auto max-w-2xl px-5 py-16 text-center md:py-24">
+        <h1 className="font-display text-6xl uppercase">{t("detail.notFoundTitle")}</h1>
+        <Link
+          to="/collection"
+          className="mt-6 inline-block font-mono text-xs uppercase tracking-widest text-white/60 hover:text-white"
+        >
+          {t("series.notFoundBackLink")}
+        </Link>
+      </div>
+    </PageShell>
+  );
+}
 
 export const Route = createFileRoute("/collection_/series/$slug")({
   head: ({ loaderData }) => {
@@ -24,19 +42,7 @@ export const Route = createFileRoute("/collection_/series/$slug")({
     if (!data) throw notFound();
     return data as Collection;
   },
-  notFoundComponent: () => (
-    <PageShell>
-      <div className="mx-auto max-w-2xl px-5 py-16 text-center md:py-24">
-        <h1 className="font-display text-6xl uppercase">Not found</h1>
-        <Link
-          to="/collection"
-          className="mt-6 inline-block font-mono text-xs uppercase tracking-widest text-white/60 hover:text-white"
-        >
-          ← Back to Collection
-        </Link>
-      </div>
-    </PageShell>
-  ),
+  notFoundComponent: SeriesNotFound,
   component: SeriesPage,
 });
 
@@ -53,6 +59,7 @@ type Item = {
 };
 
 function SeriesPage() {
+  const { t } = useTranslation();
   const params = Route.useParams();
   const { data: collection } = useQuery({
     queryKey: ["public", "collection", params.slug],
@@ -171,9 +178,11 @@ function SeriesPage() {
           to="/collection"
           className="font-mono text-[10px] uppercase tracking-widest text-white/40 hover:text-white"
         >
-          ← Collection
+          {t("series.backLink")}
         </Link>
-        <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.35em] text-kraft">Series</p>
+        <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.35em] text-kraft">
+          {t("series.label")}
+        </p>
         <h1 className="mt-2 font-display text-4xl uppercase leading-tight tracking-tight sm:text-5xl md:text-6xl">
           {collection.title}
         </h1>
@@ -182,9 +191,9 @@ function SeriesPage() {
         )}
 
         <div className="mt-12 space-y-12">
-          {isLoading && <p className="text-white/40">Loading…</p>}
+          {isLoading && <p className="text-white/40">{t("common.loading")}</p>}
           {!isLoading && groups.length === 0 && (
-            <p className="text-white/40">Nothing published in this collection yet.</p>
+            <p className="text-white/40">{t("series.empty")}</p>
           )}
           {groups.map((group, i) => (
             <section key={i}>
@@ -206,11 +215,11 @@ function SeriesPage() {
                       <p className="font-mono text-[10px] uppercase tracking-widest text-white/35">
                         {item.chapter_number != null && (
                           <>
-                            Chapter {item.chapter_number}
+                            {t("detail.chapter", { n: item.chapter_number })}
                             {item.part_number != null ? `.${item.part_number}` : ""} ·{" "}
                           </>
                         )}
-                        {item.kind === "story" ? "Story" : "Diary"}
+                        {item.kind === "story" ? t("series.story") : t("series.diary")}
                       </p>
                       <h3 className="mt-1 font-display text-xl uppercase tracking-tight text-white/90 group-hover:text-white">
                         {item.title}

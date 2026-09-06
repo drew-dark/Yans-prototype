@@ -30,10 +30,12 @@
   },
   "common": {
     "video": "動画",
+    "image": "画像",
     "playVideo": "動画を再生",
     "openImage": "画像を開く",
     "untitled": "無題",
-    "loading": "読み込み中…"
+    "loading": "読み込み中…",
+    "close": "閉じる"
   },
   "collection": {
     "volumeLabel": "ボリューム 01",
@@ -74,14 +76,19 @@
     "titleLine2": "日記",
     "intro": "ルサカと東京の間で綴られた記録。半分はジャーナリズム、半分は言い訳。",
     "empty": "まだ記事はありません。",
-    "readEntry": "記事を読む"
+    "readEntry": "記事を読む",
+    "backLink": "← 日記",
+    "backToList": "← 日記に戻る",
+    "notPublished": "この記事はまだ公開されていません。"
   },
   "stories": {
     "eyebrow": "長編",
     "title": "物語",
     "intro": "エッセイとルポルタージュ。日記より遅く、詩より鋭く。",
     "empty": "まだ公開された物語はありません。",
-    "read": "読む"
+    "read": "読む",
+    "backLink": "← 物語",
+    "backToList": "← 物語に戻る"
   },
   "newsletterPage": {
     "eyebrow": "メーリングリスト",
@@ -118,7 +125,8 @@
     "signIn": "ログイン",
     "signInPrompt": "してお気に入りの保存、コメント、プロフィール管理を行えます。",
     "motion": "モーション",
-    "motionDesc": "The Last Mukwasu は端末の「モーション削減」設定に自動的に従います — デバイスのアクセシビリティ設定で有効にすると、ホバー時の演出やズームが最小限になります。"
+    "motionDesc": "The Last Mukwasu は端末の「モーション削減」設定に自動的に従います — デバイスのアクセシビリティ設定で有効にすると、ホバー時の演出やズームが最小限になります。",
+    "signOut": "ログアウト"
   },
   "newsletterForm": {
     "eyebrow": "購読",
@@ -136,6 +144,7 @@
   },
   "comments": {
     "title": "コメント",
+    "myTitle": "あなたのコメント",
     "signInPrompt": "ログインして会話に参加しましょう。",
     "signIn": "ログイン",
     "toLeaveComment": "してコメントを投稿。",
@@ -211,5 +220,95 @@
     "viewAttachment": "添付ファイルを見る",
     "editEntry": "エントリーを編集",
     "backToCollection": "戻る:"
+  },
+  "paginator": {
+    "showing": "{{total}}件中 {{first}}–{{last}}件を表示",
+    "prevAria": "前のページへ",
+    "pageIndicator": "{{page}} / {{totalPages}} ページ",
+    "pageAria": "{{page}} ページへ",
+    "nextAria": "次のページへ"
+  },
+  "taxonomy": {
+    "seriesAria": "シリーズ"
+  },
+  "reactions": {
+    "groupAria": "リアクション",
+    "signInAria": "ログインしてリアクションする",
+    "genericError": "失敗しました"
+  },
+  "media": {
+    "closeAria": "ビューアーを閉じる",
+    "unavailable": "この動画は再生できません",
+    "openInNewTab": "新しいタブで動画を開く",
+    "unsupported": "お使いのブラウザはこの動画を再生できません。",
+    "pip": "ピクチャーインピクチャー",
+    "fullscreen": "フルスクリーン",
+    "featuredImagesAria": "注目の画像",
+    "prevImageAria": "前の画像",
+    "nextImageAria": "次の画像",
+    "goToImageAria": "{{n}}枚目の画像へ"
+  },
+  "broadcast": {
+    "notConfigured": "配信ソースが設定されていません",
+    "iframeTitle": "ライブ配信",
+    "live": "配信中",
+    "broadcastingOn": "配信元",
+    "watchThere": "こちらで見る →",
+    "browserCantPlay": "このブラウザではストリームを再生できません。",
+    "streamUnavailable": "配信を利用できません — オフラインの可能性があります。"
+  },
+  "detail": {
+    "notFoundTitle": "見つかりません",
+    "minRead": "{{mins}}分で読めます",
+    "chapter": "第{{n}}章",
+    "openCoverImageAria": "カバー画像を開く"
+  },
+  "dearToday": {
+    "eyebrow": "コレクション",
+    "intro": "届いたときにだけ記す、小さなメモと静かな観察。",
+    "empty": "まだ記事はありません。",
+    "backLink": "← Dear Today",
+    "backToList": "← Dear Today に戻る"
+  },
+  "series": {
+    "backLink": "← コレクション",
+    "notFoundBackLink": "← コレクションに戻る",
+    "label": "シリーズ",
+    "empty": "このコレクションにはまだ何も公開されていません。",
+    "story": "物語",
+    "diary": "日記"
+  },
+  "profile": {
+    "title": "プロフィール",
+    "displayName": "表示名",
+    "avatar": "アバター",
+    "bio": "自己紹介",
+    "saving": "保存中…",
+    "save": "プロフィールを保存",
+    "saved": "プロフィールを保存しました",
+    "genericError": "失敗しました"
+  },
+  "bookmarksPage": {
+    "title": "ブックマーク",
+    "intro": "保存した物語、日記など。",
+    "empty": "まだ何も保存されていません。",
+    "removedItem": "(削除済み)",
+    "open": "開く →",
+    "remove": "削除"
+  },
+  "newsletterStatus": {
+    "backHome": "← ホームに戻る",
+    "missingConfirmLink": "確認リンクが見つかりません",
+    "confirming": "確認しています…",
+    "confirmed": "確認が完了しました",
+    "confirmedDesc": "ラウンジからの便りが、まもなく受信箱に届きます。",
+    "confirmExpired": "リンクの期限切れ、または使用済みです",
+    "confirmExpiredDesc": "確認リンクの有効期限は7日間です。まだご希望の場合は、下記から再度登録してください。",
+    "missingUnsubLink": "解除リンクが見つかりません",
+    "unsubscribing": "少々お待ちください…",
+    "unsubscribed": "配信を解除しました",
+    "unsubscribedDesc": "今後、配信リストからのメールは届きません。またいつでもお待ちしています。",
+    "unsubNotRecognised": "リンクが認識できません",
+    "unsubNotRecognisedDesc": "このリンクはすでに使用されたか、期限が切れている可能性があります。"
   }
 }

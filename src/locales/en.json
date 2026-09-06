@@ -30,10 +30,12 @@
   },
   "common": {
     "video": "Video",
+    "image": "Image",
     "playVideo": "Play video",
     "openImage": "Open image",
     "untitled": "Untitled",
-    "loading": "Loading…"
+    "loading": "Loading…",
+    "close": "Close"
   },
   "collection": {
     "volumeLabel": "Volume 01",
@@ -74,14 +76,19 @@
     "titleLine2": "Diaries",
     "intro": "Entries kept between Lusaka and Tokyo. Half journalism, half apology.",
     "empty": "No entries yet.",
-    "readEntry": "Read entry"
+    "readEntry": "Read entry",
+    "backLink": "← Diaries",
+    "backToList": "← Back to diaries",
+    "notPublished": "That entry isn't published."
   },
   "stories": {
     "eyebrow": "The Longer Form",
     "title": "Stories",
     "intro": "Essays and reported pieces. Slower than a diary, sharper than a poem.",
     "empty": "No stories published yet.",
-    "read": "Read"
+    "read": "Read",
+    "backLink": "← Stories",
+    "backToList": "← Back to stories"
   },
   "newsletterPage": {
     "eyebrow": "Mailing list",
@@ -118,7 +125,8 @@
     "signIn": "Sign in",
     "signInPrompt": "to bookmark favourites, comment and manage your profile.",
     "motion": "Motion",
-    "motionDesc": "The Last Mukwasu follows your system “reduce motion” setting automatically — hover reveals and zooms are minimised when it is switched on in your device accessibility settings."
+    "motionDesc": "The Last Mukwasu follows your system “reduce motion” setting automatically — hover reveals and zooms are minimised when it is switched on in your device accessibility settings.",
+    "signOut": "Sign out"
   },
   "newsletterForm": {
     "eyebrow": "Subscribe",
@@ -136,6 +144,7 @@
   },
   "comments": {
     "title": "Comments",
+    "myTitle": "Your comments",
     "signInPrompt": "Sign in to join the conversation.",
     "signIn": "Sign in",
     "toLeaveComment": "to leave a comment.",
@@ -211,5 +220,95 @@
     "viewAttachment": "View attachment",
     "editEntry": "Edit entry",
     "backToCollection": "Back to"
+  },
+  "paginator": {
+    "showing": "Showing {{first}}–{{last}} of {{total}}",
+    "prevAria": "Go to previous page",
+    "pageIndicator": "Page {{page}} / {{totalPages}}",
+    "pageAria": "Go to page {{page}}",
+    "nextAria": "Go to next page"
+  },
+  "taxonomy": {
+    "seriesAria": "Series"
+  },
+  "reactions": {
+    "groupAria": "Reactions",
+    "signInAria": "Sign in to react",
+    "genericError": "Failed"
+  },
+  "media": {
+    "closeAria": "Close viewer",
+    "unavailable": "Video unavailable here",
+    "openInNewTab": "Open video in a new tab",
+    "unsupported": "Your browser cannot play this video.",
+    "pip": "Picture in picture",
+    "fullscreen": "Fullscreen",
+    "featuredImagesAria": "Featured images",
+    "prevImageAria": "Previous image",
+    "nextImageAria": "Next image",
+    "goToImageAria": "Go to image {{n}}"
+  },
+  "broadcast": {
+    "notConfigured": "Stream source not configured",
+    "iframeTitle": "Live broadcast",
+    "live": "Live",
+    "broadcastingOn": "Broadcasting on",
+    "watchThere": "Watch there →",
+    "browserCantPlay": "This browser can't play the stream.",
+    "streamUnavailable": "Stream unavailable — the broadcast may be offline."
+  },
+  "detail": {
+    "notFoundTitle": "Not found",
+    "minRead": "{{mins}} min read",
+    "chapter": "Chapter {{n}}",
+    "openCoverImageAria": "Open cover image"
+  },
+  "dearToday": {
+    "eyebrow": "A collection",
+    "intro": "Small notes and quiet observations, dated as they arrive.",
+    "empty": "No entries yet.",
+    "backLink": "← Dear Today",
+    "backToList": "← Back to Dear Today"
+  },
+  "series": {
+    "backLink": "← Collection",
+    "notFoundBackLink": "← Back to Collection",
+    "label": "Series",
+    "empty": "Nothing published in this collection yet.",
+    "story": "Story",
+    "diary": "Diary"
+  },
+  "profile": {
+    "title": "Your profile",
+    "displayName": "Display name",
+    "avatar": "Avatar",
+    "bio": "Bio",
+    "saving": "Saving…",
+    "save": "Save profile",
+    "saved": "Profile saved",
+    "genericError": "Failed"
+  },
+  "bookmarksPage": {
+    "title": "Your bookmarks",
+    "intro": "Saved stories, diaries, and more.",
+    "empty": "Nothing saved yet.",
+    "removedItem": "(removed)",
+    "open": "Open →",
+    "remove": "Remove"
+  },
+  "newsletterStatus": {
+    "backHome": "← Back home",
+    "missingConfirmLink": "Missing confirmation link",
+    "confirming": "Confirming…",
+    "confirmed": "You're confirmed",
+    "confirmedDesc": "Letters from the lounge will start landing in your inbox.",
+    "confirmExpired": "Link expired or already used",
+    "confirmExpiredDesc": "Confirmation links are valid for 7 days. If you still want in, subscribe again below.",
+    "missingUnsubLink": "Missing unsubscribe link",
+    "unsubscribing": "One moment…",
+    "unsubscribed": "You're unsubscribed",
+    "unsubscribedDesc": "You won't hear from the mailing list again. You're always welcome back.",
+    "unsubNotRecognised": "Link not recognised",
+    "unsubNotRecognisedDesc": "This link may have already been used, or has expired."
   }
 }

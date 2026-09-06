@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,7 @@ export const Route = createFileRoute("/_authenticated/account/")({
 });
 
 function ProfilePage() {
+  const { t } = useTranslation();
   const [userId, setUserId] = useState<string | null>(null);
   const [email, setEmail] = useState<string>("");
   const [form, setForm] = useState({ display_name: "", avatar_url: "", bio: "" });
@@ -31,7 +33,11 @@ function ProfilePage() {
         .eq("user_id", u.user.id)
         .maybeSingle();
       if (data) {
-        const p = data as unknown as { display_name: string | null; avatar_url: string | null; bio: string | null };
+        const p = data as unknown as {
+          display_name: string | null;
+          avatar_url: string | null;
+          bio: string | null;
+        };
         setForm({
           display_name: p.display_name ?? "",
           avatar_url: p.avatar_url ?? "",
@@ -50,25 +56,27 @@ function ProfilePage() {
         .from("profiles")
         .upsert({ user_id: userId, ...form }, { onConflict: "user_id" });
       if (error) throw error;
-      toast.success("Profile saved");
+      toast.success(t("profile.saved"));
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed");
+      toast.error(e instanceof Error ? e.message : t("profile.genericError"));
     } finally {
       setSaving(false);
     }
   }
 
-  if (loading) return <p className="text-white/40">Loading…</p>;
+  if (loading) return <p className="text-white/40">{t("common.loading")}</p>;
 
   return (
     <div className="max-w-xl space-y-6">
       <div>
-        <h1 className="font-display text-3xl uppercase">Your profile</h1>
-        <p className="text-sm text-white/50">Signed in as <span className="font-mono">{email}</span></p>
+        <h1 className="font-display text-3xl uppercase">{t("profile.title")}</h1>
+        <p className="text-sm text-white/50">
+          {t("settings.signedInAs")} <span className="font-mono">{email}</span>
+        </p>
       </div>
       <div className="space-y-4">
         <div className="space-y-2">
-          <Label>Display name</Label>
+          <Label>{t("profile.displayName")}</Label>
           <Input
             value={form.display_name}
             onChange={(e) => setForm({ ...form, display_name: e.target.value })}
@@ -77,12 +85,12 @@ function ProfilePage() {
         </div>
         <ImageUpload
           folder="avatars"
-          label="Avatar"
+          label={t("profile.avatar")}
           value={form.avatar_url}
           onChange={(v) => setForm({ ...form, avatar_url: v })}
         />
         <div className="space-y-2">
-          <Label>Bio</Label>
+          <Label>{t("profile.bio")}</Label>
           <Textarea
             value={form.bio}
             onChange={(e) => setForm({ ...form, bio: e.target.value })}
@@ -90,7 +98,7 @@ function ProfilePage() {
           />
         </div>
         <Button onClick={save} disabled={saving}>
-          {saving ? "Saving…" : "Save profile"}
+          {saving ? t("profile.saving") : t("profile.save")}
         </Button>
       </div>
     </div>

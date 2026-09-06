@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
 import { useMediaViewer } from "@/components/site/MediaViewer";
@@ -11,9 +12,27 @@ import { StudioEditLink } from "@/components/site/StudioEditLink";
 import { CommentsSection } from "@/components/site/CommentsSection";
 import { TaxonomyBreadcrumb } from "@/components/site/TaxonomyBreadcrumb";
 
+function StoryNotFound() {
+  const { t } = useTranslation();
+  return (
+    <PageShell>
+      <div className="mx-auto max-w-2xl px-5 py-16 text-center md:py-24">
+        <h1 className="font-display text-6xl uppercase">{t("detail.notFoundTitle")}</h1>
+        <Link
+          to="/stories"
+          className="mt-6 inline-block font-mono text-xs uppercase tracking-widest text-white/60 hover:text-white"
+        >
+          {t("stories.backToList")}
+        </Link>
+      </div>
+    </PageShell>
+  );
+}
+
 export const Route = createFileRoute("/stories_/$slug")({
   head: ({ loaderData }) => {
-    const s = loaderData as { title?: string; excerpt?: string | null; cover_image_url?: string | null } | undefined;
+    const s = loaderData as
+      { title?: string; excerpt?: string | null; cover_image_url?: string | null } | undefined;
     if (!s) return { meta: [{ title: "Story" }, { name: "robots", content: "noindex" }] };
     const desc = s.excerpt ?? "";
     return {
@@ -27,30 +46,36 @@ export const Route = createFileRoute("/stories_/$slug")({
     };
   },
   loader: async ({ params }) => {
-    const { data } = await supabase.from("stories").select("*").eq("slug", params.slug).eq("published", true).maybeSingle();
+    const { data } = await supabase
+      .from("stories")
+      .select("*")
+      .eq("slug", params.slug)
+      .eq("published", true)
+      .maybeSingle();
     if (!data) throw notFound();
     return data;
   },
   errorComponent: ({ error }) => (
-    <PageShell><div className="mx-auto max-w-2xl p-16 text-center text-white/50">{error.message}</div></PageShell>
-  ),
-  notFoundComponent: () => (
     <PageShell>
-      <div className="mx-auto max-w-2xl px-5 py-16 text-center md:py-24">
-        <h1 className="font-display text-6xl uppercase">Not found</h1>
-        <Link to="/stories" className="mt-6 inline-block font-mono text-xs uppercase tracking-widest text-white/60 hover:text-white">← Back to stories</Link>
-      </div>
+      <div className="mx-auto max-w-2xl p-16 text-center text-white/50">{error.message}</div>
     </PageShell>
   ),
+  notFoundComponent: StoryNotFound,
   component: StoryPage,
 });
 
 function StoryPage() {
+  const { t } = useTranslation();
   const params = Route.useParams();
   const { data: s } = useQuery({
     queryKey: ["public", "story", params.slug],
     queryFn: async () => {
-      const { data, error } = await supabase.from("stories").select("*").eq("slug", params.slug).eq("published", true).maybeSingle();
+      const { data, error } = await supabase
+        .from("stories")
+        .select("*")
+        .eq("slug", params.slug)
+        .eq("published", true)
+        .maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -63,23 +88,41 @@ function StoryPage() {
     <PageShell>
       <ReadingProgress />
       <article className="mx-auto max-w-3xl px-5 py-10 md:px-12 md:py-16">
-        <Link to="/stories" className="font-mono text-[10px] uppercase tracking-widest text-white/40 hover:text-white">← Stories</Link>
+        <Link
+          to="/stories"
+          className="font-mono text-[10px] uppercase tracking-widest text-white/40 hover:text-white"
+        >
+          {t("stories.backLink")}
+        </Link>
         <div className="mt-6 flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-white/40">
           {s.published_at && (
-            <span>{new Date(s.published_at).toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" })}</span>
+            <span>
+              {new Date(s.published_at).toLocaleDateString(undefined, {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            </span>
           )}
           {s.published_at && <span>·</span>}
-          <span>{mins} min read</span>
+          <span>{t("detail.minRead", { mins })}</span>
         </div>
         <TaxonomyBreadcrumb ref={s} />
         {(s.chapter_number != null || s.chapter_title || s.part_number != null || s.part_title) && (
           <p className="mt-4 font-mono text-[11px] uppercase tracking-[0.2em] text-white/50">
-            {s.chapter_number != null && <>Chapter {s.chapter_number}{s.part_number != null ? `.${s.part_number}` : ""}</>}
+            {s.chapter_number != null && (
+              <>
+                {t("detail.chapter", { n: s.chapter_number })}
+                {s.part_number != null ? `.${s.part_number}` : ""}
+              </>
+            )}
             {s.chapter_title && <> — {s.chapter_title}</>}
             {s.part_title && <> · {s.part_title}</>}
           </p>
         )}
-        <h1 className="mt-3 font-display text-4xl uppercase leading-tight tracking-tight sm:text-5xl md:text-7xl">{s.title}</h1>
+        <h1 className="mt-3 font-display text-4xl uppercase leading-tight tracking-tight sm:text-5xl md:text-7xl">
+          {s.title}
+        </h1>
         {s.excerpt && (
           <p className="mt-6 border-l-2 border-white/30 pl-4 font-display text-xl italic tracking-tight text-white/70 md:text-2xl">
             {s.excerpt}
@@ -90,9 +133,13 @@ function StoryPage() {
             type="button"
             onClick={() => open({ kind: "image", src: s.cover_image_url!, alt: s.title })}
             className="group mt-10 block w-full overflow-hidden border border-white/10"
-            aria-label="Open cover image"
+            aria-label={t("detail.openCoverImageAria")}
           >
-            <img src={s.cover_image_url} alt="" className="w-full object-cover transition-transform duration-700 group-hover:scale-[1.02] motion-reduce:group-hover:scale-100" />
+            <img
+              src={s.cover_image_url}
+              alt=""
+              className="w-full object-cover transition-transform duration-700 group-hover:scale-[1.02] motion-reduce:group-hover:scale-100"
+            />
           </button>
         )}
         {s.body && (
@@ -109,7 +156,12 @@ function StoryPage() {
         </div>
         <CommentsSection contentType="story" contentId={s.id} />
         <div className="mt-16 border-t border-white/10 pt-6">
-          <Link to="/stories" className="font-mono text-[10px] uppercase tracking-widest text-white/50 hover:text-white">← Back to stories</Link>
+          <Link
+            to="/stories"
+            className="font-mono text-[10px] uppercase tracking-widest text-white/50 hover:text-white"
+          >
+            {t("stories.backToList")}
+          </Link>
         </div>
       </article>
     </PageShell>
