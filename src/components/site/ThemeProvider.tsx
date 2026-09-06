@@ -30,8 +30,9 @@ export const themeInitScript = `(function(){try{var t=localStorage.getItem(${JSO
   THEME_STORAGE_KEY,
 )});var ok=${JSON.stringify(THEMES.map((t) => t.id))};if(t&&ok.indexOf(t)>-1){document.documentElement.dataset.theme=t;}}catch(e){}})();`;
 
-type Ctx = { theme: ThemeId; setTheme: (t: ThemeId) => void; canPersonalize: boolean };
-const ThemeCtx = createContext<Ctx>({ theme: "kraft", setTheme: () => {}, canPersonalize: false });
+type PersonalizeState = "checking" | "enabled" | "disabled";
+type Ctx = { theme: ThemeId; setTheme: (t: ThemeId) => void; personalize: PersonalizeState };
+const ThemeCtx = createContext<Ctx>({ theme: "kraft", setTheme: () => {}, personalize: "checking" });
 
 export function useTheme() {
   return useContext(ThemeCtx);
@@ -46,7 +47,7 @@ const THEME_CHANNEL = "yans-theme-sync";
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<ThemeId>("kraft");
-  const [canPersonalize, setCanPersonalize] = useState(false);
+  const [personalize, setPersonalize] = useState<PersonalizeState>("checking");
 
   // Adopt whatever was cached locally first, so there's no flash while
   // we go check the server for the authoritative value.
@@ -62,33 +63,40 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const { data: userData } = await supabase.auth.getUser();
-      const user = userData.user;
+      try {
+        const { data: userData } = await supabase.auth.getUser();
+        const user = userData.user;
 
-      if (user) {
-        const { data: profile } = await supabase
-          .from("profiles")
-          .select("theme")
-          .eq("user_id", user.id)
+        if (user) {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("theme")
+            .eq("user_id", user.id)
+            .maybeSingle();
+          if (cancelled) return;
+          setPersonalize("enabled");
+          if (profile?.theme && isTheme(profile.theme)) {
+            applyTheme(profile.theme);
+            return;
+          }
+        } else {
+          setPersonalize("disabled");
+        }
+
+        const { data: settings } = await supabase
+          .from("site_settings")
+          .select("default_theme")
+          .eq("id", "default")
           .maybeSingle();
         if (cancelled) return;
-        setCanPersonalize(true);
-        if (profile?.theme && isTheme(profile.theme)) {
-          applyTheme(profile.theme);
-          return;
+        if (settings?.default_theme && isTheme(settings.default_theme)) {
+          applyTheme(settings.default_theme);
         }
-      } else {
-        setCanPersonalize(false);
-      }
-
-      const { data: settings } = await supabase
-        .from("site_settings")
-        .select("default_theme")
-        .eq("id", "default")
-        .maybeSingle();
-      if (cancelled) return;
-      if (settings?.default_theme && isTheme(settings.default_theme)) {
-        applyTheme(settings.default_theme);
+      } catch {
+        // Network hiccup or similar — fail safe to "disabled" rather than
+        // leaving personalize stuck on "checking" forever, which would
+        // permanently show a loading state instead of ever settling.
+        if (!cancelled) setPersonalize("disabled");
       }
     })();
     return () => {
@@ -134,14 +142,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const value = useMemo<Ctx>(
     () => ({
       theme,
-      canPersonalize,
+      personalize,
       setTheme: (t) => {
         // Personalizing your own theme requires an account — this
         // mirrors bookmarks/comments/reactions, which are also
         // account-gated. Anonymous visitors see the site-wide default
         // an admin has chosen; ThemePicker hides the controls for them
         // rather than relying on this being silently ignored.
-        if (!canPersonalize) return;
+        if (personalize !== "enabled") return;
         setThemeState(t);
         try {
           window.localStorage.setItem(THEME_STORAGE_KEY, t);
@@ -164,7 +172,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         })();
       },
     }),
-    [theme, canPersonalize],
+    [theme, personalize],
   );
 
   return <ThemeCtx.Provider value={value}>{children}</ThemeCtx.Provider>;
@@ -206,9 +214,25 @@ export function ThemeSwitcher({ className = "" }: { className?: string }) {
  * prompt instead of the picker. */
 export function ThemePicker({ className = "" }: { className?: string }) {
   const { t } = useTranslation();
-  const { theme, setTheme, canPersonalize } = useTheme();
+  const { theme, setTheme, personalize } = useTheme();
 
-  if (!canPersonalize) {
+  if (personalize === "checking") {
+    // Don't assert "sign in" while we still don't actually know — that
+    // briefly told signed-in users they weren't, and clicking the link
+    // it showed sent them to /auth despite already being authenticated.
+    return (
+      <div className={`surface-card flex items-center gap-3 p-4 ${className}`}>
+        <span
+          aria-hidden="true"
+          className="h-9 w-9 shrink-0 animate-pulse rounded-full bg-white/10"
+        />
+        <span className="h-3 w-32 animate-pulse rounded bg-white/10" aria-hidden="true" />
+        <span className="sr-only">{t("theme.checking")}</span>
+      </div>
+    );
+  }
+
+  if (personalize === "disabled") {
     const current = THEMES.find((th) => th.id === theme);
     return (
       <div className={`surface-card flex items-center gap-3 p-4 ${className}`}>
