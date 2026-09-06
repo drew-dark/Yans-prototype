@@ -1,17 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 const AUTOPLAY_MS = 5000;
 
-export function HeroCarousel({
-  images,
-  className = "",
-}: {
-  images: string[];
-  className?: string;
-}) {
+export function HeroCarousel({ images, className = "" }: { images: string[]; className?: string }) {
   const [index, setIndex] = useState(0);
+  const { t } = useTranslation();
   const reduceMotion = useReducedMotion();
   const count = images.length;
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -49,7 +45,7 @@ export function HeroCarousel({
       onMouseEnter={pauseAndReset}
       role="region"
       aria-roledescription="carousel"
-      aria-label="Featured images"
+      aria-label={t("media.featuredImagesAria")}
     >
       <div
         className={`flex h-full ${reduceMotion ? "" : "transition-transform duration-700 ease-out"}`}
@@ -72,7 +68,7 @@ export function HeroCarousel({
           <button
             type="button"
             onClick={prev}
-            aria-label="Previous image"
+            aria-label={t("media.prevImageAria")}
             className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-1.5 text-white opacity-0 backdrop-blur-sm transition-opacity hover:bg-black/70 focus-visible:opacity-100 group-hover/hero:opacity-100"
           >
             <ChevronLeft className="h-4 w-4" />
@@ -80,7 +76,7 @@ export function HeroCarousel({
           <button
             type="button"
             onClick={next}
-            aria-label="Next image"
+            aria-label={t("media.nextImageAria")}
             className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-1.5 text-white opacity-0 backdrop-blur-sm transition-opacity hover:bg-black/70 focus-visible:opacity-100 group-hover/hero:opacity-100"
           >
             <ChevronRight className="h-4 w-4" />
@@ -92,7 +88,7 @@ export function HeroCarousel({
                 key={i}
                 type="button"
                 onClick={() => goTo(i)}
-                aria-label={`Go to image ${i + 1}`}
+                aria-label={t("media.goToImageAria", { n: i + 1 })}
                 aria-current={i === index}
                 className={`h-1.5 rounded-full transition-all ${
                   i === index ? "w-5 bg-white" : "w-1.5 bg-white/40 hover:bg-white/70"

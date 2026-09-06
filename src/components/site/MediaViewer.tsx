@@ -1,4 +1,13 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
+import { useTranslation } from "react-i18next";
 import { getEmbedUrl, isPlayable, mediaKind, mimeTypeFor, IMAGE_EXT_RE } from "@/lib/media";
 
 type MediaItem =
@@ -22,10 +31,15 @@ export function mediaItemFor(src: string, caption?: string): MediaItem {
 }
 
 export function MediaViewerProvider({ children }: { children: ReactNode }) {
+  const { t } = useTranslation();
   const [item, setItem] = useState<MediaItem | null>(null);
   const open = useCallback((i: MediaItem) => {
     // Normalise: an "image" that is actually a video/embed URL still plays.
-    setItem(i.kind === "image" && isPlayable(i.src) ? { kind: "video", src: i.src, caption: i.caption } : i);
+    setItem(
+      i.kind === "image" && isPlayable(i.src)
+        ? { kind: "video", src: i.src, caption: i.caption }
+        : i,
+    );
   }, []);
   const close = useCallback(() => setItem(null), []);
 
@@ -45,11 +59,14 @@ export function MediaViewerProvider({ children }: { children: ReactNode }) {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label={item.kind === "image" ? item.alt ?? "Image" : "Video"}
+          aria-label={item.kind === "image" ? (item.alt ?? t("common.image")) : t("common.video")}
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 p-4"
           onClick={close}
         >
-          <div className="relative max-h-full w-full max-w-6xl" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="relative max-h-full w-full max-w-6xl"
+            onClick={(e) => e.stopPropagation()}
+          >
             {item.kind === "image" ? (
               <img
                 src={item.src}
@@ -68,10 +85,10 @@ export function MediaViewerProvider({ children }: { children: ReactNode }) {
           <button
             type="button"
             onClick={close}
-            aria-label="Close viewer"
+            aria-label={t("media.closeAria")}
             className="absolute right-6 top-6 font-mono text-xs uppercase tracking-widest text-white/60 hover:text-white"
           >
-            Close ✕
+            {t("common.close")} ✕
           </button>
         </div>
       )}
@@ -88,7 +105,7 @@ export function VideoPlayer({
   poster,
   autoPlay = false,
   className = "",
-  title = "Video",
+  title,
 }: {
   src: string;
   poster?: string;
@@ -96,13 +113,16 @@ export function VideoPlayer({
   className?: string;
   title?: string;
 }) {
+  const { t } = useTranslation();
+  const resolvedTitle = title ?? t("common.video");
   const [failed, setFailed] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const embed = getEmbedUrl(src);
 
   const togglePip = async () => {
-    const v = videoRef.current as (HTMLVideoElement & { requestPictureInPicture?: () => Promise<unknown> }) | null;
+    const v = videoRef.current as
+      (HTMLVideoElement & { requestPictureInPicture?: () => Promise<unknown> }) | null;
     if (!v) return;
     try {
       if (document.pictureInPictureElement) await document.exitPictureInPicture();
@@ -114,7 +134,8 @@ export function VideoPlayer({
 
   const toggleFullscreen = async () => {
     const el = wrapRef.current;
-    const v = videoRef.current as (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | null;
+    const v = videoRef.current as
+      (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | null;
     try {
       if (document.fullscreenElement) await document.exitFullscreen();
       else if (el?.requestFullscreen) await el.requestFullscreen();
@@ -126,10 +147,13 @@ export function VideoPlayer({
 
   if (embed) {
     return (
-      <div className={`relative w-full overflow-hidden bg-black ${className}`} style={{ aspectRatio: "16 / 9" }}>
+      <div
+        className={`relative w-full overflow-hidden bg-black ${className}`}
+        style={{ aspectRatio: "16 / 9" }}
+      >
         <iframe
           src={autoPlay ? `${embed}${embed.includes("?") ? "&" : "?"}autoplay=1` : embed}
-          title={title}
+          title={resolvedTitle}
           loading="lazy"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
           allowFullScreen
@@ -142,9 +166,16 @@ export function VideoPlayer({
   if (failed) {
     return (
       <div className={`flex flex-col items-center gap-2 bg-black/60 p-6 text-center ${className}`}>
-        <p className="font-mono text-[10px] uppercase tracking-widest text-white/50">Video unavailable here</p>
-        <a href={src} target="_blank" rel="noreferrer" className="text-sm text-white underline underline-offset-4 break-all">
-          Open video in a new tab
+        <p className="font-mono text-[10px] uppercase tracking-widest text-white/50">
+          {t("media.unavailable")}
+        </p>
+        <a
+          href={src}
+          target="_blank"
+          rel="noreferrer"
+          className="text-sm text-white underline underline-offset-4 break-all"
+        >
+          {t("media.openInNewTab")}
         </a>
       </div>
     );
@@ -163,13 +194,13 @@ export function VideoPlayer({
         className="max-h-[85vh] w-full bg-black"
       >
         <source src={src} type={mimeTypeFor(src)} />
-        Your browser cannot play this video.
+        {t("media.unsupported")}
       </video>
       <div className="pointer-events-none absolute right-2 top-2 flex gap-2 opacity-0 transition-opacity group-hover/player:opacity-100 focus-within:opacity-100 motion-reduce:transition-none">
         <button
           type="button"
           onClick={togglePip}
-          aria-label="Picture in picture"
+          aria-label={t("media.pip")}
           className="pointer-events-auto rounded bg-black/70 px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-white/80 hover:text-white"
         >
           PiP
@@ -177,7 +208,7 @@ export function VideoPlayer({
         <button
           type="button"
           onClick={toggleFullscreen}
-          aria-label="Fullscreen"
+          aria-label={t("media.fullscreen")}
           className="pointer-events-auto rounded bg-black/70 px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-white/80 hover:text-white"
         >
           ⛶
@@ -193,7 +224,6 @@ export function VideoPlayer({
 // Any bare http(s) URL ending in an image or video extension, or a supported
 // video-provider link, is also detected.
 const IMG_EXT = IMAGE_EXT_RE;
-
 
 export function RichBody({ text, className = "" }: { text: string; className?: string }) {
   const { open } = useMediaViewer();
@@ -214,7 +244,12 @@ export function RichBody({ text, className = "" }: { text: string; className?: s
               onClick={() => open({ kind: "image", src, alt, caption: alt || undefined })}
               className="my-6 block w-full overflow-hidden border border-white/10"
             >
-              <img src={src} alt={alt} loading="lazy" className="w-full object-cover transition-transform duration-500 hover:scale-105 motion-reduce:transition-none motion-reduce:hover:scale-100" />
+              <img
+                src={src}
+                alt={alt}
+                loading="lazy"
+                className="w-full object-cover transition-transform duration-500 hover:scale-105 motion-reduce:transition-none motion-reduce:hover:scale-100"
+              />
             </button>
           );
         }
@@ -228,7 +263,10 @@ export function RichBody({ text, className = "" }: { text: string; className?: s
           return <VideoPlayer key={i} src={trimmed} className="my-6 border border-white/10" />;
         }
 
-        if (/^https?:\/\//.test(trimmed) && (IMG_EXT.test(trimmed) || mediaKind(trimmed) === "image")) {
+        if (
+          /^https?:\/\//.test(trimmed) &&
+          (IMG_EXT.test(trimmed) || mediaKind(trimmed) === "image")
+        ) {
           return (
             <button
               key={i}
@@ -236,11 +274,15 @@ export function RichBody({ text, className = "" }: { text: string; className?: s
               onClick={() => open({ kind: "image", src: trimmed })}
               className="my-6 block w-full overflow-hidden border border-white/10"
             >
-              <img src={trimmed} alt="" loading="lazy" className="w-full object-cover transition-transform duration-500 hover:scale-105 motion-reduce:transition-none motion-reduce:hover:scale-100" />
+              <img
+                src={trimmed}
+                alt=""
+                loading="lazy"
+                className="w-full object-cover transition-transform duration-500 hover:scale-105 motion-reduce:transition-none motion-reduce:hover:scale-100"
+              />
             </button>
           );
         }
-
 
         return (
           <p key={i} className="whitespace-pre-wrap">

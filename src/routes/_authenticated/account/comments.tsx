@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -18,6 +19,7 @@ type Row = {
 };
 
 function MyCommentsPage() {
+  const { t } = useTranslation();
   const [rows, setRows] = useState<Row[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -44,7 +46,7 @@ function MyCommentsPage() {
   }, []);
 
   async function del(id: string) {
-    if (!confirm("Delete this comment?")) return;
+    if (!confirm(t("comments.deleteConfirm"))) return;
     const { error } = await supabase.from("comments").delete().eq("id", id);
     if (error) return toast.error(error.message);
     await load();
@@ -52,11 +54,11 @@ function MyCommentsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="font-display text-3xl uppercase">Your comments</h1>
+      <h1 className="font-display text-3xl uppercase">{t("comments.myTitle")}</h1>
       {loading ? (
-        <p className="text-white/40">Loading…</p>
+        <p className="text-white/40">{t("comments.loading")}</p>
       ) : rows.length === 0 ? (
-        <p className="text-white/40">No comments yet.</p>
+        <p className="text-white/40">{t("comments.empty")}</p>
       ) : (
         <div className="space-y-2">
           {rows.map((r) => (
@@ -67,10 +69,12 @@ function MyCommentsPage() {
                 </span>
                 <div className="flex items-center gap-2">
                   {r.status === "hidden" && (
-                    <span className="rounded bg-red-500/20 px-1.5 py-0.5 text-red-300">Hidden</span>
+                    <span className="rounded bg-red-500/20 px-1.5 py-0.5 text-red-300">
+                      {t("comments.hidden")}
+                    </span>
                   )}
                   <Button size="sm" variant="ghost" onClick={() => del(r.id)}>
-                    Delete
+                    {t("comments.delete")}
                   </Button>
                 </div>
               </div>

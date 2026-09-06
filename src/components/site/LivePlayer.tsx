@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 /**
  * Plays an HLS (.m3u8) live stream or recording. Uses native HLS where the
@@ -19,6 +20,7 @@ export function LivePlayer({
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const wrapRef = useRef<HTMLDivElement | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const video = videoRef.current;
@@ -43,14 +45,14 @@ export function LivePlayer({
       const { default: Hls } = await import("hls.js");
       if (cancelled) return;
       if (!Hls.isSupported()) {
-        setError("This browser can't play the stream.");
+        setError(t("broadcast.browserCantPlay"));
         return;
       }
       const hls = new Hls({ lowLatencyMode: live, enableWorker: true });
       hls.loadSource(src);
       hls.attachMedia(video);
       hls.on(Hls.Events.ERROR, (_e, data) => {
-        if (data.fatal) setError("Stream unavailable — the broadcast may be offline.");
+        if (data.fatal) setError(t("broadcast.streamUnavailable"));
       });
       destroy = () => hls.destroy();
     })();
@@ -59,12 +61,11 @@ export function LivePlayer({
       cancelled = true;
       destroy?.();
     };
-  }, [src, live]);
+  }, [src, live, t]);
 
   const togglePip = async () => {
     const v = videoRef.current as
-      | (HTMLVideoElement & { requestPictureInPicture?: () => Promise<unknown> })
-      | null;
+      (HTMLVideoElement & { requestPictureInPicture?: () => Promise<unknown> }) | null;
     if (!v) return;
     try {
       if (document.pictureInPictureElement) await document.exitPictureInPicture();
@@ -76,7 +77,8 @@ export function LivePlayer({
 
   const toggleFullscreen = async () => {
     const el = wrapRef.current;
-    const v = videoRef.current as (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | null;
+    const v = videoRef.current as
+      (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | null;
     try {
       if (document.fullscreenElement) await document.exitFullscreen();
       else if (el?.requestFullscreen) await el.requestFullscreen();
@@ -102,7 +104,7 @@ export function LivePlayer({
         <button
           type="button"
           onClick={togglePip}
-          aria-label="Picture in picture"
+          aria-label={t("media.pip")}
           className="pointer-events-auto rounded bg-black/70 px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-white/80 hover:text-white"
         >
           PiP
@@ -110,7 +112,7 @@ export function LivePlayer({
         <button
           type="button"
           onClick={toggleFullscreen}
-          aria-label="Fullscreen"
+          aria-label={t("media.fullscreen")}
           className="pointer-events-auto rounded bg-black/70 px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-white/80 hover:text-white"
         >
           ⛶
@@ -118,7 +120,7 @@ export function LivePlayer({
       </div>
       {live && (
         <span className="pointer-events-none absolute left-2 top-2 rounded bg-red-600/90 px-2 py-0.5 font-mono text-[10px] uppercase tracking-widest text-white">
-          ● Live
+          ● {t("broadcast.live")}
         </span>
       )}
       {error && (

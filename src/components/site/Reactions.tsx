@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { ContentKind } from "./BookmarkButton";
@@ -45,6 +46,7 @@ export function ReactionBar({
 }) {
   const [userId, setUserId] = useState<string | null>(null);
   const [checking, setChecking] = useState(true);
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const { data: rows = [] } = useReactions(contentType, contentId);
 
@@ -87,14 +89,18 @@ export function ReactionBar({
       }
       qc.invalidateQueries({ queryKey: key });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed");
+      toast.error(e instanceof Error ? e.message : t("reactions.genericError"));
     }
   }
 
   if (checking) return null;
 
   return (
-    <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Reactions">
+    <div
+      className="flex flex-wrap items-center gap-1.5"
+      role="group"
+      aria-label={t("reactions.groupAria")}
+    >
       {REACTION_EMOJI.map((emoji) => {
         const count = counts.get(emoji) ?? 0;
         const active = mine.has(emoji);
@@ -106,7 +112,12 @@ export function ReactionBar({
 
         if (!userId) {
           return (
-            <Link key={emoji} to="/auth" className={className} aria-label="Sign in to react">
+            <Link
+              key={emoji}
+              to="/auth"
+              className={className}
+              aria-label={t("reactions.signInAria")}
+            >
               <span>{emoji}</span>
               {count > 0 && <span className="font-mono text-[10px]">{count}</span>}
             </Link>

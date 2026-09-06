@@ -7,6 +7,7 @@ import {
   PaginationPrevious,
   PaginationEllipsis,
 } from "@/components/ui/pagination";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   page: number;
@@ -41,12 +42,10 @@ export function Paginator({
   currentCount,
   className = "",
 }: Props) {
+  const { t } = useTranslation();
   const showSummary = typeof total === "number" && typeof pageSize === "number" && total > 0;
   const first = (page - 1) * (pageSize ?? 0) + 1;
-  const last = Math.min(
-    total ?? 0,
-    first - 1 + (currentCount ?? pageSize ?? 0),
-  );
+  const last = Math.min(total ?? 0, first - 1 + (currentCount ?? pageSize ?? 0));
 
   if (totalPages <= 1 && !showSummary) return null;
 
@@ -67,7 +66,7 @@ export function Paginator({
           aria-live="polite"
           className="font-mono text-[10px] uppercase tracking-widest text-white/40"
         >
-          Showing {first}–{last} of {total}
+          {t("paginator.showing", { first, last, total })}
         </p>
       )}
 
@@ -77,7 +76,7 @@ export function Paginator({
             <PaginationItem>
               <PaginationPrevious
                 href="#"
-                aria-label="Go to previous page"
+                aria-label={t("paginator.prevAria")}
                 aria-disabled={atStart}
                 tabIndex={atStart ? -1 : 0}
                 onClick={(e) => {
@@ -94,7 +93,7 @@ export function Paginator({
                 aria-live="polite"
                 className="whitespace-nowrap px-2 font-mono text-[11px] uppercase tracking-widest text-white/60"
               >
-                Page {page} / {totalPages}
+                {t("paginator.pageIndicator", { page, totalPages })}
               </span>
             </PaginationItem>
 
@@ -109,7 +108,7 @@ export function Paginator({
                     <PaginationLink
                       href="#"
                       isActive={p === page}
-                      aria-label={`Go to page ${p}`}
+                      aria-label={t("paginator.pageAria", { page: p })}
                       aria-current={p === page ? "page" : undefined}
                       onClick={(e) => {
                         e.preventDefault();
@@ -131,7 +130,7 @@ export function Paginator({
             <PaginationItem>
               <PaginationNext
                 href="#"
-                aria-label="Go to next page"
+                aria-label={t("paginator.nextAria")}
                 aria-disabled={atEnd}
                 tabIndex={atEnd ? -1 : 0}
                 onClick={(e) => {

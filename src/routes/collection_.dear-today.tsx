@@ -1,12 +1,19 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { keepPreviousData, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
 import { Paginator } from "@/components/site/Paginator";
 import { GridSkeleton } from "@/components/site/GridSkeleton";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
-import { isRangeOutOfBounds, pageRangeBounds, totalPagesFor, useScrollTopOnPageChange, validatePageSearch } from "@/lib/pagination";
+import {
+  isRangeOutOfBounds,
+  pageRangeBounds,
+  totalPagesFor,
+  useScrollTopOnPageChange,
+  validatePageSearch,
+} from "@/lib/pagination";
 
 const PAGE_SIZE = 10;
 
@@ -15,9 +22,15 @@ export const Route = createFileRoute("/collection_/dear-today")({
   head: () => ({
     meta: [
       { title: "Dear Today — The Last Mukwasu" },
-      { name: "description", content: "Dear Today — dated snippets, small notes, and quiet observations." },
+      {
+        name: "description",
+        content: "Dear Today — dated snippets, small notes, and quiet observations.",
+      },
       { property: "og:title", content: "Dear Today — The Last Mukwasu" },
-      { property: "og:description", content: "Dated snippets, small notes, and quiet observations." },
+      {
+        property: "og:description",
+        content: "Dated snippets, small notes, and quiet observations.",
+      },
       { property: "og:type", content: "website" },
     ],
   }),
@@ -49,6 +62,7 @@ const dearTodayQuery = (page: number) => ({
 });
 
 function DearTodayList() {
+  const { t } = useTranslation();
   const { page } = Route.useSearch();
   const navigate = useNavigate({ from: Route.fullPath });
   const qc = useQueryClient();
@@ -79,20 +93,18 @@ function DearTodayList() {
       <section className="mx-auto max-w-4xl px-5 py-10 md:px-12 md:py-16">
         <div className="mb-12 max-w-2xl">
           <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
-            A collection
+            {t("dearToday.eyebrow")}
           </p>
           <h1 className="font-display text-5xl uppercase leading-none tracking-tight sm:text-6xl md:text-8xl">
-            Dear Today
+            {t("nav.dearToday")}
           </h1>
-          <p className="mt-6 text-sm text-white/50 md:text-base">
-            Small notes and quiet observations, dated as they arrive.
-          </p>
+          <p className="mt-6 text-sm text-white/50 md:text-base">{t("dearToday.intro")}</p>
         </div>
 
         {isLoading ? (
           <GridSkeleton count={5} className="space-y-4" itemClassName="h-28 rounded" />
         ) : entries.length === 0 ? (
-          <p className="text-white/40">No entries yet.</p>
+          <p className="text-white/40">{t("dearToday.empty")}</p>
         ) : (
           <>
             <div
@@ -106,7 +118,12 @@ function DearTodayList() {
                   className="group flex gap-4 rounded border border-white/10 bg-neutral-900/40 transition-colors duration-300 hover:border-kraft/40 p-4 transition-colors hover:border-white/40"
                 >
                   {e.cover_url && (
-                    <img src={e.cover_url} alt="" loading="lazy" className="h-20 w-20 rounded object-cover md:h-24 md:w-24" />
+                    <img
+                      src={e.cover_url}
+                      alt=""
+                      loading="lazy"
+                      className="h-20 w-20 rounded object-cover md:h-24 md:w-24"
+                    />
                   )}
                   <div className="flex-1 min-w-0">
                     <p className="font-mono text-[10px] uppercase tracking-widest text-white/40">

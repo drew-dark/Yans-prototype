@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
 import { useMediaViewer } from "@/components/site/MediaViewer";
@@ -13,9 +14,27 @@ import type { Database } from "@/integrations/supabase/types";
 
 type DearTodayRow = Database["public"]["Tables"]["dear_today"]["Row"];
 
+function DearTodayNotFound() {
+  const { t } = useTranslation();
+  return (
+    <PageShell>
+      <div className="mx-auto max-w-2xl px-5 py-16 text-center md:py-24">
+        <h1 className="font-display text-6xl uppercase">{t("detail.notFoundTitle")}</h1>
+        <Link
+          to="/collection/dear-today"
+          className="mt-6 inline-block font-mono text-xs uppercase tracking-widest text-white/60 hover:text-white"
+        >
+          {t("dearToday.backToList")}
+        </Link>
+      </div>
+    </PageShell>
+  );
+}
+
 export const Route = createFileRoute("/collection_/dear-today_/$slug")({
   head: ({ loaderData }) => {
-    const e = loaderData as { title?: string; excerpt?: string | null; cover_url?: string | null } | undefined;
+    const e = loaderData as
+      { title?: string; excerpt?: string | null; cover_url?: string | null } | undefined;
     if (!e) return { meta: [{ title: "Dear Today" }, { name: "robots", content: "noindex" }] };
     const desc = e.excerpt ?? "";
     return {
@@ -43,20 +62,12 @@ export const Route = createFileRoute("/collection_/dear-today_/$slug")({
       <div className="mx-auto max-w-2xl p-16 text-center text-white/50">{error.message}</div>
     </PageShell>
   ),
-  notFoundComponent: () => (
-    <PageShell>
-      <div className="mx-auto max-w-2xl px-5 py-16 text-center md:py-24">
-        <h1 className="font-display text-6xl uppercase">Not found</h1>
-        <Link to="/collection/dear-today" className="mt-6 inline-block font-mono text-xs uppercase tracking-widest text-white/60 hover:text-white">
-          ← Back to Dear Today
-        </Link>
-      </div>
-    </PageShell>
-  ),
+  notFoundComponent: DearTodayNotFound,
   component: EntryPage,
 });
 
 function EntryPage() {
+  const { t } = useTranslation();
   const params = Route.useParams();
   const { data: e } = useQuery({
     queryKey: ["public", "dear_today", params.slug],
@@ -79,17 +90,24 @@ function EntryPage() {
     <PageShell>
       <ReadingProgress />
       <article className="mx-auto max-w-3xl px-5 py-10 md:px-12 md:py-16">
-        <Link to="/collection/dear-today" className="font-mono text-[10px] uppercase tracking-widest text-white/40 hover:text-white">
-          ← Dear Today
+        <Link
+          to="/collection/dear-today"
+          className="font-mono text-[10px] uppercase tracking-widest text-white/40 hover:text-white"
+        >
+          {t("dearToday.backLink")}
         </Link>
         <div className="mt-6 flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-white/40">
           <span>
-            {new Date(e.entry_date).toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" })}
+            {new Date(e.entry_date).toLocaleDateString(undefined, {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
           </span>
           {mins > 0 && (
             <>
               <span>·</span>
-              <span>{mins} min read</span>
+              <span>{t("detail.minRead", { mins })}</span>
             </>
           )}
         </div>
@@ -115,7 +133,11 @@ function EntryPage() {
           </button>
         )}
         {e.body && (
-          <Markdown text={e.body} dropCap className="mt-12 font-sans text-lg leading-[1.75] text-white/80" />
+          <Markdown
+            text={e.body}
+            dropCap
+            className="mt-12 font-sans text-lg leading-[1.75] text-white/80"
+          />
         )}
         <div className="mt-10 flex flex-wrap items-center gap-3">
           <BookmarkButton contentType="dear_today" contentId={e.id} />
