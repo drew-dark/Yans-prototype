@@ -272,6 +272,27 @@ export type Database = {
           },
         ]
       }
+      content_views: {
+        Row: {
+          content_id: string
+          content_type: Database["public"]["Enums"]["content_kind"]
+          first_viewed_at: string
+          user_id: string
+        }
+        Insert: {
+          content_id: string
+          content_type: Database["public"]["Enums"]["content_kind"]
+          first_viewed_at?: string
+          user_id: string
+        }
+        Update: {
+          content_id?: string
+          content_type?: Database["public"]["Enums"]["content_kind"]
+          first_viewed_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       dear_today: {
         Row: {
           author_id: string | null
@@ -640,27 +661,33 @@ export type Database = {
           bio: string | null
           created_at: string
           display_name: string | null
+          footsteps_visible: boolean
           theme: string | null
           updated_at: string
           user_id: string
+          username: string | null
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
           display_name?: string | null
+          footsteps_visible?: boolean
           theme?: string | null
           updated_at?: string
           user_id: string
+          username?: string | null
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
           created_at?: string
           display_name?: string | null
+          footsteps_visible?: boolean
           theme?: string | null
           updated_at?: string
           user_id?: string
+          username?: string | null
         }
         Relationships: []
       }
@@ -687,6 +714,36 @@ export type Database = {
           created_at?: string
           emoji?: string
           id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      reflections: {
+        Row: {
+          body: string
+          content_id: string | null
+          content_type: Database["public"]["Enums"]["content_kind"] | null
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          content_id?: string | null
+          content_type?: Database["public"]["Enums"]["content_kind"] | null
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          content_id?: string | null
+          content_type?: Database["public"]["Enums"]["content_kind"] | null
+          created_at?: string
+          id?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
