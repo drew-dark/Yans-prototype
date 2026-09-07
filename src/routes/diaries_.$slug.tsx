@@ -10,6 +10,7 @@ import { BookmarkButton } from "@/components/site/BookmarkButton";
 import { ReactionBar } from "@/components/site/Reactions";
 import { StudioEditLink } from "@/components/site/StudioEditLink";
 import { TaxonomyBreadcrumb } from "@/components/site/TaxonomyBreadcrumb";
+import { useRecordView } from "@/hooks/use-record-view";
 import { CommentsSection } from "@/components/site/CommentsSection";
 
 function DiaryNotFound() {
@@ -85,6 +86,7 @@ function EntryPage() {
     initialData: Route.useLoaderData(),
   });
   const { open } = useMediaViewer();
+  useRecordView("diary", e?.id);
   if (!e) return null;
   const mins = readingTimeMinutes(e.body);
   return (
