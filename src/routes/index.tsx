@@ -182,7 +182,7 @@ function Index() {
           Poet · Author · Journalist · Broadcaster
         </p>
 
-        <div className="group relative mt-8 h-[34vh] w-full max-w-6xl overflow-hidden border border-white/10 md:mt-14 md:h-[50vh]">
+        <div className="group relative mt-8 w-full max-w-6xl overflow-hidden border border-white/10 md:mt-14" style={{ height: "clamp(220px, 42vw, 620px)" }}>
           <HeroCarousel images={heroImages} className="h-full" />
         </div>
 
