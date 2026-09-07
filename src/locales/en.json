@@ -310,5 +310,12 @@
     "unsubscribedDesc": "You won't hear from the mailing list again. You're always welcome back.",
     "unsubNotRecognised": "Link not recognised",
     "unsubNotRecognisedDesc": "This link may have already been used, or has expired."
+  },
+  "footsteps": {
+    "private": "This page is private.",
+    "loading": "Loading…",
+    "empty": "Nothing here yet.",
+    "reacted": "reacted {{emoji}} to a {{type}}",
+    "read": "read a {{type}}"
   }
 }

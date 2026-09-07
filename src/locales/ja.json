@@ -310,5 +310,12 @@
     "unsubscribedDesc": "今後、配信リストからのメールは届きません。またいつでもお待ちしています。",
     "unsubNotRecognised": "リンクが認識できません",
     "unsubNotRecognisedDesc": "このリンクはすでに使用されたか、期限が切れている可能性があります。"
+  },
+  "footsteps": {
+    "private": "このページは非公開です。",
+    "loading": "読み込み中…",
+    "empty": "まだ何もありません。",
+    "reacted": "{{type}}に{{emoji}}でリアクションしました",
+    "read": "{{type}}を読みました"
   }
 }
