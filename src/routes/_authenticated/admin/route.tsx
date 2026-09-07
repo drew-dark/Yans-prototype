@@ -2,26 +2,53 @@ import { createFileRoute, Outlet, Link, useRouterState, useNavigate, redirect } 
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
+import { Menu } from "lucide-react";
 
 const STAFF_ROLES = ["admin", "editor", "moderator", "guest_author"] as const;
 
-const allNavItems = [
-  { to: "/admin/hero", label: "Hero", roles: ["admin", "editor"] },
-  { to: "/admin/collection", label: "Collection", roles: ["admin", "editor"] },
-  { to: "/admin/taxonomy", label: "Taxonomy", roles: ["admin", "editor"] },
-  { to: "/admin/stories", label: "Stories", roles: ["admin", "editor"] },
-  { to: "/admin/diary", label: "Diary", roles: ["admin", "editor"] },
-  { to: "/admin/dear-today", label: "Dear Today", roles: ["admin", "editor", "guest_author"] },
-  { to: "/admin/gallery", label: "Gallery", roles: ["admin", "editor"] },
-  { to: "/admin/collections", label: "Collections", roles: ["admin", "editor"] },
-  { to: "/admin/footprints", label: "Footprints", roles: ["admin", "editor"] },
-  { to: "/admin/shows", label: "Shows", roles: ["admin", "editor"] },
-  { to: "/admin/shop", label: "Shop", roles: ["admin", "editor"] },
-  { to: "/admin/about", label: "About", roles: ["admin", "editor"] },
-  { to: "/admin/comments", label: "Comments", roles: ["admin", "moderator"] },
-  { to: "/admin/newsletter", label: "Newsletter", roles: ["admin"] },
-  { to: "/admin/theme", label: "Theme", roles: ["admin"] },
-  { to: "/admin/users", label: "Users", roles: ["admin"] },
+// Grouped so the sidebar reads as sections instead of one flat wall of
+// 16 same-looking links — "Collection" (legacy gallery tiles) and
+// "Collections" (the Library system) sit in different groups on
+// purpose, since their near-identical names were easy to confuse
+// stacked together in a single list.
+const NAV_GROUPS = [
+  {
+    label: "Content",
+    items: [
+      { to: "/admin/stories", label: "Stories", roles: ["admin", "editor"] },
+      { to: "/admin/diary", label: "Diary", roles: ["admin", "editor"] },
+      { to: "/admin/dear-today", label: "Dear Today", roles: ["admin", "editor", "guest_author"] },
+      { to: "/admin/gallery", label: "Gallery Tiles", roles: ["admin", "editor"] },
+      { to: "/admin/collection", label: "Muyan Tiles (legacy)", roles: ["admin", "editor"] },
+      { to: "/admin/footprints", label: "Footprints", roles: ["admin", "editor"] },
+      { to: "/admin/shows", label: "Shows", roles: ["admin", "editor"] },
+    ],
+  },
+  {
+    label: "Collections",
+    items: [
+      { to: "/admin/collections", label: "Library & entries", roles: ["admin", "editor"] },
+      { to: "/admin/taxonomy", label: "Taxonomy (volumes/seasons)", roles: ["admin", "editor"] },
+    ],
+  },
+  {
+    label: "Homepage & shop",
+    items: [
+      { to: "/admin/hero", label: "Homepage hero", roles: ["admin", "editor"] },
+      { to: "/admin/shop", label: "Shop", roles: ["admin", "editor"] },
+      { to: "/admin/about", label: "About page", roles: ["admin", "editor"] },
+      { to: "/admin/theme", label: "Theme", roles: ["admin"] },
+    ],
+  },
+  {
+    label: "Community",
+    items: [
+      { to: "/admin/comments", label: "Comments", roles: ["admin", "moderator"] },
+      { to: "/admin/newsletter", label: "Newsletter", roles: ["admin"] },
+      { to: "/admin/users", label: "Users", roles: ["admin"] },
+    ],
+  },
 ] as const;
 
 export const Route = createFileRoute("/_authenticated/admin")({
@@ -59,7 +86,10 @@ function AdminLayout() {
   }
 
   const hasStaff = roles.some((r) => (STAFF_ROLES as readonly string[]).includes(r));
-  const navItems = allNavItems.filter((item) => item.roles.some((r) => roles.includes(r)));
+  const visibleGroups = NAV_GROUPS.map((g) => ({
+    ...g,
+    items: g.items.filter((item) => item.roles.some((r) => roles.includes(r))),
+  })).filter((g) => g.items.length > 0);
 
   if (checking) {
     return <div className="flex min-h-screen items-center justify-center bg-neutral-950 text-white/60">Loading…</div>;
@@ -82,14 +112,62 @@ function AdminLayout() {
     );
   }
 
+  const navContent = (
+    <nav className="space-y-6">
+      {visibleGroups.map((group) => (
+        <div key={group.label}>
+          <p className="mb-2 font-mono text-[10px] uppercase tracking-[0.25em] text-white/30">
+            {group.label}
+          </p>
+          <div className="space-y-0.5">
+            {group.items.map((item) => {
+              const active = pathname.startsWith(item.to);
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className={`block border-l-2 px-3 py-1.5 text-[12px] transition-colors ${
+                    active
+                      ? "border-kraft bg-kraft/10 text-white"
+                      : "border-transparent text-white/55 hover:border-white/25 hover:text-white"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </nav>
+  );
+
   return (
     <div className="min-h-screen bg-[color:var(--site-bg)] text-white">
       <header className="sticky top-0 z-40 border-b border-white/10 bg-[color:var(--site-bg)]/85 backdrop-blur">
-
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-3">
-          <Link to="/" className="shrink-0 font-display text-lg uppercase tracking-tight">
-            Yans <span className="text-white/40">/ admin</span>
-          </Link>
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 md:px-6">
+          <div className="flex min-w-0 items-center gap-2">
+            <Sheet>
+              <SheetTrigger className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded border border-white/15 text-white/60 hover:border-white/40 hover:text-white lg:hidden">
+                <Menu className="h-4 w-4" aria-hidden="true" />
+              </SheetTrigger>
+              <SheetContent side="left" className="w-72 border-white/10 bg-neutral-950 p-0 text-white">
+                <SheetHeader className="border-b border-white/10 px-5 py-4 text-left">
+                  <SheetTitle className="font-display text-lg uppercase tracking-tight text-white">
+                    Yans <span className="text-white/40">/ admin</span>
+                  </SheetTitle>
+                </SheetHeader>
+                <div className="overflow-y-auto p-5">
+                  <SheetClose asChild>
+                    <div>{navContent}</div>
+                  </SheetClose>
+                </div>
+              </SheetContent>
+            </Sheet>
+            <Link to="/" className="shrink-0 font-display text-lg uppercase tracking-tight">
+              Yans <span className="text-white/40">/ admin</span>
+            </Link>
+          </div>
           <div className="flex items-center gap-3 text-xs">
             <span className="hidden max-w-[180px] truncate text-white/40 md:inline">{email}</span>
             <Link
@@ -101,31 +179,14 @@ function AdminLayout() {
             <Button size="sm" variant="ghost" onClick={signOut}>Sign out</Button>
           </div>
         </div>
-        <div className="mx-auto max-w-6xl px-4 pb-2 md:px-6">
-          <nav className="flex flex-nowrap gap-1 overflow-x-auto pb-1 [scrollbar-width:none] md:flex-wrap md:overflow-visible [&::-webkit-scrollbar]:hidden">
-            {navItems.map((item) => {
-              const active = pathname.startsWith(item.to);
-              return (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                  className={`shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-[11px] uppercase tracking-widest transition-colors ${
-                    active
-                      ? "border-kraft bg-kraft text-ink-dark"
-                      : "border-white/15 text-white/60 hover:border-white/40 hover:text-white"
-                  }`}
-                >
-                  {item.label}
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-6 py-8">
-        <Outlet />
-      </main>
+      <div className="mx-auto flex max-w-7xl gap-8 px-4 py-8 md:px-6">
+        <aside className="hidden w-56 shrink-0 lg:block">{navContent}</aside>
+        <main className="min-w-0 flex-1">
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }

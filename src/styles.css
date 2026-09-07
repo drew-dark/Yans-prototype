@@ -308,10 +308,29 @@
     border: var(--surface-border);
     border-radius: var(--surface-radius);
     box-shadow: var(--surface-shadow);
-    transition: border-color 300ms ease, box-shadow 300ms ease;
+    transform: translateY(0);
+    transition: border-color 300ms ease, box-shadow 300ms ease, transform 300ms ease;
   }
-  .surface-card:hover {
+  .surface-card:hover,
+  .surface-card:focus-visible {
     border-color: var(--kraft);
+    box-shadow: var(--surface-shadow), 0 12px 28px rgba(0, 0, 0, 0.35);
+    transform: translateY(-3px);
+  }
+  /* Touch devices have no :hover — give tapping a card the same lift so
+     it isn't the only interaction on the site with zero visual feedback. */
+  .surface-card:active {
+    border-color: var(--kraft);
+    transform: translateY(-1px) scale(0.99);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .surface-card,
+    .surface-card:hover,
+    .surface-card:focus-visible,
+    .surface-card:active {
+      transition: border-color 200ms ease, box-shadow 200ms ease;
+      transform: none;
+    }
   }
 
   /* Nav dropdown panel + mobile drawer. Only backdrop-filter lives here —
