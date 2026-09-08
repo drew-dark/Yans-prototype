@@ -655,12 +655,45 @@ export type Database = {
         }
         Relationships: []
       }
+      newsletter_templates: {
+        Row: {
+          body_html: string
+          created_at: string
+          created_by: string | null
+          id: string
+          name: string
+          subject: string
+          updated_at: string
+        }
+        Insert: {
+          body_html?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name: string
+          subject?: string
+          updated_at?: string
+        }
+        Update: {
+          body_html?: string
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          name?: string
+          subject?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           bio: string | null
           created_at: string
           display_name: string | null
+          footsteps_banner_url: string | null
+          footsteps_tagline: string | null
+          footsteps_theme: string | null
           footsteps_visible: boolean
           theme: string | null
           updated_at: string
@@ -672,6 +705,9 @@ export type Database = {
           bio?: string | null
           created_at?: string
           display_name?: string | null
+          footsteps_banner_url?: string | null
+          footsteps_tagline?: string | null
+          footsteps_theme?: string | null
           footsteps_visible?: boolean
           theme?: string | null
           updated_at?: string
@@ -683,6 +719,9 @@ export type Database = {
           bio?: string | null
           created_at?: string
           display_name?: string | null
+          footsteps_banner_url?: string | null
+          footsteps_tagline?: string | null
+          footsteps_theme?: string | null
           footsteps_visible?: boolean
           theme?: string | null
           updated_at?: string

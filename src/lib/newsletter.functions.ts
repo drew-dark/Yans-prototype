@@ -13,6 +13,12 @@ const subscribeSchema = z.object({
 const sendIssueSchema = z.object({
   subject: z.string().trim().min(1).max(200),
   bodyHtml: z.string().trim().min(1).max(200_000),
+  // Optional segment: when set, only confirmed subscribers whose `source`
+  // matches exactly are sent to. Left undefined/omitted to mean "everyone
+  // confirmed" (previous behavior). Applied server-side against the same
+  // service-role query as the unfiltered case — the client picks a segment,
+  // it never supplies the recipient list itself.
+  sourceFilter: z.string().trim().min(1).max(100).optional(),
 });
 
 // Same bar as reading/managing the subscriber list itself (see the
@@ -122,17 +128,23 @@ function chunk<T>(items: T[], size: number): T[][] {
  */
 export const sendNewsletterIssue = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { subject: string; bodyHtml: string }) => sendIssueSchema.parse(input))
+  .inputValidator((input: { subject: string; bodyHtml: string; sourceFilter?: string }) =>
+    sendIssueSchema.parse(input),
+  )
   .handler(async ({ data, context }) => {
     await assertNewsletterAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { sendEmailBatch } = await import("@/lib/resend.server");
 
-    const { data: subscribers, error: subsErr } = await supabaseAdmin
+    let subscriberQuery = supabaseAdmin
       .from("newsletter_subscribers")
       .select("email, unsubscribe_token")
       .eq("confirmed", true)
       .is("unsubscribed_at", null);
+    if (data.sourceFilter) {
+      subscriberQuery = subscriberQuery.eq("source", data.sourceFilter);
+    }
+    const { data: subscribers, error: subsErr } = await subscriberQuery;
     if (subsErr) throw new Error(subsErr.message);
 
     const { data: issue, error: issueErr } = await supabaseAdmin

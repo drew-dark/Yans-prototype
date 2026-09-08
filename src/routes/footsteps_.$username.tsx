@@ -6,6 +6,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { ImageUpload } from "@/components/admin/ImageUpload";
+import { THEMES, type ThemeId } from "@/components/site/ThemeProvider";
+import { Palette } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/footsteps_/$username")({
@@ -22,7 +26,9 @@ export const Route = createFileRoute("/footsteps_/$username")({
   loader: async ({ params }) => {
     const { data, error } = await supabase
       .from("profiles")
-      .select("user_id, display_name, avatar_url, username, footsteps_visible")
+      .select(
+        "user_id, display_name, avatar_url, username, footsteps_visible, footsteps_theme, footsteps_tagline, footsteps_banner_url",
+      )
       .eq("username", params.username)
       .maybeSingle();
     if (error) throw error;
@@ -38,19 +44,61 @@ type TimelineItem =
   | { kind: "comment"; id: string; created_at: string; body: string; content_type: string }
   | { kind: "view"; id: string; created_at: string; content_type: string };
 
+function isThemeId(v: string | null): v is ThemeId {
+  return !!v && THEMES.some((t) => t.id === v);
+}
+
 function FootstepsPage() {
   const { t } = useTranslation();
-  const profile = Route.useLoaderData();
+  const loaded = Route.useLoaderData();
   const qc = useQueryClient();
   const [viewerId, setViewerId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
   const [posting, setPosting] = useState(false);
+
+  // Local, editable copy of the customizable fields — the loader snapshot
+  // stays as the initial value, but saving customization updates this
+  // directly rather than requiring a full route reload to see the result.
+  const [profile, setProfile] = useState(loaded);
+  const [showCustomize, setShowCustomize] = useState(false);
+  const [tagline, setTagline] = useState(loaded.footsteps_tagline ?? "");
+  const [banner, setBanner] = useState(loaded.footsteps_banner_url ?? "");
+  const [pageTheme, setPageTheme] = useState<string>(loaded.footsteps_theme ?? "");
+  const [savingCustomize, setSavingCustomize] = useState(false);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => setViewerId(data.user?.id ?? null));
   }, []);
 
   const isOwner = viewerId !== null && viewerId === profile.user_id;
+  const resolvedTheme: ThemeId = isThemeId(profile.footsteps_theme) ? profile.footsteps_theme : "kraft";
+
+  async function saveCustomization() {
+    setSavingCustomize(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .update({
+          footsteps_tagline: tagline.trim() || null,
+          footsteps_banner_url: banner || null,
+          footsteps_theme: pageTheme || null,
+        })
+        .eq("user_id", profile.user_id);
+      if (error) throw error;
+      setProfile({
+        ...profile,
+        footsteps_tagline: tagline.trim() || null,
+        footsteps_banner_url: banner || null,
+        footsteps_theme: pageTheme || null,
+      });
+      setShowCustomize(false);
+      toast.success(t("footsteps.customizeSaved"));
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : t("footsteps.customizeError"));
+    } finally {
+      setSavingCustomize(false);
+    }
+  }
 
   async function postReflection() {
     if (!draft.trim() || !viewerId) return;
@@ -124,54 +172,148 @@ function FootstepsPage() {
   });
 
   return (
-    <PageShell>
-      <div className="mx-auto max-w-2xl px-5 py-16">
-        <div className="flex items-center gap-4">
-          {profile.avatar_url && (
+    // Scoped to this page only — [data-theme="…"] just sets CSS custom
+    // properties (--kraft, --site-bg, etc.) that inherit down to
+    // everything inside this div, so a visitor's own site-wide theme
+    // (or the one they're browsing as a guest) is untouched once they
+    // navigate away.
+    <div data-theme={resolvedTheme}>
+      <PageShell>
+        {profile.footsteps_banner_url && (
+          <div className="h-40 w-full overflow-hidden md:h-56">
             <img
-              src={profile.avatar_url}
+              src={profile.footsteps_banner_url}
               alt=""
-              className="h-16 w-16 rounded-full object-cover"
+              className="h-full w-full object-cover"
             />
-          )}
-          <h1 className="font-display text-3xl">{profile.display_name ?? profile.username}</h1>
-        </div>
-
-        {isOwner && (
-          <div className="mt-8 space-y-2 border-b border-white/10 pb-8">
-            <Textarea
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              placeholder={t("footsteps.composePlaceholder")}
-              className="min-h-[90px] border-white/15 bg-white/5"
-            />
-            <div className="flex justify-end">
-              <Button onClick={postReflection} disabled={posting || !draft.trim()}>
-                {posting ? t("footsteps.posting") : t("footsteps.post")}
-              </Button>
-            </div>
           </div>
         )}
 
-        {!profile.footsteps_visible ? (
-          <p className="mt-10 font-mono text-xs uppercase tracking-widest text-white/60">
-            {t("footsteps.private")}
-          </p>
-        ) : isLoading ? (
-          <p className="mt-10 text-white/60">{t("footsteps.loading")}</p>
-        ) : timeline.length === 0 ? (
-          <p className="mt-10 text-white/60">{t("footsteps.empty")}</p>
-        ) : (
-          <ul className="mt-10 space-y-4">
-            {timeline.map((item) => (
-              <li key={`${item.kind}-${item.id}`} className="border-b border-white/10 pb-4">
-                <TimelineRow item={item} />
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </PageShell>
+        <div className="mx-auto max-w-2xl px-5 py-16">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex items-center gap-4">
+              {profile.avatar_url && (
+                <img
+                  src={profile.avatar_url}
+                  alt=""
+                  className="h-16 w-16 rounded-full object-cover"
+                />
+              )}
+              <div>
+                <h1 className="font-display text-3xl">{profile.display_name ?? profile.username}</h1>
+                {profile.footsteps_tagline && (
+                  <p className="mt-1 text-sm text-white/60">{profile.footsteps_tagline}</p>
+                )}
+              </div>
+            </div>
+            {isOwner && (
+              <button
+                type="button"
+                onClick={() => setShowCustomize((v) => !v)}
+                className="flex shrink-0 items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-white/60 hover:border-kraft hover:text-white"
+              >
+                <Palette className="h-3 w-3" />
+                {t("footsteps.customize")}
+              </button>
+            )}
+          </div>
+
+          {isOwner && showCustomize && (
+            <div className="mt-6 space-y-5 rounded border border-kraft/40 bg-kraft/5 p-5">
+              <div>
+                <label className="text-xs uppercase tracking-widest text-white/60">
+                  {t("footsteps.tagline")}
+                </label>
+                <Input
+                  value={tagline}
+                  onChange={(e) => setTagline(e.target.value.slice(0, 140))}
+                  placeholder={t("footsteps.taglinePlaceholder")}
+                  maxLength={140}
+                  className="mt-2 border-white/15 bg-black/40"
+                />
+                <p className="mt-1 text-right font-mono text-[10px] text-white/30">
+                  {tagline.length}/140
+                </p>
+              </div>
+
+              <ImageUpload
+                value={banner}
+                onChange={setBanner}
+                folder="footsteps-banners"
+                label={t("footsteps.banner")}
+                accept="image/*"
+              />
+
+              <div>
+                <label className="text-xs uppercase tracking-widest text-white/60">
+                  {t("footsteps.accent")}
+                </label>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {THEMES.map((th) => (
+                    <button
+                      key={th.id}
+                      type="button"
+                      onClick={() => setPageTheme(th.id)}
+                      title={th.label}
+                      aria-pressed={pageTheme === th.id}
+                      className={`h-8 w-8 rounded-full border-2 transition-transform ${
+                        pageTheme === th.id
+                          ? "scale-110 border-white"
+                          : "border-transparent hover:scale-105"
+                      }`}
+                      style={{ backgroundColor: th.swatch }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-2">
+                <Button variant="ghost" size="sm" onClick={() => setShowCustomize(false)}>
+                  {t("footsteps.cancel")}
+                </Button>
+                <Button size="sm" disabled={savingCustomize} onClick={saveCustomization}>
+                  {savingCustomize ? t("footsteps.saving") : t("footsteps.save")}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {isOwner && (
+            <div className="mt-8 space-y-2 border-b border-white/10 pb-8">
+              <Textarea
+                value={draft}
+                onChange={(e) => setDraft(e.target.value)}
+                placeholder={t("footsteps.composePlaceholder")}
+                className="min-h-[90px] border-white/15 bg-white/5"
+              />
+              <div className="flex justify-end">
+                <Button onClick={postReflection} disabled={posting || !draft.trim()}>
+                  {posting ? t("footsteps.posting") : t("footsteps.post")}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {!profile.footsteps_visible ? (
+            <p className="mt-10 font-mono text-xs uppercase tracking-widest text-white/60">
+              {t("footsteps.private")}
+            </p>
+          ) : isLoading ? (
+            <p className="mt-10 text-white/60">{t("footsteps.loading")}</p>
+          ) : timeline.length === 0 ? (
+            <p className="mt-10 text-white/60">{t("footsteps.empty")}</p>
+          ) : (
+            <ul className="mt-10 space-y-4">
+              {timeline.map((item) => (
+                <li key={`${item.kind}-${item.id}`} className="border-b border-white/10 pb-4">
+                  <TimelineRow item={item} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </PageShell>
+    </div>
   );
 }
 

@@ -326,7 +326,17 @@
     "composePlaceholder": "Write a reflection…",
     "post": "Post",
     "posting": "Posting…",
-    "postError": "Couldn't post that. Try again."
+    "postError": "Couldn't post that. Try again.",
+    "customize": "Customize",
+    "tagline": "Tagline",
+    "taglinePlaceholder": "A short line about you",
+    "banner": "Banner image",
+    "accent": "Accent",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving…",
+    "customizeSaved": "Page updated",
+    "customizeError": "Couldn't save changes"
   },
   "justIn": {
     "eyebrow": "Fresh",

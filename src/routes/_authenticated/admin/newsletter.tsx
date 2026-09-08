@@ -1,14 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { sendNewsletterIssue } from "@/lib/newsletter.functions";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { ImageUpload } from "@/components/admin/ImageUpload";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { toast } from "sonner";
-import { Trash2, Mail, MailCheck, Send } from "lucide-react";
+import { Trash2, Mail, MailCheck, Send, Eye, EyeOff, Save, FileText } from "lucide-react";
 
 function escapeHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -16,7 +24,9 @@ function escapeHtml(s: string): string {
 
 // Default mode: blank-line-separated paragraphs, escaped so a stray "<" or
 // "&" in the draft can't break the markup. The "raw HTML" switch below skips
-// this for anyone who wants to write the email body directly.
+// this for anyone who wants to write the email body directly — inserting an
+// image (see handleInsertImage) also switches into this mode, since an
+// <img> tag would otherwise get escaped into visible text.
 function plainTextToParagraphs(text: string): string {
   return text
     .split(/\n{2,}/)
@@ -29,11 +39,20 @@ function plainTextToParagraphs(text: string): string {
 type NewsletterIssue = {
   id: string;
   subject: string;
+  body_html: string;
   status: string;
   recipient_count: number;
   sent_count: number;
   failed_count: number;
   sent_at: string | null;
+  created_at: string;
+};
+
+type NewsletterTemplate = {
+  id: string;
+  name: string;
+  subject: string;
+  body_html: string;
   created_at: string;
 };
 
@@ -71,7 +90,7 @@ function NewsletterAdmin() {
       const { data, error } = await supabase
         .from("newsletter_issues")
         .select(
-          "id, subject, status, recipient_count, sent_count, failed_count, sent_at, created_at",
+          "id, subject, body_html, status, recipient_count, sent_count, failed_count, sent_at, created_at",
         )
         .order("created_at", { ascending: false })
         .limit(20);
@@ -80,10 +99,26 @@ function NewsletterAdmin() {
     },
   });
 
+  const { data: templates = [] } = useQuery({
+    queryKey: ["admin", "newsletter_templates"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("newsletter_templates")
+        .select("id, name, subject, body_html, created_at")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as NewsletterTemplate[];
+    },
+  });
+
   const [showCompose, setShowCompose] = useState(false);
+  const [draftId, setDraftId] = useState<string | null>(null);
   const [subject, setSubject] = useState("");
   const [body, setBody] = useState("");
   const [rawHtml, setRawHtml] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [segment, setSegment] = useState("__all__");
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
 
   const [q, setQ] = useState("");
   const [statusFilter, setStatusFilter] = useState<
@@ -108,12 +143,65 @@ function NewsletterAdmin() {
   const unconfirmedCount = subscribers.filter((s) => !s.confirmed && !s.unsubscribed_at).length;
   const unsubscribedCount = subscribers.filter((s) => !!s.unsubscribed_at).length;
 
+  const sources = useMemo(
+    () => Array.from(new Set(subscribers.map((s) => s.source).filter((s): s is string => !!s))),
+    [subscribers],
+  );
+  const segmentCount =
+    segment === "__all__"
+      ? confirmedCount
+      : subscribers.filter((s) => s.confirmed && !s.unsubscribed_at && s.source === segment).length;
+
+  function resetComposer() {
+    setDraftId(null);
+    setSubject("");
+    setBody("");
+    setRawHtml(false);
+    setSegment("__all__");
+    setShowPreview(false);
+  }
+
+  function loadIntoComposer(issue: { id?: string; subject: string; body_html: string }) {
+    setDraftId(issue.id ?? null);
+    setSubject(issue.subject);
+    setBody(issue.body_html);
+    setRawHtml(true); // saved HTML (from a draft or template) is always shown raw, not re-escaped
+    setShowCompose(true);
+  }
+
+  function handleInsertImage(url: string) {
+    if (!url) return;
+    const snippet = `<p><img src="${url}" alt="" style="max-width:100%;height:auto;display:block;margin:0 0 16px" /></p>`;
+    if (!rawHtml && body.trim()) {
+      // Switching modes mid-draft would silently escape everything typed
+      // so far the next time it's re-rendered — convert what's there once,
+      // at the moment of the switch, instead of losing it later.
+      setBody(plainTextToParagraphs(body) + "\n" + snippet);
+    } else {
+      const el = bodyRef.current;
+      if (el && document.activeElement === el) {
+        const pos = el.selectionStart ?? body.length;
+        setBody(body.slice(0, pos) + snippet + body.slice(pos));
+      } else {
+        setBody((b) => (b ? `${b}\n${snippet}` : snippet));
+      }
+    }
+    setRawHtml(true);
+    toast.success("Image inserted");
+  }
+
   const sendMut = useMutation({
     mutationFn: async () => {
       const bodyHtml = rawHtml ? body.trim() : plainTextToParagraphs(body);
-      return sendNewsletterIssue({ data: { subject: subject.trim(), bodyHtml } });
+      return sendNewsletterIssue({
+        data: {
+          subject: subject.trim(),
+          bodyHtml,
+          sourceFilter: segment === "__all__" ? undefined : segment,
+        },
+      });
     },
-    onSuccess: (result) => {
+    onSuccess: async (result) => {
       if (result.failedCount > 0) {
         toast.error(
           `Sent to ${result.sentCount} of ${result.recipientCount} — ${result.failedCount} failed. Check the issue history below.`,
@@ -123,8 +211,12 @@ function NewsletterAdmin() {
           `Sent to ${result.sentCount} confirmed subscriber${result.sentCount === 1 ? "" : "s"}`,
         );
       }
-      setSubject("");
-      setBody("");
+      // A sent issue supersedes the draft row it was composed from — remove
+      // the draft so it doesn't linger alongside the now-sent copy.
+      if (draftId) {
+        await supabase.from("newsletter_issues").delete().eq("id", draftId);
+      }
+      resetComposer();
       setShowCompose(false);
       qc.invalidateQueries({ queryKey: ["admin", "newsletter_issues"] });
     },
@@ -136,18 +228,87 @@ function NewsletterAdmin() {
       toast.error("Subject and body are both required");
       return;
     }
-    if (confirmedCount === 0) {
-      toast.error("No confirmed subscribers to send to");
+    if (segmentCount === 0) {
+      toast.error("No confirmed subscribers in that segment");
       return;
     }
     if (
       confirm(
-        `Send "${subject.trim()}" to ${confirmedCount} confirmed subscriber${confirmedCount === 1 ? "" : "s"}? This can't be undone.`,
+        `Send "${subject.trim()}" to ${segmentCount} confirmed subscriber${segmentCount === 1 ? "" : "s"}${
+          segment === "__all__" ? "" : ` (source: ${segment})`
+        }? This can't be undone.`,
       )
     ) {
       sendMut.mutate();
     }
   }
+
+  const saveDraftMut = useMutation({
+    mutationFn: async () => {
+      const bodyHtml = rawHtml ? body.trim() : plainTextToParagraphs(body);
+      const { data, error } = await supabase
+        .from("newsletter_issues")
+        .upsert({
+          id: draftId ?? undefined,
+          subject: subject.trim() || "(untitled draft)",
+          body_html: bodyHtml || "<p></p>",
+          status: "draft",
+        })
+        .select("id")
+        .single();
+      if (error) throw error;
+      return data.id as string;
+    },
+    onSuccess: (id) => {
+      setDraftId(id);
+      toast.success("Draft saved");
+      qc.invalidateQueries({ queryKey: ["admin", "newsletter_issues"] });
+    },
+    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Failed to save draft"),
+  });
+
+  const deleteIssueMut = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("newsletter_issues").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Deleted");
+      qc.invalidateQueries({ queryKey: ["admin", "newsletter_issues"] });
+    },
+    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Failed"),
+  });
+
+  const saveTemplateMut = useMutation({
+    mutationFn: async () => {
+      const name = prompt("Template name?", subject.trim() || "Untitled template");
+      if (!name) return null;
+      const bodyHtml = rawHtml ? body.trim() : plainTextToParagraphs(body);
+      const { error } = await supabase
+        .from("newsletter_templates")
+        .insert({ name, subject: subject.trim(), body_html: bodyHtml });
+      if (error) throw error;
+      return name;
+    },
+    onSuccess: (name) => {
+      if (!name) return;
+      toast.success(`Saved template "${name}"`);
+      qc.invalidateQueries({ queryKey: ["admin", "newsletter_templates"] });
+    },
+    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Failed to save template"),
+  });
+
+  const deleteTemplateMut = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("newsletter_templates").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Template deleted");
+      qc.invalidateQueries({ queryKey: ["admin", "newsletter_templates"] });
+    },
+    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Failed"),
+  });
 
   const unsubscribeMut = useMutation({
     mutationFn: async (id: string) => {
@@ -198,6 +359,10 @@ function NewsletterAdmin() {
     URL.revokeObjectURL(url);
   }
 
+  const previewHtml = rawHtml ? body : plainTextToParagraphs(body);
+  const drafts = issues.filter((i) => i.status === "draft");
+  const sentIssues = issues.filter((i) => i.status !== "draft");
+
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -215,7 +380,10 @@ function NewsletterAdmin() {
         </div>
         <Button
           size="sm"
-          onClick={() => setShowCompose((v) => !v)}
+          onClick={() => {
+            if (showCompose) resetComposer();
+            setShowCompose((v) => !v);
+          }}
           className="bg-kraft font-mono text-[11px] font-bold uppercase tracking-widest text-ink-dark hover:bg-kraft-dark"
         >
           <Send className="mr-1.5 h-3.5 w-3.5" />
@@ -225,6 +393,33 @@ function NewsletterAdmin() {
 
       {showCompose && (
         <div className="space-y-4 rounded border border-kraft/40 bg-kraft/5 p-5">
+          {templates.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 border-b border-white/10 pb-4">
+              <span className="font-mono text-[10px] uppercase tracking-widest text-white/40">
+                Start from template:
+              </span>
+              {templates.map((tpl) => (
+                <span key={tpl.id} className="inline-flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => loadIntoComposer(tpl)}
+                    className="rounded-full border border-white/15 px-3 py-1 font-mono text-[10px] uppercase tracking-widest text-white/60 hover:border-kraft hover:text-white"
+                  >
+                    {tpl.name}
+                  </button>
+                  <button
+                    type="button"
+                    title="Delete template"
+                    onClick={() => confirm(`Delete template "${tpl.name}"?`) && deleteTemplateMut.mutate(tpl.id)}
+                    className="text-white/25 hover:text-red-400"
+                  >
+                    <Trash2 className="h-3 w-3" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+
           <Input
             value={subject}
             onChange={(e) => setSubject(e.target.value)}
@@ -232,43 +427,156 @@ function NewsletterAdmin() {
             aria-label="Subject"
             className="border-white/15 bg-black/40"
           />
-          <Textarea
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            placeholder={
-              rawHtml
-                ? "<p>Raw HTML body…</p>"
-                : "Write the issue here. Leave a blank line between paragraphs."
-            }
-            rows={10}
-            aria-label="Body"
-            className="border-white/15 bg-black/40 font-mono text-sm"
-          />
+
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex-1">
+              <ImageUpload
+                value=""
+                onChange={handleInsertImage}
+                folder="newsletter"
+                label="Insert image into body"
+                accept="image/*"
+              />
+            </div>
+          </div>
+
+          {showPreview ? (
+            <div className="rounded border border-white/15 bg-white p-4">
+              <div
+                className="mx-auto max-w-[480px]"
+                style={{ fontFamily: "Georgia, serif", color: "#1a1a1a" }}
+                dangerouslySetInnerHTML={{
+                  __html: `<h1 style="font-size:22px;margin:0 0 12px">${escapeHtml(subject) || "(subject)"}</h1><div style="font-size:15px;line-height:1.6">${previewHtml}</div>`,
+                }}
+              />
+            </div>
+          ) : (
+            <Textarea
+              ref={bodyRef}
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              placeholder={
+                rawHtml
+                  ? "<p>Raw HTML body…</p>"
+                  : "Write the issue here. Leave a blank line between paragraphs."
+              }
+              rows={10}
+              aria-label="Body"
+              className="border-white/15 bg-black/40 font-mono text-sm"
+            />
+          )}
+
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <label className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-white/50">
-              <Switch checked={rawHtml} onCheckedChange={setRawHtml} />
-              Raw HTML
-            </label>
-            <Button
-              size="sm"
-              disabled={sendMut.isPending}
-              onClick={handleSend}
-              className="bg-kraft font-mono text-[11px] font-bold uppercase tracking-widest text-ink-dark hover:bg-kraft-dark"
-            >
-              {sendMut.isPending
-                ? "Sending…"
-                : `Send to ${confirmedCount} confirmed subscriber${confirmedCount === 1 ? "" : "s"}`}
-            </Button>
+            <div className="flex flex-wrap items-center gap-4">
+              <label className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-white/50">
+                <Switch checked={rawHtml} onCheckedChange={setRawHtml} />
+                Raw HTML
+              </label>
+              <button
+                type="button"
+                onClick={() => setShowPreview((v) => !v)}
+                className="flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-white/50 hover:text-white"
+              >
+                {showPreview ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+                {showPreview ? "Back to editing" : "Preview"}
+              </button>
+              {sources.length > 0 && (
+                <div className="flex items-center gap-1.5">
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-white/40">
+                    Send to:
+                  </span>
+                  <Select value={segment} onValueChange={setSegment}>
+                    <SelectTrigger className="h-7 w-auto gap-1.5 border-white/15 bg-black/40 font-mono text-[10px] uppercase tracking-widest">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__all__">All confirmed ({confirmedCount})</SelectItem>
+                      {sources.map((src) => (
+                        <SelectItem key={src} value={src}>
+                          {src}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={saveTemplateMut.isPending || (!subject.trim() && !body.trim())}
+                onClick={() => saveTemplateMut.mutate()}
+              >
+                <FileText className="mr-1.5 h-3.5 w-3.5" />
+                Save as template
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={saveDraftMut.isPending}
+                onClick={() => saveDraftMut.mutate()}
+              >
+                <Save className="mr-1.5 h-3.5 w-3.5" />
+                {saveDraftMut.isPending ? "Saving…" : "Save draft"}
+              </Button>
+              <Button
+                size="sm"
+                disabled={sendMut.isPending}
+                onClick={handleSend}
+                className="bg-kraft font-mono text-[11px] font-bold uppercase tracking-widest text-ink-dark hover:bg-kraft-dark"
+              >
+                {sendMut.isPending ? "Sending…" : `Send to ${segmentCount}`}
+              </Button>
+            </div>
           </div>
         </div>
       )}
 
-      {issues.length > 0 && (
+      {drafts.length > 0 && (
+        <div className="space-y-2">
+          <p className="font-mono text-[10px] uppercase tracking-widest text-white/40">
+            Drafts
+          </p>
+          {drafts.map((d) => (
+            <div
+              key={d.id}
+              className="flex flex-wrap items-center justify-between gap-3 rounded border border-white/10 bg-white/[0.03] p-3"
+            >
+              <button
+                type="button"
+                onClick={() => loadIntoComposer(d)}
+                className="min-w-0 flex-1 text-left"
+              >
+                <p className="truncate font-mono text-sm">{d.subject}</p>
+                <p className="font-mono text-[10px] uppercase tracking-widest text-white/40">
+                  Last saved {new Date(d.created_at).toLocaleString()}
+                </p>
+              </button>
+              <div className="flex items-center gap-1">
+                <span className="shrink-0 rounded bg-white/10 px-2 py-1 font-mono text-[10px] uppercase tracking-widest text-white/50">
+                  Draft
+                </span>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  title="Delete draft"
+                  onClick={() => confirm("Delete this draft?") && deleteIssueMut.mutate(d.id)}
+                >
+                  <Trash2 className="h-3 w-3 text-red-400" />
+                </Button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {sentIssues.length > 0 && (
         <div className="space-y-2">
           <p className="font-mono text-[10px] uppercase tracking-widest text-white/40">
             Recent issues
           </p>
-          {issues.map((iss) => (
+          {sentIssues.map((iss) => (
             <div
               key={iss.id}
               className="flex flex-wrap items-center justify-between gap-3 rounded border border-white/10 bg-white/[0.03] p-3"
