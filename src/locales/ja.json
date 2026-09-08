@@ -327,5 +327,13 @@
     "post": "投稿",
     "posting": "投稿中…",
     "postError": "投稿できませんでした。もう一度お試しください。"
+  },
+  "justIn": {
+    "eyebrow": "新着",
+    "title": "Just In",
+    "diary": "日記",
+    "collection_entry": "コレクション",
+    "gallery": "写真",
+    "story": "物語"
   }
 }

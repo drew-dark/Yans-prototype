@@ -327,5 +327,13 @@
     "post": "Post",
     "posting": "Posting…",
     "postError": "Couldn't post that. Try again."
+  },
+  "justIn": {
+    "eyebrow": "Fresh",
+    "title": "Just In",
+    "diary": "Diary",
+    "collection_entry": "Collection",
+    "gallery": "Photo",
+    "story": "Story"
   }
 }
