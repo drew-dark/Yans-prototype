@@ -11,6 +11,7 @@ import { ReactionBar } from "@/components/site/Reactions";
 import { StudioEditLink } from "@/components/site/StudioEditLink";
 import { CommentsSection } from "@/components/site/CommentsSection";
 import { TaxonomyBreadcrumb } from "@/components/site/TaxonomyBreadcrumb";
+import { useRecordView } from "@/hooks/use-record-view";
 
 function StoryNotFound() {
   const { t } = useTranslation();
@@ -82,6 +83,7 @@ function StoryPage() {
     initialData: Route.useLoaderData(),
   });
   const { open } = useMediaViewer();
+  useRecordView("story", s?.id);
   if (!s) return null;
   const mins = readingTimeMinutes(s.body);
   return (

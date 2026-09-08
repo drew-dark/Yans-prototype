@@ -286,7 +286,13 @@
     "saving": "保存中…",
     "save": "プロフィールを保存",
     "saved": "プロフィールを保存しました",
-    "genericError": "失敗しました"
+    "genericError": "失敗しました",
+    "username": "ユーザー名",
+    "usernameHint": "公開されます — Footstepsページのアドレスになります。空欄のままにすると誰にも表示されません。",
+    "usernameTaken": "そのユーザー名はすでに使用されています。",
+    "viewFootsteps": "Footstepsページを見る",
+    "footstepsVisible": "Footstepsに自分の活動を表示する",
+    "footstepsVisibleHint": "リアクション・コメント・既読の公開表示をオフにします。投稿した振り返りはどちらの設定でも表示されたままです。"
   },
   "bookmarksPage": {
     "title": "ブックマーク",
@@ -316,6 +322,10 @@
     "loading": "読み込み中…",
     "empty": "まだ何もありません。",
     "reacted": "{{type}}に{{emoji}}でリアクションしました",
-    "read": "{{type}}を読みました"
+    "read": "{{type}}を読みました",
+    "composePlaceholder": "振り返りを書く…",
+    "post": "投稿",
+    "posting": "投稿中…",
+    "postError": "投稿できませんでした。もう一度お試しください。"
   }
 }

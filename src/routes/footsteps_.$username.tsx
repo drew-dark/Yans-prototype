@@ -1,8 +1,12 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { PageShell } from "@/components/site/SiteChrome";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/footsteps_/$username")({
   head: ({ loaderData }) => {
@@ -37,6 +41,33 @@ type TimelineItem =
 function FootstepsPage() {
   const { t } = useTranslation();
   const profile = Route.useLoaderData();
+  const qc = useQueryClient();
+  const [viewerId, setViewerId] = useState<string | null>(null);
+  const [draft, setDraft] = useState("");
+  const [posting, setPosting] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setViewerId(data.user?.id ?? null));
+  }, []);
+
+  const isOwner = viewerId !== null && viewerId === profile.user_id;
+
+  async function postReflection() {
+    if (!draft.trim() || !viewerId) return;
+    setPosting(true);
+    try {
+      const { error } = await supabase
+        .from("reflections")
+        .insert({ user_id: viewerId, body: draft.trim() });
+      if (error) throw error;
+      setDraft("");
+      qc.invalidateQueries({ queryKey: ["footsteps", profile.user_id] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : t("footsteps.postError"));
+    } finally {
+      setPosting(false);
+    }
+  }
 
   const { data: timeline = [], isLoading } = useQuery({
     queryKey: ["footsteps", profile.user_id],
@@ -105,6 +136,22 @@ function FootstepsPage() {
           )}
           <h1 className="font-display text-3xl">{profile.display_name ?? profile.username}</h1>
         </div>
+
+        {isOwner && (
+          <div className="mt-8 space-y-2 border-b border-white/10 pb-8">
+            <Textarea
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              placeholder={t("footsteps.composePlaceholder")}
+              className="min-h-[90px] border-white/15 bg-white/5"
+            />
+            <div className="flex justify-end">
+              <Button onClick={postReflection} disabled={posting || !draft.trim()}>
+                {posting ? t("footsteps.posting") : t("footsteps.post")}
+              </Button>
+            </div>
+          </div>
+        )}
 
         {!profile.footsteps_visible ? (
           <p className="mt-10 font-mono text-xs uppercase tracking-widest text-white/60">

@@ -286,7 +286,13 @@
     "saving": "Saving…",
     "save": "Save profile",
     "saved": "Profile saved",
-    "genericError": "Failed"
+    "genericError": "Failed",
+    "username": "Username",
+    "usernameHint": "Public — sets your Footsteps page address. Leave blank to keep it unreachable.",
+    "usernameTaken": "That username is already taken.",
+    "viewFootsteps": "View your Footsteps page",
+    "footstepsVisible": "Show my activity on Footsteps",
+    "footstepsVisibleHint": "Turns off your reactions/comments/reads showing publicly. Reflections you post stay visible either way."
   },
   "bookmarksPage": {
     "title": "Your bookmarks",
@@ -316,6 +322,10 @@
     "loading": "Loading…",
     "empty": "Nothing here yet.",
     "reacted": "reacted {{emoji}} to a {{type}}",
-    "read": "read a {{type}}"
+    "read": "read a {{type}}",
+    "composePlaceholder": "Write a reflection…",
+    "post": "Post",
+    "posting": "Posting…",
+    "postError": "Couldn't post that. Try again."
   }
 }
