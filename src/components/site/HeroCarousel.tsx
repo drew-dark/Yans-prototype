@@ -5,6 +5,9 @@ import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 const AUTOPLAY_MS = 5000;
 
+// Admin-configurable timing is a future addition — AUTOPLAY_MS stays a
+// constant for now, not wired to any settings table yet.
+
 export function HeroCarousel({ images, className = "" }: { images: string[]; className?: string }) {
   const [index, setIndex] = useState(0);
   const { t } = useTranslation();
@@ -41,27 +44,48 @@ export function HeroCarousel({ images, className = "" }: { images: string[]; cla
 
   return (
     <div
-      className={`group/hero relative w-full overflow-hidden ${className}`}
+      className={`group/hero relative w-full overflow-hidden bg-black ${className}`}
       onMouseEnter={pauseAndReset}
       role="region"
       aria-roledescription="carousel"
       aria-label={t("media.featuredImagesAria")}
     >
-      <div
-        className={`flex h-full ${reduceMotion ? "" : "transition-transform duration-700 ease-out"}`}
-        style={{ transform: `translateX(-${index * 100}%)` }}
-      >
-        {images.map((src, i) => (
-          <div key={i} className="h-full w-full shrink-0" aria-hidden={i !== index}>
+      {images.map((src, i) => {
+        const active = i === index;
+        return (
+          <div
+            key={i}
+            className={`absolute inset-0 ${
+              reduceMotion ? "" : "transition-opacity duration-1000 ease-out"
+            } ${active ? "opacity-100" : "opacity-0"}`}
+            aria-hidden={!active}
+          >
+            {/* Backdrop: same image, blurred and scaled to fill the frame
+                so there's never an empty letterbox bar — purely
+                decorative, crops freely since none of its detail matters. */}
+            <img
+              src={src}
+              alt=""
+              aria-hidden="true"
+              className="h-full w-full scale-110 object-cover opacity-60 blur-2xl"
+            />
+            {/* Foreground: the actual photo, always shown in full via
+                object-contain — nothing gets cropped out of the real
+                image, only resized to fit. A slow scale-up (Ken Burns)
+                plays on the active slide only, skipped for reduced motion. */}
             <img
               src={src}
               alt=""
               loading={i === 0 ? "eager" : "lazy"}
-              className="h-full w-full object-cover"
+              className={`absolute inset-0 h-full w-full object-contain ${
+                reduceMotion
+                  ? ""
+                  : `transition-transform duration-[6000ms] ease-out ${active ? "scale-105" : "scale-100"}`
+              }`}
             />
           </div>
-        ))}
-      </div>
+        );
+      })}
 
       {count > 1 && (
         <>
@@ -69,7 +93,7 @@ export function HeroCarousel({ images, className = "" }: { images: string[]; cla
             type="button"
             onClick={prev}
             aria-label={t("media.prevImageAria")}
-            className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-1.5 text-white opacity-0 backdrop-blur-sm transition-opacity hover:bg-black/70 focus-visible:opacity-100 group-hover/hero:opacity-100"
+            className="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/50 p-1.5 text-white opacity-0 backdrop-blur-sm transition-opacity hover:bg-black/70 focus-visible:opacity-100 group-hover/hero:opacity-100"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -77,12 +101,12 @@ export function HeroCarousel({ images, className = "" }: { images: string[]; cla
             type="button"
             onClick={next}
             aria-label={t("media.nextImageAria")}
-            className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-1.5 text-white opacity-0 backdrop-blur-sm transition-opacity hover:bg-black/70 focus-visible:opacity-100 group-hover/hero:opacity-100"
+            className="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/50 p-1.5 text-white opacity-0 backdrop-blur-sm transition-opacity hover:bg-black/70 focus-visible:opacity-100 group-hover/hero:opacity-100"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
 
-          <div className="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5">
+          <div className="absolute bottom-3 left-1/2 z-10 flex -translate-x-1/2 gap-1.5">
             {images.map((_, i) => (
               <button
                 key={i}

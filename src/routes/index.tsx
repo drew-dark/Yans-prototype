@@ -9,6 +9,7 @@ import { SiteNavBar } from "@/components/site/SiteChrome";
 import { ContentCard } from "@/components/site/ContentCard";
 import { ReactionSummary } from "@/components/site/Reactions";
 import { HeroCarousel } from "@/components/site/HeroCarousel";
+import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import portraitImg from "@/assets/muyan-portrait.jpg";
 import broadcastImg from "@/assets/muyan-broadcast.jpg";
 import foodImg from "@/assets/muyan-food.jpg";
@@ -37,6 +38,51 @@ const fallbackTiles = [
   { id: "7", image_url: foodImg, label: "Table" },
   { id: "8", image_url: portraitImg, label: "Studio" },
 ];
+
+function HomeTile({
+  tile,
+  index: i,
+  onOpen,
+  imageTransitionClass,
+  hoverImageClass,
+  reduceMotion,
+}: {
+  tile: { id: string; image_url: string; label: string };
+  index: number;
+  onOpen: () => void;
+  imageTransitionClass: string;
+  hoverImageClass: string;
+  reduceMotion: boolean;
+}) {
+  const { ref, revealed } = useScrollReveal<HTMLButtonElement>();
+  const heights = ["h-[88%]", "h-full", "h-[72%]", "h-[95%]", "h-[80%]", "h-full", "h-[75%]", "h-[92%]"];
+  const aligns = ["self-end", "self-start", "self-end", "self-center", "self-start", "self-end", "self-center", "self-start"];
+
+  return (
+    <button
+      ref={ref}
+      type="button"
+      onClick={onOpen}
+      className={`relative w-[44vw] shrink-0 snap-start overflow-hidden border border-white/10 bg-neutral-900 text-left md:w-auto md:flex-1 md:shrink ${heights[i % heights.length]} ${aligns[i % aligns.length]} ${imageTransitionClass} md:hover:z-10 md:hover:flex-[2] md:focus-visible:z-10 md:focus-visible:flex-[2] focus:outline-none ${
+        reduceMotion
+          ? ""
+          : `transition-all duration-700 ease-out ${revealed ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0"}`
+      }`}
+      style={reduceMotion ? undefined : { transitionDelay: `${(i % 8) * 60}ms` }}
+      aria-label={tile.label}
+    >
+      <img
+        src={tile.image_url}
+        alt={tile.label}
+        loading="lazy"
+        className={`h-full w-full object-cover ${imageTransitionClass} ${hoverImageClass} md:group-hover/strip:opacity-40 md:hover:!opacity-100 md:focus-visible:!opacity-100`}
+      />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2.5 md:p-3">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-white md:text-[10px]">{tile.label}</p>
+      </div>
+    </button>
+  );
+}
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -145,6 +191,96 @@ function Index() {
     },
   });
 
+  // "Just In": a unified recent-activity feed for content types that don't
+  // have their own homepage rail (diaries, collection entries, gallery) —
+  // stories/dear-today already have sections above, but are included here
+  // too so this reads as "everything new," not just the leftovers.
+  const { data: justIn = [] } = useQuery({
+    queryKey: ["public", "home", "just-in"],
+    queryFn: async () => {
+      const [diaries, entries, photos, stories] = await Promise.all([
+        supabase
+          .from("diary_entries")
+          .select("id, slug, title, cover_image_url, entry_date")
+          .eq("published", true)
+          .order("entry_date", { ascending: false })
+          .limit(8),
+        supabase
+          .from("collection_entries")
+          .select("id, slug, title, cover_url, entry_date, collections(slug, title)")
+          .eq("published", true)
+          .order("entry_date", { ascending: false })
+          .limit(8),
+        supabase
+          .from("gallery_photos")
+          .select("id, image_url, caption, created_at")
+          .eq("published", true)
+          .order("created_at", { ascending: false })
+          .limit(8),
+        supabase
+          .from("stories")
+          .select("id, slug, title, cover_image_url, published_at")
+          .eq("published", true)
+          .order("published_at", { ascending: false, nullsFirst: false })
+          .limit(8),
+      ]);
+
+      type JustInItem = {
+        id: string;
+        kind: "diary" | "collection_entry" | "gallery" | "story";
+        date: string;
+        title: string;
+        image: string | null;
+        href: { to: string; params?: Record<string, string> };
+      };
+
+      const items: JustInItem[] = [
+        ...(diaries.data ?? []).map((d) => ({
+          id: `diary-${d.id}`,
+          kind: "diary" as const,
+          date: d.entry_date,
+          title: d.title,
+          image: d.cover_image_url,
+          href: { to: "/diaries/$slug", params: { slug: d.slug } },
+        })),
+        ...(entries.data ?? [])
+          .filter((e) => e.collections)
+          .map((e) => {
+            const col = e.collections as unknown as { slug: string; title: string };
+            return {
+              id: `entry-${e.id}`,
+              kind: "collection_entry" as const,
+              date: e.entry_date,
+              title: e.title,
+              image: e.cover_url,
+              href: { to: "/collection/$slug/$entrySlug", params: { slug: col.slug, entrySlug: e.slug } },
+            };
+          }),
+        ...(photos.data ?? []).map((p) => ({
+          id: `photo-${p.id}`,
+          kind: "gallery" as const,
+          date: p.created_at,
+          title: p.caption || "",
+          image: p.image_url,
+          href: { to: "/gallery" },
+        })),
+        ...(stories.data ?? []).map((s) => ({
+          id: `story-${s.id}`,
+          kind: "story" as const,
+          date: s.published_at ?? "",
+          title: s.title,
+          image: s.cover_image_url,
+          href: { to: "/stories/$slug", params: { slug: s.slug } },
+        })),
+      ];
+
+      return items
+        .filter((i) => i.date)
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 8);
+    },
+  });
+
   const tagline =
     about?.tagline ||
     "These are words carved from quiet places — am just a Zambian poet and journalist writing the things we rarely say out loud.";
@@ -205,6 +341,31 @@ function Index() {
         </div>
       </section>
 
+      {justIn.length > 0 && (
+        <section className="relative z-10 mx-auto max-w-6xl px-5 pb-16 md:px-12 md:pb-20">
+          <div className="mb-6 md:mb-8">
+            <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
+              {t("justIn.eyebrow")}
+            </p>
+            <h3 className="font-display text-3xl uppercase leading-none tracking-tight sm:text-4xl md:text-6xl">
+              {t("justIn.title")}
+            </h3>
+          </div>
+          <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+            {justIn.map((item) => (
+              <ContentCard
+                key={item.id}
+                to={item.href}
+                image={item.image}
+                aspect="square"
+                badge={t(`justIn.${item.kind}`)}
+                title={item.title || t(`justIn.${item.kind}`)}
+              />
+            ))}
+          </div>
+        </section>
+      )}
+
 
       <section className="relative z-10 mx-auto max-w-6xl px-5 pb-16 md:px-12 md:pb-20">
         <div className="mb-6 flex items-end justify-between gap-6 md:mb-10">
@@ -224,30 +385,18 @@ function Index() {
           </Link>
         </div>
 
-        <div className="group/strip -mx-5 flex h-[36vh] snap-x snap-mandatory items-stretch gap-1 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:mx-0 md:h-[58vh] md:snap-none md:gap-2 md:overflow-hidden md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
-          {tiles.slice(0, 8).map((t, i) => {
-            const heights = ["h-[88%]", "h-full", "h-[72%]", "h-[95%]", "h-[80%]", "h-full", "h-[75%]", "h-[92%]"];
-            const aligns = ["self-end", "self-start", "self-end", "self-center", "self-start", "self-end", "self-center", "self-start"];
-            return (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label })}
-                className={`relative w-[44vw] shrink-0 snap-start overflow-hidden border border-white/10 bg-neutral-900 text-left md:w-auto md:flex-1 md:shrink ${heights[i % heights.length]} ${aligns[i % aligns.length]} ${imageTransitionClass} md:hover:z-10 md:hover:flex-[2] md:focus-visible:z-10 md:focus-visible:flex-[2] focus:outline-none`}
-                aria-label={t.label}
-              >
-                <img
-                  src={t.image_url}
-                  alt={t.label}
-                  loading="lazy"
-                  className={`h-full w-full object-cover ${imageTransitionClass} ${hoverImageClass} md:group-hover/strip:opacity-40 md:hover:!opacity-100 md:focus-visible:!opacity-100`}
-                />
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-2.5 md:p-3">
-                  <p className="font-mono text-[9px] uppercase tracking-widest text-white md:text-[10px]">{t.label}</p>
-                </div>
-              </button>
-            );
-          })}
+        <div className="group/strip -mx-5 flex h-[36vh] snap-x snap-mandatory items-stretch gap-1 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:mx-0 md:h-[58vh] md:snap-none md:flex-wrap md:gap-2 md:overflow-hidden md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
+          {tiles.slice(0, 12).map((t, i) => (
+            <HomeTile
+              key={t.id}
+              tile={t}
+              index={i}
+              onOpen={() => open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label })}
+              imageTransitionClass={imageTransitionClass}
+              hoverImageClass={hoverImageClass}
+              reduceMotion={reduceMotion}
+            />
+          ))}
         </div>
 
         <div className="mt-5 flex items-center justify-between md:hidden">
