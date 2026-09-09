@@ -326,7 +326,17 @@
     "composePlaceholder": "振り返りを書く…",
     "post": "投稿",
     "posting": "投稿中…",
-    "postError": "投稿できませんでした。もう一度お試しください。"
+    "postError": "投稿できませんでした。もう一度お試しください。",
+    "customize": "カスタマイズ",
+    "tagline": "タグライン",
+    "taglinePlaceholder": "あなたについての一言",
+    "banner": "バナー画像",
+    "accent": "アクセントカラー",
+    "cancel": "キャンセル",
+    "save": "保存",
+    "saving": "保存中…",
+    "customizeSaved": "ページを更新しました",
+    "customizeError": "変更を保存できませんでした"
   },
   "justIn": {
     "eyebrow": "新着",
