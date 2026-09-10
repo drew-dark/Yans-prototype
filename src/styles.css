@@ -19,9 +19,9 @@
  */
 
 @theme inline {
-  --font-display: 'Bebas Neue', 'Anton', sans-serif;
-  --font-mono: 'Courier Prime', monospace;
-  --font-sans: 'Barlow', 'Inter', sans-serif;
+  --font-display: var(--font-display-raw);
+  --font-mono: var(--font-mono-raw);
+  --font-sans: var(--font-sans-raw);
   --color-site-bg: var(--site-bg);
   --color-site-accent: var(--kraft);
   --color-ink-dark: var(--ink-dark);
@@ -76,6 +76,13 @@
   --kraft-dark: #a38965;
   --site-bg: #0a0a0a;
   --site-glow-a: rgba(255, 255, 255, 0.035);
+  /* Raw font values, overridden per [data-theme] below — same
+     var()-indirection pattern as --kraft/--color-kraft, so Tailwind's
+     generated .font-display utility actually stays live at runtime
+     instead of baking in whatever value was here at build time. */
+  --font-display-raw: 'Bebas Neue', 'Anton', sans-serif;
+  --font-mono-raw: 'Courier Prime', monospace;
+  --font-sans-raw: 'Barlow', 'Inter', sans-serif;
   --site-glow-b: rgba(197, 168, 128, 0.05);
   /* Surface vars: what cards, panels & utility buttons render with.
      Base values here reproduce the original flat bordered look
@@ -91,6 +98,11 @@
   --panel-blur: none;
   --panel-radius: 0px;
   --panel-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  /* Default hover/press feel: quick and direct. Glass themes below ease
+     into something slower and smoother; clay themes get a springy
+     overshoot — the interaction itself should read as a different
+     material, not just a different color. */
+  --surface-transition-timing: 300ms ease;
   --background: oklch(1 0 0);
   --foreground: oklch(0.129 0.042 264.695);
   --card: oklch(1 0 0);
@@ -186,6 +198,9 @@
   --site-bg: #0d0f12;
   --site-glow-a: rgba(255, 255, 255, 0.04);
   --site-glow-b: rgba(120, 160, 200, 0.07);
+  /* Broadsheet: a real serif for headlines instead of the zine's
+     condensed display face. */
+  --font-display-raw: "Playfair Display", Georgia, serif;
 }
 
 [data-theme="moss"] {
@@ -194,6 +209,7 @@
   --site-bg: #07100c;
   --site-glow-a: rgba(255, 255, 255, 0.03);
   --site-glow-b: rgba(105, 195, 154, 0.09);
+  --font-display-raw: "Fraunces", Georgia, serif;
 }
 
 [data-theme="indigo"] {
@@ -202,6 +218,7 @@
   --site-bg: #08090f;
   --site-glow-a: rgba(255, 255, 255, 0.03);
   --site-glow-b: rgba(91, 127, 219, 0.09);
+  --font-display-raw: "Space Grotesk", sans-serif;
 }
 
 [data-theme="plum"] {
@@ -210,6 +227,7 @@
   --site-bg: #0f0a0d;
   --site-glow-a: rgba(255, 255, 255, 0.03);
   --site-glow-b: rgba(199, 125, 171, 0.09);
+  --font-display-raw: "Cormorant Garamond", Georgia, serif;
 }
 
 [data-theme="marigold"] {
@@ -238,6 +256,8 @@
   --panel-blur: blur(18px);
   --panel-radius: 18px;
   --panel-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+  --font-display-raw: "Cormorant Garamond", Georgia, serif;
+  --surface-transition-timing: 450ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Ai / indigo (glass): ai-zome dye blue, frosted glass surfaces */
@@ -256,6 +276,8 @@
   --panel-blur: blur(18px);
   --panel-radius: 18px;
   --panel-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
+  --font-display-raw: "Space Grotesk", sans-serif;
+  --surface-transition-timing: 450ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* Matcha (clay): tea green, soft inflated claymorphism */
@@ -276,6 +298,10 @@
   --panel-radius: 28px;
   --panel-shadow:
     10px 10px 22px rgba(0, 0, 0, 0.5), -8px -8px 16px rgba(255, 255, 255, 0.035);
+  --font-display-raw: "Fraunces", Georgia, serif;
+  /* Clay gets a springy overshoot on hover/press instead of a plain
+     ease — the material should feel like it's actually deforming. */
+  --surface-transition-timing: 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* Sumi (clay): ink charcoal, soft inflated claymorphism */
@@ -296,6 +322,8 @@
   --panel-radius: 28px;
   --panel-shadow:
     10px 10px 22px rgba(0, 0, 0, 0.55), -8px -8px 16px rgba(255, 255, 255, 0.03);
+  --font-display-raw: "Fraunces", Georgia, serif;
+  --surface-transition-timing: 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @layer components {
@@ -309,7 +337,7 @@
     border-radius: var(--surface-radius);
     box-shadow: var(--surface-shadow);
     transform: translateY(0);
-    transition: border-color 300ms ease, box-shadow 300ms ease, transform 300ms ease;
+    transition: border-color var(--surface-transition-timing), box-shadow var(--surface-transition-timing), transform var(--surface-transition-timing);
   }
   .surface-card:hover,
   .surface-card:focus-visible {
@@ -357,7 +385,7 @@
     border: var(--surface-border);
     border-radius: var(--surface-radius);
     box-shadow: var(--surface-shadow);
-    transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+    transition: transform var(--surface-transition-timing), border-color var(--surface-transition-timing), box-shadow var(--surface-transition-timing);
   }
   .surface-button:hover {
     border-color: var(--kraft);
