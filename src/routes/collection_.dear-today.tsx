@@ -91,7 +91,15 @@ function DearTodayList() {
   return (
     <PageShell>
       <section className="mx-auto max-w-4xl px-5 py-10 md:px-12 md:py-16">
-        <div className="mb-12 max-w-2xl">
+        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-white/40">
+          <Link to="/collection" className="hover:text-white">
+            {t("collectionsLibrary.title")}
+          </Link>
+          <span>/</span>
+          <span className="text-white/70">{t("nav.dearToday")}</span>
+        </nav>
+
+        <div className="mb-12 mt-6 max-w-2xl">
           <p className="mb-3 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.4em] text-kraft before:block before:h-px before:w-8 before:bg-kraft/60">
             {t("dearToday.eyebrow")}
           </p>
@@ -118,12 +126,20 @@ function DearTodayList() {
                   className="group flex gap-4 rounded border border-white/10 bg-neutral-900/40 transition-colors duration-300 hover:border-kraft/40 p-4 transition-colors hover:border-white/40"
                 >
                   {e.cover_url && (
-                    <img
-                      src={e.cover_url}
-                      alt=""
-                      loading="lazy"
-                      className="h-20 w-20 rounded object-cover md:h-24 md:w-24"
-                    />
+                    <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded md:h-24 md:w-24">
+                      <img
+                        src={e.cover_url}
+                        alt=""
+                        loading="lazy"
+                        className="h-full w-full object-cover"
+                      />
+                      <span className="absolute bottom-0 left-0 right-0 bg-black/70 px-1 py-0.5 text-center font-mono text-[8px] uppercase tracking-wide text-white/90">
+                        {new Date(e.entry_date).toLocaleDateString(undefined, {
+                          day: "numeric",
+                          month: "short",
+                        })}
+                      </span>
+                    </div>
                   )}
                   <div className="flex-1 min-w-0">
                     <p className="font-mono text-[10px] uppercase tracking-widest text-white/40">
