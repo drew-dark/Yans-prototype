@@ -27,10 +27,16 @@ type Collection = {
   cover_url: string | null;
 };
 
-function linkFor(slug: string) {
+function linkFor(slug: string, isSeries: boolean) {
   // Dear Today keeps its own dedicated pages rather than the generic
   // Collection Home template — see /collection/dear-today.
-  return slug === "dear-today" ? "/collection/dear-today" : `/collection/${slug}`;
+  if (slug === "dear-today") return "/collection/dear-today";
+  // A collection with Volumes under it (created from admin/taxonomy) is a
+  // story/diary series, not a generic entries collection — it belongs on
+  // /collection/series/$slug. The generic Collection Home template only
+  // reads from collection_entries, which series collections never
+  // populate, so sending them there renders as empty/broken.
+  return isSeries ? `/collection/series/${slug}` : `/collection/${slug}`;
 }
 
 function CollectionLibraryPage() {
@@ -44,6 +50,19 @@ function CollectionLibraryPage() {
         .order("sort_order");
       if (error) throw error;
       return data as Collection[];
+    },
+  });
+
+  // Collections used as story/diary taxonomy (see lib/taxonomy.ts,
+  // admin/taxonomy.tsx) always have at least one Volume under them; plain
+  // "collection library" collections never do. Used to route each card to
+  // the right detail template below.
+  const { data: seriesCollectionIds = new Set<string>() } = useQuery({
+    queryKey: ["public", "collections-with-volumes"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("volumes").select("collection_id");
+      if (error) throw error;
+      return new Set((data ?? []).map((v) => v.collection_id as string));
     },
   });
 
@@ -75,7 +94,7 @@ function CollectionLibraryPage() {
             {collections.map((c) => (
               <Link
                 key={c.id}
-                to={linkFor(c.slug)}
+                to={linkFor(c.slug, seriesCollectionIds.has(c.id))}
                 className="group surface-card flex flex-col overflow-hidden text-left"
               >
                 <div className="aspect-[16/9] overflow-hidden bg-neutral-900">
