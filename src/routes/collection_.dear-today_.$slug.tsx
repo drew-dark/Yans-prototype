@@ -90,12 +90,17 @@ function EntryPage() {
     <PageShell>
       <ReadingProgress />
       <article className="mx-auto max-w-3xl px-5 py-10 md:px-12 md:py-16">
-        <Link
-          to="/collection/dear-today"
-          className="font-mono text-[10px] uppercase tracking-widest text-white/40 hover:text-white"
-        >
-          {t("dearToday.backLink")}
-        </Link>
+        <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1.5 font-mono text-[10px] uppercase tracking-widest text-white/40">
+          <Link to="/collection" className="hover:text-white">
+            {t("collectionsLibrary.title")}
+          </Link>
+          <span>/</span>
+          <Link to="/collection/dear-today" className="hover:text-white">
+            {t("nav.dearToday")}
+          </Link>
+          <span>/</span>
+          <span className="text-white/70">{e.title}</span>
+        </nav>
         <div className="mt-6 flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-widest text-white/40">
           <span>
             {new Date(e.entry_date).toLocaleDateString(undefined, {

@@ -31,11 +31,25 @@ export const Route = createFileRoute("/_authenticated/admin/footprints")({
   component: FootprintsAdmin,
 });
 
-const CATEGORIES = ["news", "video", "project"] as const;
+const CATEGORIES = [
+  "news",
+  "video",
+  "project",
+  "podcast",
+  "interview",
+  "publication",
+  "award",
+  "collaboration",
+] as const;
+
+function slugify(s: string) {
+  return s.toLowerCase().trim().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+}
 
 type Footprint = {
   id: string;
   title: string;
+  slug: string | null;
   category: string;
   role_or_outlet: string | null;
   description: string | null;
@@ -50,6 +64,7 @@ type Footprint = {
 
 const empty = {
   title: "",
+  slug: "",
   category: "project" as string,
   role_or_outlet: "",
   description: "",
@@ -87,6 +102,7 @@ function FootprintsAdmin() {
     setEditing(item);
     setForm({
       title: item.title,
+      slug: item.slug ?? "",
       category: item.category,
       role_or_outlet: item.role_or_outlet ?? "",
       description: item.description ?? "",
@@ -106,6 +122,7 @@ function FootprintsAdmin() {
       if (!form.title) throw new Error("Title required");
       const payload = {
         title: form.title,
+        slug: form.slug || slugify(form.title),
         category: form.category,
         role_or_outlet: form.role_or_outlet || null,
         description: form.description || null,
@@ -171,6 +188,16 @@ function FootprintsAdmin() {
                 <Input
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
+                  className="bg-neutral-900 border-neutral-800"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Slug (used in the URL — blank = generate from title)</Label>
+                <Input
+                  value={form.slug}
+                  onChange={(e) => setForm({ ...form, slug: slugify(e.target.value) })}
+                  placeholder={slugify(form.title)}
                   className="bg-neutral-900 border-neutral-800"
                 />
               </div>

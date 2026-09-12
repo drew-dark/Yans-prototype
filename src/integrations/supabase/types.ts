@@ -469,6 +469,7 @@ export type Database = {
           occurred_on: string | null
           published: boolean
           role_or_outlet: string | null
+          slug: string | null
           sort_order: number
           tags: string[]
           title: string
@@ -485,6 +486,7 @@ export type Database = {
           occurred_on?: string | null
           published?: boolean
           role_or_outlet?: string | null
+          slug?: string | null
           sort_order?: number
           tags?: string[]
           title: string
@@ -501,6 +503,7 @@ export type Database = {
           occurred_on?: string | null
           published?: boolean
           role_or_outlet?: string | null
+          slug?: string | null
           sort_order?: number
           tags?: string[]
           title?: string
