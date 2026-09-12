@@ -126,7 +126,8 @@
     "signInPrompt": "してお気に入りの保存、コメント、プロフィール管理を行えます。",
     "motion": "モーション",
     "motionDesc": "The Last Mukwasu は端末の「モーション削減」設定に自動的に従います — デバイスのアクセシビリティ設定で有効にすると、ホバー時の演出やズームが最小限になります。",
-    "signOut": "ログアウト"
+    "signOut": "ログアウト",
+    "friends": "フレンド"
   },
   "newsletterForm": {
     "eyebrow": "購読",
@@ -176,17 +177,50 @@
     "active": "使用中",
     "siteDefault": "サイトのデフォルト",
     "signInToPersonalize": "して自分だけのテーマを選べます — 見た目が変わるのはご自身の画面だけです。",
-    "kraft": { "label": "インク＆クラフト", "blurb": "深い黒地に温かみのある紙の色。" },
-    "ember": { "label": "熾火", "blurb": "深夜ラジオを思わせる、燃えるようなオレンジ。" },
-    "newsprint": { "label": "新聞紙", "blurb": "新聞紙のような、澄んだ灰色。" },
-    "moss": { "label": "苔", "blurb": "静かな緑、庭のひととき。" },
-    "indigo": { "label": "藍", "blurb": "藍甕と夜行列車を思わせる、深い青。" },
-    "plum": { "label": "梅", "blurb": "霜の残る朝に咲く、早咲きの梅色。" },
-    "marigold": { "label": "金盞花", "blurb": "夕暮れの市場のような、温かい金色。" },
-    "sakura": { "label": "桜", "blurb": "桜色の淡いピンク — 曇りガラスのような質感。" },
-    "ai": { "label": "藍染", "blurb": "藍染の青 — 曇りガラスのような質感。" },
-    "matcha": { "label": "抹茶", "blurb": "抹茶色の緑 — 柔らかく膨らんだ質感。" },
-    "sumi": { "label": "墨", "blurb": "墨色の炭 — 柔らかく膨らんだ質感。" }
+    "kraft": {
+      "label": "インク＆クラフト",
+      "blurb": "深い黒地に温かみのある紙の色。"
+    },
+    "ember": {
+      "label": "熾火",
+      "blurb": "深夜ラジオを思わせる、燃えるようなオレンジ。"
+    },
+    "newsprint": {
+      "label": "新聞紙",
+      "blurb": "新聞紙のような、澄んだ灰色。"
+    },
+    "moss": {
+      "label": "苔",
+      "blurb": "静かな緑、庭のひととき。"
+    },
+    "indigo": {
+      "label": "藍",
+      "blurb": "藍甕と夜行列車を思わせる、深い青。"
+    },
+    "plum": {
+      "label": "梅",
+      "blurb": "霜の残る朝に咲く、早咲きの梅色。"
+    },
+    "marigold": {
+      "label": "金盞花",
+      "blurb": "夕暮れの市場のような、温かい金色。"
+    },
+    "sakura": {
+      "label": "桜",
+      "blurb": "桜色の淡いピンク — 曇りガラスのような質感。"
+    },
+    "ai": {
+      "label": "藍染",
+      "blurb": "藍染の青 — 曇りガラスのような質感。"
+    },
+    "matcha": {
+      "label": "抹茶",
+      "blurb": "抹茶色の緑 — 柔らかく膨らんだ質感。"
+    },
+    "sumi": {
+      "label": "墨",
+      "blurb": "墨色の炭 — 柔らかく膨らんだ質感。"
+    }
   },
   "auth": {
     "studioSignIn": "スタジオへのログイン",
@@ -336,7 +370,8 @@
     "save": "保存",
     "saving": "保存中…",
     "customizeSaved": "ページを更新しました",
-    "customizeError": "変更を保存できませんでした"
+    "customizeError": "変更を保存できませんでした",
+    "followError": "フォロー状態を更新できませんでした"
   },
   "justIn": {
     "eyebrow": "新着",
@@ -345,5 +380,35 @@
     "collection_entry": "コレクション",
     "gallery": "写真",
     "story": "物語"
+  },
+  "friends": {
+    "title": "フレンド",
+    "subtitle": "フレンドはメッセージ・通話ができます。フォローは別機能で、これらは許可されません。",
+    "searchPlaceholder": "ユーザー名で検索…",
+    "searching": "検索中…",
+    "noResults": "見つかりませんでした。",
+    "addFriend": "フレンド申請",
+    "alreadyFriends": "フレンド",
+    "pending": "保留中",
+    "incoming": "申請",
+    "outgoing": "送信済み",
+    "accept": "承認",
+    "decline": "拒否",
+    "cancel": "キャンセル",
+    "yourFriends": "フレンド",
+    "noFriendsYet": "まだフレンドがいません — 上でユーザー名を検索してください。",
+    "requestSent": "フレンド申請を送信しました",
+    "error": "問題が発生しました",
+    "follow": "フォロー",
+    "following": "フォロー中",
+    "followingTitle": "フォロー中",
+    "noFollowingYet": "まだ誰もフォローしていません。"
+  },
+  "notifications": {
+    "title": "通知",
+    "empty": "まだ通知はありません。",
+    "friend_request": "さんがフレンド申請を送りました",
+    "friend_accept": "さんがフレンド申請を承認しました",
+    "new_follower": "さんにフォローされました"
   }
 }

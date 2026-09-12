@@ -10,6 +10,7 @@ export const Route = createFileRoute("/_authenticated/account")({
 
 const tabs = [
   { to: "/account", labelKey: "settings.profile" },
+  { to: "/account/friends", labelKey: "settings.friends" },
   { to: "/account/bookmarks", labelKey: "settings.bookmarks" },
   { to: "/account/comments", labelKey: "settings.comments" },
   { to: "/settings", labelKey: "settings.title" },
