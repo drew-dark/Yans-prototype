@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { THEMES, type ThemeId } from "@/components/site/ThemeProvider";
 import { Palette } from "lucide-react";
+import { FollowButton } from "@/components/site/SocialButtons";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/footsteps_/$username")({
@@ -72,6 +73,43 @@ function FootstepsPage() {
 
   const isOwner = viewerId !== null && viewerId === profile.user_id;
   const resolvedTheme: ThemeId = isThemeId(profile.footsteps_theme) ? profile.footsteps_theme : "kraft";
+
+  const { data: isFollowing = false } = useQuery({
+    queryKey: ["is_following", viewerId, profile.user_id],
+    enabled: !!viewerId && !isOwner,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("follows")
+        .select("follower_id")
+        .eq("follower_id", viewerId as string)
+        .eq("followed_id", profile.user_id)
+        .maybeSingle();
+      if (error) throw error;
+      return !!data;
+    },
+  });
+
+  async function toggleFollow() {
+    if (!viewerId) return;
+    try {
+      if (isFollowing) {
+        const { error } = await supabase
+          .from("follows")
+          .delete()
+          .eq("follower_id", viewerId)
+          .eq("followed_id", profile.user_id);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from("follows")
+          .insert({ follower_id: viewerId, followed_id: profile.user_id });
+        if (error) throw error;
+      }
+      qc.invalidateQueries({ queryKey: ["is_following", viewerId, profile.user_id] });
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : t("footsteps.followError"));
+    }
+  }
 
   async function saveCustomization() {
     setSavingCustomize(true);
@@ -215,6 +253,9 @@ function FootstepsPage() {
                 <Palette className="h-3 w-3" />
                 {t("footsteps.customize")}
               </button>
+            )}
+            {!isOwner && viewerId && (
+              <FollowButton isFollowing={isFollowing} onToggle={toggleFollow} />
             )}
           </div>
 

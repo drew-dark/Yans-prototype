@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { LanguageToggle } from "@/components/site/LanguageProvider";
 import { Settings, Menu, ChevronDown } from "lucide-react";
+import { NotificationBell } from "@/components/site/NotificationBell";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -120,6 +121,7 @@ export function AuthAffordance({ className = "flex" }: { className?: string }) {
   }
   return (
     <div className={`items-center gap-2 ${className}`}>
+      <NotificationBell />
       <Link
         to="/account"
         className="surface-button px-2.5 py-1 font-mono text-[10px] uppercase tracking-widest text-white/70 hover:text-white"

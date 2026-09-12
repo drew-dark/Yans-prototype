@@ -126,7 +126,8 @@
     "signInPrompt": "to bookmark favourites, comment and manage your profile.",
     "motion": "Motion",
     "motionDesc": "The Last Mukwasu follows your system “reduce motion” setting automatically — hover reveals and zooms are minimised when it is switched on in your device accessibility settings.",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "friends": "Friends"
   },
   "newsletterForm": {
     "eyebrow": "Subscribe",
@@ -176,17 +177,50 @@
     "active": "Active",
     "siteDefault": "Site default",
     "signInToPersonalize": "to choose your own theme — it'll only change what you see.",
-    "kraft": { "label": "Ink & Kraft", "blurb": "Warm paper accent on deep ink." },
-    "ember": { "label": "Ember", "blurb": "Burnt orange, late-night radio." },
-    "newsprint": { "label": "Newsprint", "blurb": "Cool grey, broadsheet clarity." },
-    "moss": { "label": "Moss", "blurb": "Quiet green, garden hours." },
-    "indigo": { "label": "Indigo", "blurb": "Deep blue, dye vats and night trains." },
-    "plum": { "label": "Plum", "blurb": "Dusty rose, early bloom before frost." },
-    "marigold": { "label": "Marigold", "blurb": "Golden warmth, market stalls at dusk." },
-    "sakura": { "label": "Sakura", "blurb": "Cherry blossom pink — frosted glass surfaces." },
-    "ai": { "label": "Ai", "blurb": "Ai-zome indigo — frosted glass surfaces." },
-    "matcha": { "label": "Matcha", "blurb": "Tea green — soft inflated clay surfaces." },
-    "sumi": { "label": "Sumi", "blurb": "Sumi ink charcoal — soft inflated clay surfaces." }
+    "kraft": {
+      "label": "Ink & Kraft",
+      "blurb": "Warm paper accent on deep ink."
+    },
+    "ember": {
+      "label": "Ember",
+      "blurb": "Burnt orange, late-night radio."
+    },
+    "newsprint": {
+      "label": "Newsprint",
+      "blurb": "Cool grey, broadsheet clarity."
+    },
+    "moss": {
+      "label": "Moss",
+      "blurb": "Quiet green, garden hours."
+    },
+    "indigo": {
+      "label": "Indigo",
+      "blurb": "Deep blue, dye vats and night trains."
+    },
+    "plum": {
+      "label": "Plum",
+      "blurb": "Dusty rose, early bloom before frost."
+    },
+    "marigold": {
+      "label": "Marigold",
+      "blurb": "Golden warmth, market stalls at dusk."
+    },
+    "sakura": {
+      "label": "Sakura",
+      "blurb": "Cherry blossom pink — frosted glass surfaces."
+    },
+    "ai": {
+      "label": "Ai",
+      "blurb": "Ai-zome indigo — frosted glass surfaces."
+    },
+    "matcha": {
+      "label": "Matcha",
+      "blurb": "Tea green — soft inflated clay surfaces."
+    },
+    "sumi": {
+      "label": "Sumi",
+      "blurb": "Sumi ink charcoal — soft inflated clay surfaces."
+    }
   },
   "auth": {
     "studioSignIn": "Studio sign-in",
@@ -336,7 +370,8 @@
     "save": "Save",
     "saving": "Saving…",
     "customizeSaved": "Page updated",
-    "customizeError": "Couldn't save changes"
+    "customizeError": "Couldn't save changes",
+    "followError": "Couldn't update follow"
   },
   "justIn": {
     "eyebrow": "Fresh",
@@ -345,5 +380,35 @@
     "collection_entry": "Collection",
     "gallery": "Photo",
     "story": "Story"
+  },
+  "friends": {
+    "title": "Friends",
+    "subtitle": "Friends can message and call you. Following is separate and doesn't grant that.",
+    "searchPlaceholder": "Search by username…",
+    "searching": "Searching…",
+    "noResults": "No one found.",
+    "addFriend": "Add friend",
+    "alreadyFriends": "Friends",
+    "pending": "Pending",
+    "incoming": "Requests",
+    "outgoing": "Sent",
+    "accept": "Accept",
+    "decline": "Decline",
+    "cancel": "Cancel",
+    "yourFriends": "Friends",
+    "noFriendsYet": "No friends yet — search for a username above.",
+    "requestSent": "Friend request sent",
+    "error": "Something went wrong",
+    "follow": "Follow",
+    "following": "Following",
+    "followingTitle": "Following",
+    "noFollowingYet": "Not following anyone yet."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "Nothing yet.",
+    "friend_request": "sent you a friend request",
+    "friend_accept": "accepted your friend request",
+    "new_follower": "followed you"
   }
 }
