@@ -90,7 +90,7 @@ function CollectionsAdmin() {
         const { error } = await supabase.from("collections").update(payload).eq("id", editingCol.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("collections").insert(payload);
+        const { error } = await supabase.from("collections").insert({ ...payload, kind: "library" });
         if (error) throw error;
       }
     },

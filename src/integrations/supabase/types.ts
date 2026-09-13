@@ -201,6 +201,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          kind: string
           slug: string
           sort_order: number
           title: string
@@ -211,6 +212,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          kind?: string
           slug: string
           sort_order?: number
           title: string
@@ -221,6 +223,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          kind?: string
           slug?: string
           sort_order?: number
           title?: string
@@ -297,9 +300,6 @@ export type Database = {
         Row: {
           author_id: string | null
           body: string | null
-          chapter_number: number | null
-          chapter_title: string | null
-          collection_id: string | null
           cover_url: string | null
           created_at: string
           entry_date: string
@@ -307,18 +307,13 @@ export type Database = {
           id: string
           published: boolean
           published_at: string | null
-          season_id: string | null
           slug: string
           title: string
           updated_at: string
-          volume_id: string | null
         }
         Insert: {
           author_id?: string | null
           body?: string | null
-          chapter_number?: number | null
-          chapter_title?: string | null
-          collection_id?: string | null
           cover_url?: string | null
           created_at?: string
           entry_date?: string
@@ -326,18 +321,13 @@ export type Database = {
           id?: string
           published?: boolean
           published_at?: string | null
-          season_id?: string | null
           slug: string
           title: string
           updated_at?: string
-          volume_id?: string | null
         }
         Update: {
           author_id?: string | null
           body?: string | null
-          chapter_number?: number | null
-          chapter_title?: string | null
-          collection_id?: string | null
           cover_url?: string | null
           created_at?: string
           entry_date?: string
@@ -345,35 +335,11 @@ export type Database = {
           id?: string
           published?: boolean
           published_at?: string | null
-          season_id?: string | null
           slug?: string
           title?: string
           updated_at?: string
-          volume_id?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "dear_today_collection_id_fkey"
-            columns: ["collection_id"]
-            isOneToOne: false
-            referencedRelation: "collections"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "dear_today_season_id_fkey"
-            columns: ["season_id"]
-            isOneToOne: false
-            referencedRelation: "seasons"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "dear_today_volume_id_fkey"
-            columns: ["volume_id"]
-            isOneToOne: false
-            referencedRelation: "volumes"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       diary_entries: {
         Row: {
