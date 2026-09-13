@@ -8,6 +8,7 @@ export type Collection = {
   description: string | null;
   cover_url: string | null;
   sort_order: number;
+  kind: "library" | "series";
 };
 export type Volume = Collection & { collection_id: string };
 export type Season = Collection & { volume_id: string };

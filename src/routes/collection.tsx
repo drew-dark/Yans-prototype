@@ -25,18 +25,20 @@ type Collection = {
   title: string;
   description: string | null;
   cover_url: string | null;
+  kind: "library" | "series";
 };
 
-function linkFor(slug: string, isSeries: boolean) {
+function linkFor(c: Collection) {
   // Dear Today keeps its own dedicated pages rather than the generic
   // Collection Home template — see /collection/dear-today.
-  if (slug === "dear-today") return "/collection/dear-today";
-  // A collection with Volumes under it (created from admin/taxonomy) is a
-  // story/diary series, not a generic entries collection — it belongs on
-  // /collection/series/$slug. The generic Collection Home template only
-  // reads from collection_entries, which series collections never
-  // populate, so sending them there renders as empty/broken.
-  return isSeries ? `/collection/series/${slug}` : `/collection/${slug}`;
+  if (c.slug === "dear-today") return "/collection/dear-today";
+  // kind is set once at creation by whichever admin surface made the row
+  // (admin/taxonomy.tsx -> "series", admin/collections.tsx -> "library")
+  // — see the collections_kind migration. A "series" collection's content
+  // lives on stories/diary_entries via volume_id/season_id, never in
+  // collection_entries, so it needs the series template instead of the
+  // generic one.
+  return c.kind === "series" ? `/collection/series/${c.slug}` : `/collection/${c.slug}`;
 }
 
 function CollectionLibraryPage() {
@@ -46,23 +48,10 @@ function CollectionLibraryPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("collections")
-        .select("id, slug, title, description, cover_url")
+        .select("id, slug, title, description, cover_url, kind")
         .order("sort_order");
       if (error) throw error;
       return data as Collection[];
-    },
-  });
-
-  // Collections used as story/diary taxonomy (see lib/taxonomy.ts,
-  // admin/taxonomy.tsx) always have at least one Volume under them; plain
-  // "collection library" collections never do. Used to route each card to
-  // the right detail template below.
-  const { data: seriesCollectionIds = new Set<string>() } = useQuery({
-    queryKey: ["public", "collections-with-volumes"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("volumes").select("collection_id");
-      if (error) throw error;
-      return new Set((data ?? []).map((v) => v.collection_id as string));
     },
   });
 
@@ -94,7 +83,7 @@ function CollectionLibraryPage() {
             {collections.map((c) => (
               <Link
                 key={c.id}
-                to={linkFor(c.slug, seriesCollectionIds.has(c.id))}
+                to={linkFor(c)}
                 className="group surface-card flex flex-col overflow-hidden text-left"
               >
                 <div className="aspect-[16/9] overflow-hidden bg-neutral-900">
