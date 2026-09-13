@@ -29,6 +29,7 @@ export const navLinks = [
   { to: "/show", labelKey: "nav.show" },
   { to: "/shop", labelKey: "nav.shop" },
   { to: "/about", labelKey: "nav.about" },
+  { to: "/newsletter", labelKey: "nav.newsletter" },
 ] as const;
 
 /** "Dear Today" lives under Collection (/collection/dear-today) — shown as

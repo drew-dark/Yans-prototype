@@ -89,12 +89,22 @@ function SeriesPage() {
     },
   });
 
+  const volumeIds = volumes.map((v) => v.id);
+
+  // Depends on `volumes` having actually resolved, not just `collection.id`
+  // — this used to key/enable off collection.id alone and read volumeIds
+  // from closure, so on first load (volumes still []) it would fire
+  // immediately, see zero volume ids, and resolve to [] permanently: once
+  // a query is in "success" state, React Query won't refetch it just
+  // because a closure variable changed elsewhere, only when its key
+  // changes. That meant Seasons never actually populated after the very
+  // first render. Including volumeIds in the key (and gating on them
+  // existing) fixes both the race and keeps it correctly re-fetching if
+  // the set of volumes ever changes.
   const { data: seasons = [] } = useQuery({
-    queryKey: ["public", "seasons", collection?.id],
-    enabled: !!collection?.id,
+    queryKey: ["public", "seasons", collection?.id, volumeIds],
+    enabled: !!collection?.id && volumeIds.length > 0,
     queryFn: async () => {
-      const volumeIds = volumes.map((v) => v.id);
-      if (volumeIds.length === 0) return [];
       const { data, error } = await supabase
         .from("seasons")
         .select("*")
