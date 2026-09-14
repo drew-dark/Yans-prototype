@@ -66,14 +66,13 @@ export function formatTaxonomyLabel(
   return parts.join(" · ");
 }
 
-export function useCollections() {
+export function useCollections(kind?: "library" | "series") {
   return useQuery({
-    queryKey: ["taxonomy", "collections"],
+    queryKey: ["taxonomy", "collections", kind ?? "all"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("collections")
-        .select("*")
-        .order("sort_order", { ascending: true });
+      let query = supabase.from("collections").select("*").order("sort_order", { ascending: true });
+      if (kind) query = query.eq("kind", kind);
+      const { data, error } = await query;
       if (error) throw error;
       return (data ?? []) as unknown as Collection[];
     },

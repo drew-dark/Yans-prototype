@@ -53,7 +53,11 @@ function CollectionsAdmin() {
   const { data: collections = [], isLoading } = useQuery({
     queryKey: ["admin", "collections"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("collections").select("*").order("sort_order");
+      const { data, error } = await supabase
+        .from("collections")
+        .select("*")
+        .eq("kind", "library")
+        .order("sort_order");
       if (error) throw error;
       return data as Collection[];
     },

@@ -173,7 +173,7 @@ function RowItem({
 
 function CollectionsPane({ selected, onSelect }: { selected: string | null; onSelect: (id: string) => void }) {
   const qc = useQueryClient();
-  const { data = [], isLoading } = useCollections();
+  const { data = [], isLoading } = useCollections("series");
   const create = useMutation({
     mutationFn: async (n: NewNode) => {
       const slug = n.slug || slugify(n.title);
