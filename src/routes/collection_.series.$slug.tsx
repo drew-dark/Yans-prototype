@@ -125,9 +125,15 @@ function SeriesPage() {
           .select("id, slug, title, excerpt, volume_id, season_id, chapter_number, part_number")
           .eq("collection_id", collection!.id)
           .eq("published", true),
+        // diary_entries has never had an excerpt column (unlike stories) —
+        // requesting it here made PostgREST reject this query with a 400,
+        // which took down the whole combined items fetch (Promise.all +
+        // throw-on-error below), not just the diary half. That's what was
+        // actually causing series pages to render empty even when their
+        // stories were fine.
         supabase
           .from("diary_entries")
-          .select("id, slug, title, excerpt, volume_id, season_id, chapter_number, part_number")
+          .select("id, slug, title, volume_id, season_id, chapter_number, part_number")
           .eq("collection_id", collection!.id)
           .eq("published", true),
       ]);
@@ -144,7 +150,10 @@ function SeriesPage() {
         part_number: number | null;
       };
       const storyRows = (stories.data ?? []) as unknown as Row[];
-      const diaryRows = (diaries.data ?? []) as unknown as Row[];
+      const diaryRows = ((diaries.data ?? []) as unknown as Omit<Row, "excerpt">[]).map((d) => ({
+        ...d,
+        excerpt: null,
+      }));
       const all: Item[] = [
         ...storyRows.map((s) => ({ ...s, kind: "story" as const })),
         ...diaryRows.map((d) => ({ ...d, kind: "diary" as const })),
