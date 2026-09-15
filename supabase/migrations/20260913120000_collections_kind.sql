@@ -28,18 +28,39 @@ WHERE kind <> 'series'
 -- that was set by hand outside the app.
 -- ----------------------------------------------------------------------
 DO $$
+DECLARE
+  present_cols text[];
+  where_clause text := '';
+  col text;
+  has_data boolean := false;
 BEGIN
-  IF EXISTS (
-    SELECT 1 FROM public.dear_today
-    WHERE collection_id IS NOT NULL
-       OR volume_id IS NOT NULL
-       OR season_id IS NOT NULL
-       OR chapter_number IS NOT NULL
-       OR chapter_title IS NOT NULL
-  ) THEN
-    RAISE EXCEPTION
-      'dear_today has non-null taxonomy column data -- these were assumed unused but are not. Aborting the DROP COLUMN below; investigate the actual rows before re-running this migration.';
+  -- Only check columns that actually exist on this database -- the
+  -- 23063813 migration that was supposed to add these apparently never
+  -- ran here (same migration-history-drift pattern seen earlier with
+  -- friend_requests), so referencing them directly errors at parse time
+  -- before DROP COLUMN IF EXISTS ever gets a chance to no-op safely.
+  SELECT array_agg(column_name) INTO present_cols
+  FROM information_schema.columns
+  WHERE table_schema = 'public' AND table_name = 'dear_today'
+    AND column_name IN ('collection_id', 'volume_id', 'season_id', 'chapter_number', 'chapter_title');
+
+  IF present_cols IS NOT NULL AND array_length(present_cols, 1) > 0 THEN
+    FOREACH col IN ARRAY present_cols LOOP
+      where_clause := where_clause || CASE WHEN where_clause = '' THEN '' ELSE ' OR ' END
+        || quote_ident(col) || ' IS NOT NULL';
+    END LOOP;
+
+    EXECUTE format('SELECT EXISTS (SELECT 1 FROM public.dear_today WHERE %s)', where_clause)
+      INTO has_data;
+
+    IF has_data THEN
+      RAISE EXCEPTION
+        'dear_today has non-null data in one or more of % -- these were assumed unused but are not. Aborting the DROP COLUMN below; investigate the actual rows before re-running this migration.',
+        present_cols;
+    END IF;
   END IF;
+  -- If present_cols is empty, there's nothing to check and nothing to
+  -- drop -- DROP COLUMN IF EXISTS below is already a safe no-op for that.
 END $$;
 
 ALTER TABLE public.dear_today
