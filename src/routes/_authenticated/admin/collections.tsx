@@ -53,7 +53,11 @@ function CollectionsAdmin() {
   const { data: collections = [], isLoading } = useQuery({
     queryKey: ["admin", "collections"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("collections").select("*").order("sort_order");
+      const { data, error } = await supabase
+        .from("collections")
+        .select("*")
+        .eq("kind", "library")
+        .order("sort_order");
       if (error) throw error;
       return data as Collection[];
     },
@@ -90,7 +94,7 @@ function CollectionsAdmin() {
         const { error } = await supabase.from("collections").update(payload).eq("id", editingCol.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("collections").insert(payload);
+        const { error } = await supabase.from("collections").insert({ ...payload, kind: "library" });
         if (error) throw error;
       }
     },

@@ -11,7 +11,7 @@ const selectCls =
   "h-10 w-full rounded border border-neutral-800 bg-neutral-900 px-3 text-sm text-white outline-none focus:border-white/40";
 
 export function TaxonomyPicker({ value, onChange }: Props) {
-  const { data: collections = [] } = useCollections();
+  const { data: collections = [] } = useCollections("series");
   const { data: volumes = [] } = useVolumes(value.collection_id);
   const { data: seasons = [] } = useSeasons(value.volume_id);
 

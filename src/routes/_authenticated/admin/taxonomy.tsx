@@ -173,11 +173,11 @@ function RowItem({
 
 function CollectionsPane({ selected, onSelect }: { selected: string | null; onSelect: (id: string) => void }) {
   const qc = useQueryClient();
-  const { data = [], isLoading } = useCollections();
+  const { data = [], isLoading } = useCollections("series");
   const create = useMutation({
     mutationFn: async (n: NewNode) => {
       const slug = n.slug || slugify(n.title);
-      const { error } = await supabase.from("collections").insert({ ...n, slug });
+      const { error } = await supabase.from("collections").insert({ ...n, slug, kind: "series" });
       if (error) throw error;
     },
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["taxonomy", "collections"] }); toast.success("Collection added"); },
