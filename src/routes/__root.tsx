@@ -12,6 +12,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { MediaViewerProvider } from "@/components/site/MediaViewer";
 import { ThemeProvider, themeInitScript } from "@/components/site/ThemeProvider";
 import { LanguageProvider, languageInitScript } from "@/components/site/LanguageProvider";
+import { ImmersiveModeProvider, uiModeInitScript } from "@/components/site/ImmersiveModeProvider";
 
 import appCss from "../styles.css?url";
 
@@ -116,6 +117,7 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script dangerouslySetInnerHTML={{ __html: uiModeInitScript }} />
         <script dangerouslySetInnerHTML={{ __html: languageInitScript }} />
         <HeadContent />
       </head>
@@ -135,11 +137,13 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
         <ThemeProvider>
-          <MediaViewerProvider>
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-            <Outlet />
-            <Toaster theme="dark" position="top-right" />
-          </MediaViewerProvider>
+          <ImmersiveModeProvider>
+            <MediaViewerProvider>
+            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+              <Outlet />
+              <Toaster theme="dark" position="top-right" />
+            </MediaViewerProvider>
+          </ImmersiveModeProvider>
         </ThemeProvider>
       </LanguageProvider>
     </QueryClientProvider>

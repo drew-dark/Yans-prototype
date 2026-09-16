@@ -408,3 +408,72 @@
   background-image: linear-gradient(to right, var(--kraft), transparent);
   height: 2px;
 }
+
+/* ---------------------------------------------------------------------
+ * Social micro-interactions: the Follow button's walking-figures scene
+ * and the Send-message letter → paper-plane sequence. Plain @keyframes
+ * rather than a JS animation library — kept dependency-free, driven by
+ * a `key`-remount + `animation-delay` chain from the React side (see
+ * FollowScene.tsx / LetterFoldAnimation.tsx).
+ * --------------------------------------------------------------------- */
+
+@keyframes figure-walk-in {
+  0% { transform: translateX(-26px); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+@keyframes figure-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1.5px); }
+}
+@keyframes figure-pop-up {
+  0% { transform: scale(1) translateY(0); }
+  35% { transform: scale(0.85, 1.15) translateY(-2px); }
+  100% { transform: scale(1) translateY(0); }
+}
+@keyframes figures-walk-off {
+  0% { transform: translateX(0); opacity: 1; }
+  75% { opacity: 1; }
+  100% { transform: translateX(22px); opacity: 0; }
+}
+@keyframes leg-swing-a {
+  0%, 100% { transform: rotate(18deg); }
+  50% { transform: rotate(-18deg); }
+}
+@keyframes leg-swing-b {
+  0%, 100% { transform: rotate(-18deg); }
+  50% { transform: rotate(18deg); }
+}
+
+/* Three layers of the send-message sequence, each spanning the same
+ * 5000ms so percentage keyframe steps stay in sync across layers without
+ * needing separate animation-delay math. See LetterFoldAnimation.tsx. */
+@keyframes letter-timeline {
+  0% { transform: scale(0.9); opacity: 0; }
+  10% { transform: scale(1) scaleY(1) scaleX(1); opacity: 1; }
+  30% { transform: scale(1) scaleY(1) scaleX(1); opacity: 1; }
+  45% { transform: scaleY(0.5) scaleX(1); opacity: 1; }
+  60% { transform: scaleY(0.25) scaleX(0.8); opacity: 1; }
+  63% { transform: scaleY(0.25) scaleX(0.8); opacity: 0; }
+  100% { transform: scaleY(0.25) scaleX(0.8); opacity: 0; }
+}
+@keyframes envelope-timeline {
+  0%, 57% { opacity: 0; transform: rotateX(0deg) scale(1); }
+  60% { opacity: 1; transform: rotateX(0deg) scale(1); }
+  72% { opacity: 1; transform: rotateX(180deg) scale(1); }
+  78% { opacity: 1; transform: rotateX(180deg) scale(1); }
+  86% { opacity: 0; transform: rotateX(180deg) scale(0.6); }
+  100% { opacity: 0; }
+}
+@keyframes seal-timeline {
+  0%, 71% { opacity: 0; transform: scale(0); }
+  75% { opacity: 1; transform: scale(1.3); }
+  78% { opacity: 1; transform: scale(1); }
+  86% { opacity: 0; transform: scale(0.6); }
+  100% { opacity: 0; }
+}
+@keyframes plane-timeline {
+  0%, 79% { opacity: 0; transform: translate(0, 0) rotate(0deg) scale(0.5); }
+  86% { opacity: 1; transform: translate(0, 0) rotate(0deg) scale(1); }
+  100% { opacity: 0; transform: translate(30px, -24px) rotate(28deg) scale(0.8); }
+}
