@@ -127,7 +127,11 @@
     "motion": "モーション",
     "motionDesc": "The Last Mukwasu は端末の「モーション削減」設定に自動的に従います — デバイスのアクセシビリティ設定で有効にすると、ホバー時の演出やズームが最小限になります。",
     "signOut": "ログアウト",
-    "friends": "フレンド"
+    "friends": "フレンド",
+    "immersive": "イマーシブモード",
+    "immersiveDesc": "上のカラーテーマに加えて、ベントグリッドのレイアウトと漂う3D背景を表示します。",
+    "immersiveOff": "オフ",
+    "immersiveOn": "オン"
   },
   "newsletterForm": {
     "eyebrow": "購読",
@@ -371,7 +375,11 @@
     "saving": "保存中…",
     "customizeSaved": "ページを更新しました",
     "customizeError": "変更を保存できませんでした",
-    "followError": "フォロー状態を更新できませんでした"
+    "followError": "フォロー状態を更新できませんでした",
+    "message": "メッセージ",
+    "messageError": "送信できませんでした",
+    "messagePlaceholder": "メッセージを書く…",
+    "messageSent": "送信しました"
   },
   "justIn": {
     "eyebrow": "新着",
@@ -402,7 +410,8 @@
     "follow": "フォロー",
     "following": "フォロー中",
     "followingTitle": "フォロー中",
-    "noFollowingYet": "まだ誰もフォローしていません。"
+    "noFollowingYet": "まだ誰もフォローしていません。",
+    "followFailed": "失敗しました"
   },
   "notifications": {
     "title": "通知",

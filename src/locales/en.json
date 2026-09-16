@@ -127,7 +127,11 @@
     "motion": "Motion",
     "motionDesc": "The Last Mukwasu follows your system “reduce motion” setting automatically — hover reveals and zooms are minimised when it is switched on in your device accessibility settings.",
     "signOut": "Sign out",
-    "friends": "Friends"
+    "friends": "Friends",
+    "immersive": "Immersive mode",
+    "immersiveDesc": "Bento-grid layouts with a drifting 3D background, on top of your colour theme above.",
+    "immersiveOn": "On",
+    "immersiveOff": "Off"
   },
   "newsletterForm": {
     "eyebrow": "Subscribe",
@@ -371,7 +375,11 @@
     "saving": "Saving…",
     "customizeSaved": "Page updated",
     "customizeError": "Couldn't save changes",
-    "followError": "Couldn't update follow"
+    "followError": "Couldn't update follow",
+    "message": "Message",
+    "messagePlaceholder": "Write a message…",
+    "messageSent": "Sent",
+    "messageError": "Failed"
   },
   "justIn": {
     "eyebrow": "Fresh",
@@ -402,7 +410,8 @@
     "follow": "Follow",
     "following": "Following",
     "followingTitle": "Following",
-    "noFollowingYet": "Not following anyone yet."
+    "noFollowingYet": "Not following anyone yet.",
+    "followFailed": "Failed"
   },
   "notifications": {
     "title": "Notifications",

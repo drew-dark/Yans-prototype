@@ -10,7 +10,10 @@ import { Input } from "@/components/ui/input";
 import { ImageUpload } from "@/components/admin/ImageUpload";
 import { THEMES, type ThemeId } from "@/components/site/ThemeProvider";
 import { Palette } from "lucide-react";
-import { FollowButton } from "@/components/site/SocialButtons";
+import { FollowButton, SendMessageButton } from "@/components/site/SocialButtons";
+import { useSocialGraph } from "@/hooks/use-social-graph";
+import { useImmersiveMode } from "@/components/site/ImmersiveModeProvider";
+import { BentoGrid, BentoCell } from "@/components/site/BentoGrid";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/footsteps_/$username")({
@@ -73,42 +76,21 @@ function FootstepsPage() {
 
   const isOwner = viewerId !== null && viewerId === profile.user_id;
   const resolvedTheme: ThemeId = isThemeId(profile.footsteps_theme) ? profile.footsteps_theme : "kraft";
+  const social = useSocialGraph(viewerId);
+  const { mode: uiMode } = useImmersiveMode();
+  const isFollowing = social.isFollowing(profile.user_id);
+  const isFriend = social.statusWith(profile.user_id) === "accepted";
+  const [messageDraft, setMessageDraft] = useState("");
 
-  const { data: isFollowing = false } = useQuery({
-    queryKey: ["is_following", viewerId, profile.user_id],
-    enabled: !!viewerId && !isOwner,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("follows")
-        .select("follower_id")
-        .eq("follower_id", viewerId as string)
-        .eq("followed_id", profile.user_id)
-        .maybeSingle();
-      if (error) throw error;
-      return !!data;
-    },
-  });
-
-  async function toggleFollow() {
-    if (!viewerId) return;
-    try {
-      if (isFollowing) {
-        const { error } = await supabase
-          .from("follows")
-          .delete()
-          .eq("follower_id", viewerId)
-          .eq("followed_id", profile.user_id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase
-          .from("follows")
-          .insert({ follower_id: viewerId, followed_id: profile.user_id });
-        if (error) throw error;
-      }
-      qc.invalidateQueries({ queryKey: ["is_following", viewerId, profile.user_id] });
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : t("footsteps.followError"));
-    }
+  async function sendMessage() {
+    const body = messageDraft.trim();
+    if (!body) return;
+    const { error } = await supabase.rpc("start_conversation", {
+      other_user_id: profile.user_id,
+      first_message: body,
+    });
+    if (error) throw error;
+    setMessageDraft("");
   }
 
   async function saveCustomization() {
@@ -255,7 +237,20 @@ function FootstepsPage() {
               </button>
             )}
             {!isOwner && viewerId && (
-              <FollowButton isFollowing={isFollowing} onToggle={toggleFollow} />
+              <FollowButton
+                isFollowing={isFollowing}
+                pending={social.isPendingFor(profile.user_id)}
+                onToggle={() =>
+                  isFollowing
+                    ? social.unfollow(profile.user_id, {
+                        onError: (e: unknown) => toast.error(e instanceof Error ? e.message : t("footsteps.followError")),
+                      })
+                    : social.followAsync(profile.user_id).catch((e: unknown) => {
+                        toast.error(e instanceof Error ? e.message : t("footsteps.followError"));
+                        throw e;
+                      })
+                }
+              />
             )}
           </div>
 
@@ -335,6 +330,18 @@ function FootstepsPage() {
             </div>
           )}
 
+          {!isOwner && isFriend && (
+            <div className="mt-8 flex items-center gap-2 border-b border-white/10 pb-8">
+              <Input
+                value={messageDraft}
+                onChange={(e) => setMessageDraft(e.target.value)}
+                placeholder={t("footsteps.messagePlaceholder")}
+                className="border-white/15 bg-black/40"
+              />
+              <SendMessageButton onSend={sendMessage} disabled={!messageDraft.trim()} />
+            </div>
+          )}
+
           {!profile.footsteps_visible ? (
             <p className="mt-10 font-mono text-xs uppercase tracking-widest text-white/60">
               {t("footsteps.private")}
@@ -343,6 +350,14 @@ function FootstepsPage() {
             <p className="mt-10 text-white/60">{t("footsteps.loading")}</p>
           ) : timeline.length === 0 ? (
             <p className="mt-10 text-white/60">{t("footsteps.empty")}</p>
+          ) : uiMode === "immersive" ? (
+            <BentoGrid className="mt-10">
+              {timeline.map((item, i) => (
+                <BentoCell key={`${item.kind}-${item.id}`} colSpan={i % 5 === 0 ? 2 : 1}>
+                  <TimelineRow item={item} />
+                </BentoCell>
+              ))}
+            </BentoGrid>
           ) : (
             <ul className="mt-10 space-y-4">
               {timeline.map((item) => (

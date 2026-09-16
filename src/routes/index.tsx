@@ -10,6 +10,8 @@ import { ContentCard } from "@/components/site/ContentCard";
 import { ReactionSummary } from "@/components/site/Reactions";
 import { HeroCarousel } from "@/components/site/HeroCarousel";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
+import { useImmersiveMode } from "@/components/site/ImmersiveModeProvider";
+import { BentoGrid, BentoCell } from "@/components/site/BentoGrid";
 import portraitImg from "@/assets/muyan-portrait.jpg";
 import broadcastImg from "@/assets/muyan-broadcast.jpg";
 import foodImg from "@/assets/muyan-food.jpg";
@@ -108,6 +110,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const { t } = useTranslation();
+  const { mode: uiMode } = useImmersiveMode();
   const { data: heroImages = fallbackHero } = useQuery({
     queryKey: ["public", "hero_images"],
     queryFn: async () => {
@@ -385,19 +388,62 @@ function Index() {
           </Link>
         </div>
 
-        <div className="group/strip -mx-5 flex h-[36vh] snap-x snap-mandatory items-stretch gap-1 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:mx-0 md:h-[58vh] md:snap-none md:flex-wrap md:gap-2 md:overflow-hidden md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
-          {tiles.slice(0, 12).map((t, i) => (
-            <HomeTile
-              key={t.id}
-              tile={t}
-              index={i}
-              onOpen={() => open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label })}
-              imageTransitionClass={imageTransitionClass}
-              hoverImageClass={hoverImageClass}
-              reduceMotion={reduceMotion}
-            />
-          ))}
-        </div>
+        {uiMode === "immersive" ? (
+          <BentoGrid>
+            {tiles.slice(0, 12).map((t, i) => {
+              // A hand-picked rhythm of spans rather than a repeating
+              // pattern, so the grid reads as composed rather than tiled.
+              const spanPattern: Array<{ col: 1 | 2 | 3; row: 1 | 2 | 3 }> = [
+                { col: 2, row: 2 },
+                { col: 1, row: 1 },
+                { col: 1, row: 1 },
+                { col: 1, row: 2 },
+                { col: 1, row: 1 },
+                { col: 2, row: 1 },
+                { col: 1, row: 1 },
+                { col: 1, row: 1 },
+                { col: 2, row: 1 },
+                { col: 1, row: 1 },
+                { col: 1, row: 1 },
+                { col: 1, row: 1 },
+              ];
+              const span = spanPattern[i % spanPattern.length];
+              return (
+                <BentoCell key={t.id} colSpan={span.col} rowSpan={span.row} className="!p-0">
+                  <button
+                    type="button"
+                    onClick={() => open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label })}
+                    className="group relative block h-full min-h-32 w-full text-left"
+                  >
+                    <img
+                      src={t.image_url}
+                      alt={t.label}
+                      loading="lazy"
+                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-3">
+                      <p className="font-mono text-[10px] uppercase tracking-widest text-white">{t.label}</p>
+                    </div>
+                  </button>
+                </BentoCell>
+              );
+            })}
+          </BentoGrid>
+        ) : (
+          <div className="group/strip -mx-5 flex h-[36vh] snap-x snap-mandatory items-stretch gap-1 overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:mx-0 md:h-[58vh] md:snap-none md:flex-wrap md:gap-2 md:overflow-hidden md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden">
+            {tiles.slice(0, 12).map((t, i) => (
+              <HomeTile
+                key={t.id}
+                tile={t}
+                index={i}
+                onOpen={() => open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label })}
+                imageTransitionClass={imageTransitionClass}
+                hoverImageClass={hoverImageClass}
+                reduceMotion={reduceMotion}
+              />
+            ))}
+          </div>
+        )}
 
         <div className="mt-5 flex items-center justify-between md:hidden">
           <span className="font-mono text-[9px] uppercase tracking-widest text-white/30">

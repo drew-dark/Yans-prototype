@@ -296,6 +296,63 @@ export type Database = {
         }
         Relationships: []
       }
+      conversation_participants: {
+        Row: {
+          conversation_id: string
+          joined_at: string
+          user_id: string
+        }
+        Insert: {
+          conversation_id: string
+          joined_at?: string
+          user_id: string
+        }
+        Update: {
+          conversation_id?: string
+          joined_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      conversations: {
+        Row: {
+          created_at: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      messages: {
+        Row: {
+          body: string
+          conversation_id: string
+          created_at: string
+          id: string
+          sender_id: string
+        }
+        Insert: {
+          body: string
+          conversation_id: string
+          created_at?: string
+          id?: string
+          sender_id: string
+        }
+        Update: {
+          body?: string
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          sender_id?: string
+        }
+        Relationships: []
+      }
       dear_today: {
         Row: {
           author_id: string | null
@@ -737,6 +794,7 @@ export type Database = {
           footsteps_theme: string | null
           footsteps_visible: boolean
           theme: string | null
+          ui_mode: string
           updated_at: string
           user_id: string
           username: string | null
@@ -751,6 +809,7 @@ export type Database = {
           footsteps_theme?: string | null
           footsteps_visible?: boolean
           theme?: string | null
+          ui_mode?: string
           updated_at?: string
           user_id: string
           username?: string | null
@@ -765,6 +824,7 @@ export type Database = {
           footsteps_theme?: string | null
           footsteps_visible?: boolean
           theme?: string | null
+          ui_mode?: string
           updated_at?: string
           user_id?: string
           username?: string | null
@@ -1210,6 +1270,13 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      start_conversation: {
+        Args: {
+          first_message: string
+          other_user_id: string
+        }
+        Returns: string
       }
       unsubscribe_newsletter_subscriber: {
         Args: {

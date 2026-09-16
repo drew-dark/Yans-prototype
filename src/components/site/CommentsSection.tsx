@@ -6,6 +6,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
 import type { ContentKind } from "./BookmarkButton";
+import { useSocialGraph } from "@/hooks/use-social-graph";
+import { FollowButton, AddFriendButton } from "@/components/site/SocialButtons";
 
 type CommentRow = {
   id: string;
@@ -14,7 +16,7 @@ type CommentRow = {
   body: string;
   status: "visible" | "hidden";
   created_at: string;
-  profiles?: { display_name: string | null; avatar_url: string | null } | null;
+  profiles?: { username: string | null; display_name: string | null; avatar_url: string | null } | null;
 };
 
 export function CommentsSection({
@@ -49,15 +51,15 @@ export function CommentsSection({
     }
     const rows = (data ?? []) as unknown as CommentRow[];
     const userIds = Array.from(new Set(rows.map((r) => r.user_id)));
-    let profiles: Record<string, { display_name: string | null; avatar_url: string | null }> = {};
+    let profiles: Record<string, { username: string | null; display_name: string | null; avatar_url: string | null }> = {};
     if (userIds.length) {
       const { data: profs } = await supabase
         .from("profiles")
-        .select("user_id, display_name, avatar_url")
+        .select("user_id, username, display_name, avatar_url")
         .in("user_id", userIds);
       profiles = Object.fromEntries(
-        ((profs ?? []) as unknown as Array<{ user_id: string; display_name: string | null; avatar_url: string | null }>)
-          .map((p) => [p.user_id, { display_name: p.display_name, avatar_url: p.avatar_url }]),
+        ((profs ?? []) as unknown as Array<{ user_id: string; username: string | null; display_name: string | null; avatar_url: string | null }>)
+          .map((p) => [p.user_id, { username: p.username, display_name: p.display_name, avatar_url: p.avatar_url }]),
       );
     }
     setComments(rows.map((r) => ({ ...r, profiles: profiles[r.user_id] ?? null })));
@@ -81,6 +83,11 @@ export function CommentsSection({
   }, [load]);
 
   const isMod = roles.includes("admin") || roles.includes("moderator");
+  const social = useSocialGraph(userId);
+
+  function handleSocialError(e: unknown) {
+    toast.error(e instanceof Error ? e.message : "Something went wrong");
+  }
 
   async function post(parentId: string | null, text: string, clear: () => void) {
     if (!userId) return;
@@ -171,6 +178,8 @@ export function CommentsSection({
             row={c}
             userId={userId}
             isMod={isMod}
+            social={social}
+            onSocialError={handleSocialError}
             onReply={() => setReplyTo(replyTo === c.id ? null : c.id)}
             onDelete={() => del(c.id)}
             onToggleHide={() => toggleHide(c)}
@@ -211,6 +220,8 @@ export function CommentsSection({
                     row={r}
                     userId={userId}
                     isMod={isMod}
+                    social={social}
+                    onSocialError={handleSocialError}
                     onDelete={() => del(r.id)}
                     onToggleHide={() => toggleHide(r)}
                     t={t}
@@ -229,6 +240,8 @@ function CommentItem({
   row,
   userId,
   isMod,
+  social,
+  onSocialError,
   onReply,
   onDelete,
   onToggleHide,
@@ -238,6 +251,8 @@ function CommentItem({
   row: CommentRow;
   userId: string | null;
   isMod: boolean;
+  social: ReturnType<typeof useSocialGraph>;
+  onSocialError: (e: unknown) => void;
   onReply?: () => void;
   onDelete: () => void;
   onToggleHide: () => void;
@@ -247,18 +262,32 @@ function CommentItem({
   const hidden = row.status === "hidden";
   const canDelete = userId === row.user_id || isMod;
   const name = row.profiles?.display_name || t("comments.reader");
+  const username = row.profiles?.username;
+  const isSelf = userId === row.user_id;
+  const addFriendStatus = social.statusWith(row.user_id);
+  const identity = (
+    <>
+      {row.profiles?.avatar_url ? (
+        <img src={row.profiles.avatar_url} alt="" className="h-6 w-6 shrink-0 rounded-full object-cover" />
+      ) : (
+        <div className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-white/10 font-mono text-[10px] uppercase">
+          {name.slice(0, 1)}
+        </div>
+      )}
+      <span className="truncate font-mono text-xs text-white/70">{name}</span>
+    </>
+  );
   return (
     <div className={`rounded border border-white/10 bg-neutral-900/50 p-4 ${hidden ? "opacity-50" : ""}`}>
       <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
         <div className="flex min-w-0 items-center gap-2">
-          {row.profiles?.avatar_url ? (
-            <img src={row.profiles.avatar_url} alt="" className="h-6 w-6 shrink-0 rounded-full object-cover" />
+          {username ? (
+            <Link to="/footsteps/$username" params={{ username }} className="flex min-w-0 items-center gap-2 hover:opacity-80">
+              {identity}
+            </Link>
           ) : (
-            <div className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-white/10 font-mono text-[10px] uppercase">
-              {name.slice(0, 1)}
-            </div>
+            identity
           )}
-          <span className="truncate font-mono text-xs text-white/70">{name}</span>
           <span className="shrink-0 font-mono text-[10px] text-white/30">
             {new Date(row.created_at).toLocaleDateString()}
           </span>
@@ -292,6 +321,28 @@ function CommentItem({
         </div>
       </div>
       <p className="mt-3 whitespace-pre-wrap text-sm leading-relaxed text-white/80">{row.body}</p>
+      {userId && !isSelf && (
+        <div className="mt-3 flex items-center gap-1.5">
+          <FollowButton
+            size="sm"
+            isFollowing={social.isFollowing(row.user_id)}
+            pending={social.isPendingFor(row.user_id)}
+            onToggle={() =>
+              social.isFollowing(row.user_id)
+                ? social.unfollow(row.user_id, { onError: onSocialError })
+                : social.followAsync(row.user_id).catch((e) => {
+                    onSocialError(e);
+                    throw e;
+                  })
+            }
+          />
+          <AddFriendButton
+            status={addFriendStatus === "accepted" ? "accepted" : addFriendStatus === "none" ? "none" : "pending"}
+            pending={social.isPendingFor(row.user_id)}
+            onSend={() => social.sendRequest(row.user_id, { onError: onSocialError })}
+          />
+        </div>
+      )}
       {children}
     </div>
   );

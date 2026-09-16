@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
+import { getEmbedThumbnail } from "@/lib/media";
 import { PageShell } from "@/components/site/SiteChrome";
 import { NewsletterForm } from "@/components/site/NewsletterForm";
 import { ReactionSummary } from "@/components/site/Reactions";
@@ -51,6 +52,7 @@ type Footprint = {
   description: string | null;
   occurred_on: string | null;
   cover_url: string | null;
+  media_url: string | null;
 };
 
 function FootprintsPage() {
@@ -61,7 +63,7 @@ function FootprintsPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("footprints")
-        .select("id, slug, title, category, role_or_outlet, description, occurred_on, cover_url")
+        .select("id, slug, title, category, role_or_outlet, description, occurred_on, cover_url, media_url")
         .eq("published", true)
         .order("sort_order");
       if (error) throw error;
@@ -97,6 +99,12 @@ function FootprintsPage() {
             {items.map((item, i) => {
               const Icon = CATEGORY_ICON[item.category] ?? Briefcase;
               const onRight = i % 2 === 0;
+              // Same fallback chain footprints_.$slug.tsx already uses for
+              // the detail page — "cover image override" was always meant
+              // to be optional (its own placeholder text says so), but the
+              // listing card never actually fell back to anything when
+              // it was left blank.
+              const cardImage = item.cover_url || getEmbedThumbnail(item.media_url ?? "") || item.media_url;
               return (
                 <li key={item.id} className="relative mb-10 last:mb-0 md:grid md:grid-cols-2 md:gap-10">
                   {/* Marker: the "footprint" itself — a morphism-styled icon
@@ -117,10 +125,10 @@ function FootprintsPage() {
                       params={item.slug ? { slug: item.slug } : undefined}
                       className="group surface-card block overflow-hidden text-left"
                     >
-                      {item.cover_url && (
+                      {cardImage && (
                         <div className="aspect-video overflow-hidden bg-neutral-900">
                           <img
-                            src={item.cover_url}
+                            src={cardImage}
                             alt=""
                             loading="lazy"
                             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"

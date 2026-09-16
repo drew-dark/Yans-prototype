@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { LanguageToggle } from "@/components/site/LanguageProvider";
 import { Settings, Menu, ChevronDown } from "lucide-react";
 import { NotificationBell } from "@/components/site/NotificationBell";
+import { ImmersiveBackground } from "@/components/site/ImmersiveBackground";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -433,6 +434,7 @@ export function PageShell({ children }: { children: React.ReactNode }) {
           "radial-gradient(circle at 20% 30%, var(--site-glow-a) 0%, transparent 50%), radial-gradient(circle at 80% 70%, var(--site-glow-b) 0%, transparent 55%)",
       }}
     >
+      <ImmersiveBackground />
       <SiteNavBar />
       {children}
       <SiteFooter />

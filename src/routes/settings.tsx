@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { PageShell } from "@/components/site/SiteChrome";
 import { ThemePicker } from "@/components/site/ThemeProvider";
+import { useImmersiveMode } from "@/components/site/ImmersiveModeProvider";
+import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "react-i18next";
 
@@ -30,6 +32,7 @@ function SettingsPage() {
   const { t } = useTranslation();
   const [email, setEmail] = useState<string | null>(null);
   const [staff, setStaff] = useState(false);
+  const { mode, setMode } = useImmersiveMode();
 
   useEffect(() => {
     (async () => {
@@ -61,6 +64,19 @@ function SettingsPage() {
             {t("settings.appearanceDesc")}
           </p>
           <ThemePicker className="mt-5" />
+        </section>
+
+        <section className="mt-12" aria-labelledby="immersive">
+          <h2 id="immersive" className="font-display text-2xl uppercase tracking-tight">
+            {t("settings.immersive")}
+          </h2>
+          <p className="mt-1 text-sm text-white/50">{t("settings.immersiveDesc")}</p>
+          <div className="mt-5 flex items-center gap-3">
+            <Switch checked={mode === "immersive"} onCheckedChange={(v) => setMode(v ? "immersive" : "classic")} />
+            <span className="font-mono text-xs uppercase tracking-widest text-white/60">
+              {mode === "immersive" ? t("settings.immersiveOn") : t("settings.immersiveOff")}
+            </span>
+          </div>
         </section>
 
         <section className="mt-12" aria-labelledby="account">
