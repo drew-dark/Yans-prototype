@@ -11,7 +11,7 @@ import { ReactionSummary } from "@/components/site/Reactions";
 import { HeroCarousel } from "@/components/site/HeroCarousel";
 import { useScrollReveal } from "@/hooks/use-scroll-reveal";
 import { useImmersiveMode } from "@/components/site/ImmersiveModeProvider";
-import { BentoGrid, BentoCell } from "@/components/site/BentoGrid";
+import { BentoGrid, BentoCard } from "@/components/site/BentoGrid";
 import portraitImg from "@/assets/muyan-portrait.jpg";
 import broadcastImg from "@/assets/muyan-broadcast.jpg";
 import foodImg from "@/assets/muyan-food.jpg";
@@ -31,14 +31,14 @@ const fallbackHero = [
 ];
 
 const fallbackTiles = [
-  { id: "1", image_url: foodImg, label: "Culture" },
-  { id: "2", image_url: stageImg, label: "Stage" },
-  { id: "3", image_url: portraitImg, label: "Portrait" },
-  { id: "4", image_url: verseImg, label: "Verse" },
-  { id: "5", image_url: broadcastImg, label: "Broadcast" },
-  { id: "6", image_url: stageImg, label: "Field" },
-  { id: "7", image_url: foodImg, label: "Table" },
-  { id: "8", image_url: portraitImg, label: "Studio" },
+  { id: "1", image_url: foodImg, label: "Culture", cta_label: undefined, cta_href: undefined },
+  { id: "2", image_url: stageImg, label: "Stage", cta_label: undefined, cta_href: undefined },
+  { id: "3", image_url: portraitImg, label: "Portrait", cta_label: undefined, cta_href: undefined },
+  { id: "4", image_url: verseImg, label: "Verse", cta_label: undefined, cta_href: undefined },
+  { id: "5", image_url: broadcastImg, label: "Broadcast", cta_label: undefined, cta_href: undefined },
+  { id: "6", image_url: stageImg, label: "Field", cta_label: undefined, cta_href: undefined },
+  { id: "7", image_url: foodImg, label: "Table", cta_label: undefined, cta_href: undefined },
+  { id: "8", image_url: portraitImg, label: "Studio", cta_label: undefined, cta_href: undefined },
 ];
 
 function HomeTile({
@@ -125,15 +125,51 @@ function Index() {
   });
 
   const { data: tiles = fallbackTiles } = useQuery({
-    queryKey: ["public", "collection_items"],
+    queryKey: ["public", "home", "bento-tiles"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("collection_items")
-        .select("id, image_url, label")
-        .eq("published", true)
-        .order("sort_order");
-      if (error) throw error;
-      return data.length > 0 ? data : fallbackTiles;
+      // Pulls from real content that's actually organized under a Volume
+      // via the taxonomy system (admin/taxonomy.tsx + the TaxonomyPicker
+      // on the Stories/Diary editors) -- not the disconnected legacy
+      // Muyan Tiles table (collection_items), which has no relationship
+      // to collections/volumes/seasons at all and had to be curated by
+      // hand in a separate admin page nobody was maintaining.
+      const [stories, diaries] = await Promise.all([
+        supabase
+          .from("stories")
+          .select("id, slug, title, cover_image_url")
+          .eq("published", true)
+          .not("volume_id", "is", null)
+          .not("cover_image_url", "is", null)
+          .order("published_at", { ascending: false, nullsFirst: false })
+          .limit(12),
+        supabase
+          .from("diary_entries")
+          .select("id, slug, title, cover_image_url")
+          .eq("published", true)
+          .not("volume_id", "is", null)
+          .not("cover_image_url", "is", null)
+          .order("entry_date", { ascending: false })
+          .limit(12),
+      ]);
+      if (stories.error) throw stories.error;
+      if (diaries.error) throw diaries.error;
+      const items = [
+        ...(stories.data ?? []).map((s) => ({
+          id: s.id,
+          image_url: s.cover_image_url as string,
+          label: s.title,
+          cta_label: "Read",
+          cta_href: `/stories/${s.slug}`,
+        })),
+        ...(diaries.data ?? []).map((d) => ({
+          id: d.id,
+          image_url: d.cover_image_url as string,
+          label: d.title,
+          cta_label: "Read",
+          cta_href: `/diaries/${d.slug}`,
+        })),
+      ].slice(0, 12);
+      return items.length > 0 ? items : fallbackTiles;
     },
   });
 
@@ -409,23 +445,16 @@ function Index() {
               ];
               const span = spanPattern[i % spanPattern.length];
               return (
-                <BentoCell key={t.id} colSpan={span.col} rowSpan={span.row} className="!p-0">
-                  <button
-                    type="button"
-                    onClick={() => open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label })}
-                    className="group relative block h-full min-h-32 w-full text-left"
-                  >
-                    <img
-                      src={t.image_url}
-                      alt={t.label}
-                      loading="lazy"
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent p-3">
-                      <p className="font-mono text-[10px] uppercase tracking-widest text-white">{t.label}</p>
-                    </div>
-                  </button>
-                </BentoCell>
+                <BentoCard
+                  key={t.id}
+                  image={t.image_url}
+                  label={t.label}
+                  ctaLabel={t.cta_label ?? null}
+                  ctaHref={t.cta_href ?? null}
+                  colSpan={span.col}
+                  rowSpan={span.row}
+                  onClick={() => open({ kind: "image", src: t.image_url, alt: t.label, caption: t.label })}
+                />
               );
             })}
           </BentoGrid>
