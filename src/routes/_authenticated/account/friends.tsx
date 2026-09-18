@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
@@ -18,8 +18,8 @@ export const Route = createFileRoute("/_authenticated/account/friends")({
 });
 
 function ProfileRow({ profile }: { profile: Profile }) {
-  return (
-    <div className="flex min-w-0 items-center gap-3">
+  const content = (
+    <>
       {profile.avatar_url ? (
         <img src={profile.avatar_url} alt="" className="h-9 w-9 shrink-0 rounded-full object-cover" />
       ) : (
@@ -29,8 +29,20 @@ function ProfileRow({ profile }: { profile: Profile }) {
         <p className="truncate text-sm">{profile.display_name ?? profile.username}</p>
         {profile.username && <p className="truncate text-xs text-white/40">@{profile.username}</p>}
       </div>
-    </div>
+    </>
   );
+  if (profile.username) {
+    return (
+      <Link
+        to="/footsteps/$username"
+        params={{ username: profile.username }}
+        className="flex min-w-0 items-center gap-3 hover:opacity-80"
+      >
+        {content}
+      </Link>
+    );
+  }
+  return <div className="flex min-w-0 items-center gap-3">{content}</div>;
 }
 
 function FriendsPage() {
