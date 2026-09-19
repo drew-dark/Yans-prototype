@@ -401,6 +401,18 @@
   [class*="font-display"] {
     letter-spacing: 0.01em;
   }
+
+  /* Several themes' --kraft sits close enough in luminance to the
+     site's white foreground text (computed contrast as low as 1.41:1
+     for newsprint) that hue alone doesn't reliably separate an accent-
+     colored title from plain body copy — this adds weight so it never
+     depends on color alone, matching WCAG's "don't use color as the
+     only visual distinguisher" guidance concretely rather than just in
+     principle. */
+  .text-kraft {
+    font-weight: 600;
+    letter-spacing: 0.02em;
+  }
 }
 
 /* Editorial rule used across magazine-style section headers */
