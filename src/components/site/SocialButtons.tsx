@@ -66,7 +66,7 @@ export function FollowButton({
       variant={isFollowing ? "outline" : "default"}
       onClick={handleClick}
       disabled={pending || playing}
-      className="shrink-0 overflow-hidden"
+      className="shrink-0 overflow-hidden bg-[var(--surface-bg)] [backdrop-filter:var(--surface-blur)] [-webkit-backdrop-filter:var(--surface-blur)] [border:var(--surface-border)] rounded-[var(--surface-radius)] shadow-[var(--surface-shadow)] transition-all duration-300 hover:[border-color:var(--kraft)]"
     >
       {playing ? (
         <FollowScene playing={playing} />
@@ -131,7 +131,7 @@ export function AddFriendButton({
       size="sm"
       onClick={onSend}
       disabled={pending}
-      className={`shrink-0 transition-transform duration-200 ${justChanged ? "scale-110" : "scale-100"}`}
+      className={`shrink-0 transition-transform duration-200 bg-[var(--surface-bg)] [backdrop-filter:var(--surface-blur)] [-webkit-backdrop-filter:var(--surface-blur)] [border:var(--surface-border)] rounded-[var(--surface-radius)] shadow-[var(--surface-shadow)] hover:[border-color:var(--kraft)] ${justChanged ? "scale-110" : "scale-100"}`}
     >
       <UserPlus className="mr-1.5 h-3.5 w-3.5" />
       {t("friends.addFriend")}
@@ -185,7 +185,7 @@ export function SendMessageButton({
       variant="outline"
       onClick={handleClick}
       disabled={disabled || phase === "animating"}
-      className="shrink-0 overflow-hidden"
+      className="shrink-0 overflow-hidden bg-[var(--surface-bg)] [backdrop-filter:var(--surface-blur)] [-webkit-backdrop-filter:var(--surface-blur)] [border:var(--surface-border)] rounded-[var(--surface-radius)] shadow-[var(--surface-shadow)] transition-all duration-300 hover:[border-color:var(--kraft)]"
     >
       {phase === "animating" ? (
         <LetterFoldAnimation playing={true} />
